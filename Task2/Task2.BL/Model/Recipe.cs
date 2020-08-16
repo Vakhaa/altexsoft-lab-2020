@@ -8,7 +8,7 @@ namespace Task2.BL.Model
     /// Рецепт
     /// </summary>
     [Serializable]
-    public class Recipes
+    public class Recipe
     {
         #region Свойства
         /// <summary>
@@ -38,7 +38,7 @@ namespace Task2.BL.Model
         /// <param name="Name">Имя.</param>
         /// <param name="Ingredients">ингредиенты.</param>
         /// <param name="StepsHowCooking">Рецепт.</param>
-        public Recipes(string Name, string Category,string Description, List<string> Ingredients, List<string> StepsHowCooking)
+        public Recipe(string Name, string Category,string Description, List<string> Ingredients, List<string> StepsHowCooking)
         {
             #region  Проверка условий
             if (string.IsNullOrWhiteSpace(Name))

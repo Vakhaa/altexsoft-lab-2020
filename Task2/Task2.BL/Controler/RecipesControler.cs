@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 using Task2.BL.Model;
 
 namespace Task2.BL.Controler
@@ -13,16 +10,16 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Логика рецептов
     /// </summary>
-    public class RecipesControler
+    public class RecipesControler //TODO проверить методы еще раз, в случае чего убрать комментарии
     {
         /// <summary>
         /// Рецепты
         /// </summary>
-        public List<Recipes> Recipes{get;}
+        public List<Recipe> Recipes{get;}
         /// <summary>
         /// Активный рецепт
         /// </summary>
-        public Recipes CurrentRecipes { get; set; }
+        public Recipe CurrentRecipes { get; set; }
         /// <summary>
         /// Создает контролер моделью рецепта
         /// </summary>
@@ -34,9 +31,10 @@ namespace Task2.BL.Controler
         /// Загрузка списка рецепта в приложение
         /// </summary>
         /// <returns>Рецепт</returns>
-        private List<Recipes> GetRecipes()
+        private List<Recipe> GetRecipes()
         {
-            JsonSerializer des = new JsonSerializer();
+            return JSONReader.DeserialezeFile<Recipe>(Recipes,"rcps.json");
+            /*JsonSerializer des = new JsonSerializer();
             
             if(File.Exists("text.json"))                //читаем файл, если он есть
             {
@@ -60,16 +58,16 @@ namespace Task2.BL.Controler
             {
                 Save();
                 return new List<Recipes>();
-            }
+            }*/
         }
         /// <summary>
         /// Сохранение рецепта
         /// </summary>
         public void Save()
         {
-
-            JsonSerializer serializer = new JsonSerializer();
-       //     serializer.Converters.Add(new JavaScriptDateTimeConverter()); //dla daty
+            JSONReader.Save(Recipes, "rcps.json");
+         /*   JsonSerializer serializer = new JsonSerializer();
+             //     serializer.Converters.Add(new JavaScriptDateTimeConverter()); //dla daty
             
             serializer.NullValueHandling = NullValueHandling.Ignore;
 
@@ -77,16 +75,26 @@ namespace Task2.BL.Controler
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, JsonConvert.SerializeObject(Recipes, Formatting.Indented));
-            }
+            }*/
         }
         /// <summary>
         /// Добавить рецепт
         /// </summary>
         /// <param name="recipes">Рецепт</param>
-        public void AddRecipes(ref Recipes recipes)
+        public void AddRecipes(string NameRecipe, string categories, string description, List<string>ingradients,List<string>recipes)
         {
-            Recipes.Add(recipes??throw new ArgumentNullException("Нельзя добавить пустой рецепт",nameof(recipes)));
-            CurrentRecipes = recipes; //точно ли нужно делать рецепт активным, возможно он уже будет активным на тот момент так или иначе
+            foreach(var recip in Recipes)
+            {
+                if(recip.Name==NameRecipe)
+                {
+                    Console.WriteLine("Такой рецепт уже существует");
+                }
+            }
+
+            
+            Recipe r = new Recipe(NameRecipe, categories, description, ingradients, recipes);
+            Recipes.Add(r ?? throw new ArgumentNullException("Нельзя добавить пустой рецепт",nameof(recipes)));
+            CurrentRecipes = r; //точно ли нужно делать рецепт активным, возможно он уже будет активным на тот момент так или иначе
         }
         /// <summary>
         /// Поиск рецепта

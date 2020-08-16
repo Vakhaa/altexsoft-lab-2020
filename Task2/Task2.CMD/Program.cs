@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using Task2.BL.Controler;
 using Task2.BL.Model;
 
@@ -8,15 +7,22 @@ namespace Task2.CMD
 {
     class Program
     {
-        //TODO Сделать модель категории, что будет содержать в себе подкатегории, а дальше связать подкатегорию с внешним ключом рецепта
+        //TODO1 Добавить экземпляры RecipesControler и IngradientController, что б создавть ингредиенты
+        //TODO2 Сделать модель категории, что будет содержать в себе подкатегории, а дальше связать подкатегорию с внешним ключом рецепта
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            LoadRecipes();
             Console.ReadLine();
-            Console.Clear();
-            SaveRecipes();
-            LoadRecipes();
+            /*     LoadRecipes();
+                 Console.ReadLine();
+                 Console.Clear();
+                 SaveRecipes();
+                 LoadRecipes();
+            */
+            IngradientControler ic = new IngradientControler();
+            ic.ADDIngradients("czlenix");
+            ic.Save();
+            Console.WriteLine(ic.FindIngrandients("czlenix").Name);
             Console.ReadLine();
         }
         public static void LoadRecipes()
@@ -25,7 +31,7 @@ namespace Task2.CMD
             RecipesControler rc1 = new RecipesControler();
             if (rc1.Recipes.Count != 0)
             {
-                Recipes r1 = rc1.Recipes[2];
+                Recipe r1 = rc1.Recipes[2];
                 Console.WriteLine("Название " + r1.Name);
                 Console.WriteLine(r1.Ingredients[0]);
                 Console.WriteLine(r1.Ingredients[1]);
@@ -34,22 +40,27 @@ namespace Task2.CMD
             }
             #endregion
         }
-        public static void SaveRecipes()
+        public static void SaveRecipes() //tut todo1
         {
             #region Создание рецпета
             Console.WriteLine("Ввидите название рецепта: ");
             var name = Console.ReadLine();
 
-            Console.WriteLine("Ввидите категорию блюда: "); //enum
+            Console.WriteLine("Ввидите категорию блюда: ");
             var categories = Console.ReadLine();
 
             Console.WriteLine("Ввидите описание блюда: ");
             var description = Console.ReadLine();
 
-            Console.WriteLine("Ввидите колличество ингредиентов: ");
-            var countIngr = int.Parse(Console.ReadLine()); //proverka
-            List<string> Ingradients = new List<string>();
+            string str;
+            int countIngr;
+            do
+            {
+                Console.WriteLine("Ввидите колличество ингредиентов: ");
+                str = Console.ReadLine();
+            } while (int.TryParse(str, out countIngr));
 
+            List<string> Ingradients = new List<string>();
             for (int count = 1; count <= countIngr; count++)
             {
                 Console.WriteLine("Ввидите ингредиент:");
@@ -57,8 +68,12 @@ namespace Task2.CMD
                 Ingradients.Add(Console.ReadLine());
             }
 
-            Console.WriteLine("Ввидете колличество шагов приготовления: ");
-            var steps = int.Parse(Console.ReadLine()); //proverka
+            int steps;
+            do
+            {
+                Console.WriteLine("Ввидете колличество шагов приготовления: ");
+                str = Console.ReadLine();
+            } while (int.TryParse(str, out steps));
             List<string> recipes = new List<string>();
 
             for (int count = 1; count <= steps; count++)
@@ -66,9 +81,9 @@ namespace Task2.CMD
                 Console.WriteLine($"Ввидете описания шага {count} : ");
                 recipes.Add(Console.ReadLine());
             }
-            Recipes r = new Recipes(name, categories, description, Ingradients, recipes);
+
             RecipesControler rc = new RecipesControler();
-            rc.AddRecipes(ref r);
+            rc.AddRecipes(name, categories, description, Ingradients, recipes);
             rc.Save();
             #endregion
         }
