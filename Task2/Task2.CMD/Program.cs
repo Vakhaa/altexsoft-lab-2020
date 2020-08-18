@@ -7,31 +7,37 @@ namespace Task2.CMD
 {
     class Program
     {
-        //TODO1 Добавить экземпляры RecipesControler и IngradientController, что б создавть ингредиенты
-        //TODO2 Сделать модель категории, что будет содержать в себе подкатегории, а дальше связать подкатегорию с внешним ключом рецепта
+        //TODO Сделать контроллер модели категории,
+        //а дальше связать подкатегорию с внешним ключом рецепта, модель категории уже есть
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
             Console.ReadLine();
-            /*     LoadRecipes();
-                 Console.ReadLine();
-                 Console.Clear();
-                 SaveRecipes();
-                 LoadRecipes();
-            */
             IngradientControler ic = new IngradientControler();
-            ic.ADDIngradients("czlenix");
-            ic.Save();
-            Console.WriteLine(ic.FindIngrandients("czlenix").Name);
+            RecipesControler rc = new RecipesControler();
+            /*LoadRecipes(rc);
+            Console.ReadLine();
+            Console.Clear();
+            SaveRecipes(ic);
+            LoadRecipes(rc);*/
+            rc.FindRecipes("Perec wraszyrowanyj");
+            Console.WriteLine(rc.CurrentRecipes.Name);
+            Console.WriteLine(rc.CurrentRecipes.Description);
+            Console.WriteLine(rc.CurrentRecipes.Ingredients[0]);
+            Console.WriteLine(rc.CurrentRecipes.Ingredients[1]);
+
+            //    ic.ADDIngradients("czlenix");
+            //    ic.Save();
+            //    Console.WriteLine(ic.FindIngrandients("czlenix").Name);
+
             Console.ReadLine();
         }
-        public static void LoadRecipes()
+        public static void LoadRecipes(RecipesControler rc1)
         {
             #region Загрузка с файла
-            RecipesControler rc1 = new RecipesControler();
             if (rc1.Recipes.Count != 0)
             {
-                Recipe r1 = rc1.Recipes[2];
+                Recipe r1 = rc1.Recipes[0];
                 Console.WriteLine("Название " + r1.Name);
                 Console.WriteLine(r1.Ingredients[0]);
                 Console.WriteLine(r1.Ingredients[1]);
@@ -40,7 +46,7 @@ namespace Task2.CMD
             }
             #endregion
         }
-        public static void SaveRecipes() //tut todo1
+        public static void SaveRecipes(IngradientControler ic)
         {
             #region Создание рецпета
             Console.WriteLine("Ввидите название рецепта: ");
@@ -58,14 +64,22 @@ namespace Task2.CMD
             {
                 Console.WriteLine("Ввидите колличество ингредиентов: ");
                 str = Console.ReadLine();
-            } while (int.TryParse(str, out countIngr));
+                if(int.TryParse(str, out countIngr))
+                {
+                    break;
+                }
+           } while (true);
 
             List<string> Ingradients = new List<string>();
             for (int count = 1; count <= countIngr; count++)
             {
                 Console.WriteLine("Ввидите ингредиент:");
                 Console.Write($"{count}. ");
-                Ingradients.Add(Console.ReadLine());
+                str = Console.ReadLine();
+                Ingradients.Add(str);
+                ic.ADDIngradients(str);
+                ic.Save();
+          //      Console.WriteLine(ic.FindIngrandients("czlenix").Name);
             }
 
             int steps;
@@ -73,7 +87,11 @@ namespace Task2.CMD
             {
                 Console.WriteLine("Ввидете колличество шагов приготовления: ");
                 str = Console.ReadLine();
-            } while (int.TryParse(str, out steps));
+                if(int.TryParse(str, out steps))
+                {
+                    break;
+                }
+            } while (true);
             List<string> recipes = new List<string>();
 
             for (int count = 1; count <= steps; count++)

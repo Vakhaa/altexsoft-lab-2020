@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 using Task2.BL.Model;
 
 namespace Task2.BL.Controler
@@ -10,7 +8,7 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Логика рецептов
     /// </summary>
-    public class RecipesControler //TODO проверить методы еще раз, в случае чего убрать комментарии
+    public class RecipesControler
     {
         /// <summary>
         /// Рецепты
@@ -34,31 +32,6 @@ namespace Task2.BL.Controler
         private List<Recipe> GetRecipes()
         {
             return JSONReader.DeserialezeFile<Recipe>(Recipes,"rcps.json");
-            /*JsonSerializer des = new JsonSerializer();
-            
-            if(File.Exists("text.json"))                //читаем файл, если он есть
-            {
-                using (StreamReader sr = new StreamReader("text.json"))
-                {
-                    using (JsonReader reader = new JsonTextReader(sr))
-                    {
-                        try
-                        {
-                            return JsonConvert.DeserializeObject<List<Recipes>>(des.Deserialize<string>(reader))?? new List<Recipes>();
-                        }
-                        catch (Exception)
-                        {
-
-                            return new List<Recipes>();
-                        }
-                    }
-                }
-            }
-            else                                           //создаем файл, если его не существует
-            {
-                Save();
-                return new List<Recipes>();
-            }*/
         }
         /// <summary>
         /// Сохранение рецепта
@@ -66,16 +39,6 @@ namespace Task2.BL.Controler
         public void Save()
         {
             JSONReader.Save(Recipes, "rcps.json");
-         /*   JsonSerializer serializer = new JsonSerializer();
-             //     serializer.Converters.Add(new JavaScriptDateTimeConverter()); //dla daty
-            
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-
-            using (StreamWriter sw = new StreamWriter(@"text.json"))
-            using (JsonWriter writer = new JsonTextWriter(sw))
-            {
-                serializer.Serialize(writer, JsonConvert.SerializeObject(Recipes, Formatting.Indented));
-            }*/
         }
         /// <summary>
         /// Добавить рецепт
@@ -90,7 +53,6 @@ namespace Task2.BL.Controler
                     Console.WriteLine("Такой рецепт уже существует");
                 }
             }
-
             
             Recipe r = new Recipe(NameRecipe, categories, description, ingradients, recipes);
             Recipes.Add(r ?? throw new ArgumentNullException("Нельзя добавить пустой рецепт",nameof(recipes)));
