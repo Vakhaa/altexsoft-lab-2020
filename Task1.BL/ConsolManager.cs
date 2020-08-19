@@ -46,7 +46,7 @@ namespace Task1.BL
                 str = Console.ReadLine();
                 if (int.TryParse(str, out int result))
                 {
-                    switch (Int32.Parse(str))
+                    switch (result)
                     {
                         case 1:
                             Console.WriteLine("Symbol or word: ");
@@ -171,7 +171,7 @@ namespace Task1.BL
                         OpenFile((IReadTxt)_reader, out str);
                         return;
                     }
-                case "open": //Open File //todo isKorekt
+                case "open": //Open File
                     Console.Write("File: ");
                     str = Console.ReadLine();
                     Console.WriteLine();
