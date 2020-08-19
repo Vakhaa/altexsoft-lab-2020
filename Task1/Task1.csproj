@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Task1.BL\Task1.BL.csproj" />
+  </ItemGroup>
+
 </Project>
