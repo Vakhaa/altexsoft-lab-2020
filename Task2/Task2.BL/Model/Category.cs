@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 
 namespace Task2.BL.Model
 {
@@ -22,7 +20,7 @@ namespace Task2.BL.Model
         /// <summary>
         /// Выбраная категория
         /// </summary>
-        public string CurrentSubcategories { get; set; }
+        public string CurrentSubcategories { get; set; }    
         /// <summary>
         /// Создание категории
         /// </summary>
@@ -57,7 +55,6 @@ namespace Task2.BL.Model
             }
             Subcategories.Add(NameSubcategories);
         }
-
         public override string ToString()
         {
             return "Category";

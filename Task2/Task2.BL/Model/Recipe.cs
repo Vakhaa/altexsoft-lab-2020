@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Task2.BL.Model
 {
-    //TODO Change List<string> Ingradients => Class Ingradients
+    //TODO Change List<string> Ingradients => Class Ingradients, а может и не надо
     /// <summary>
     /// Рецепт
     /// </summary>

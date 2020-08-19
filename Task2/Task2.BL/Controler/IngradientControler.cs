@@ -14,6 +14,9 @@ namespace Task2.BL.Controler
         /// Все ингредиенты
         /// </summary>
         public List<Ingradient> Ingradients { get; }
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public IngradientControler()
         {
             Ingradients = GetIngradients();
@@ -58,6 +61,5 @@ namespace Task2.BL.Controler
         {
             return Ingradients.SingleOrDefault(ig => ig.Name == NameIngradients);
         }
-
     }
 }
