@@ -86,7 +86,7 @@ namespace Task1.BL
             Console.WriteLine("\nCount words: {0}", Regex.Matches(GetText(), @"[\S]+").Count);
             foreach (string word in Text)
             {
-                if (count % 10 == 0 & count != 1)
+                if (count % 10 == 0 && count != 1)
                 {
                     Console.Write(word);
                     if (count < Text.Length - 9) Console.Write(", ");
@@ -102,18 +102,22 @@ namespace Task1.BL
         public void ThirdSentenceReverse(int count = 0)
         {
             Console.WriteLine("\nReverse: ");
-            for (int i = 0; i < Text.Length - 1; i++)
+            var text = GetText();
+            for (int i = 0,temp=0; i < text.Length - 1; i++)
             {
-                if (Text[i].Contains('.'))
+                if (text[i]=='.')
                 {
                     count++;
                 }
-                if (count == 2)
+                if (count == 2&&temp==0)
                 {
-                    foreach (string words in Text.Reverse(startIndex: i)) //Reverse
-                    {
-                        if (words != null) Console.Write(words + " ");
-                    }
+                    temp = i+1;
+                }
+                if(count==3)
+                {
+                    var tempchararray = text.ToCharArray(temp,i-temp);
+                    Array.Reverse(tempchararray, 0, tempchararray.Length);
+                    Console.WriteLine(tempchararray);
                     Console.WriteLine();
                     return;
                 }

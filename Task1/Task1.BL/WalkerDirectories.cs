@@ -35,22 +35,22 @@ namespace Task1.BL
         /// </summary>
         public WalkerDirectories()
         {
-            ChangeDisk(out String str);
+            ChangeDisk();
             _dirs = Directory.GetDirectories(_path);
         }
         /// <summary>
         /// Метод для смены диска.
         /// </summary>
-        /// <param name="str">Строковая перемена, для хранения ответа пользователя.</param>
-        public void ChangeDisk(out String str)
+        public void ChangeDisk()
         {
+            String str;//Строковая перемена, для хранения ответа пользователя.
             Console.WriteLine("Choose disk: ");
             foreach (var drive in Drivers)
             {
                 Console.Write(drive.Name + " ");
             }
             Console.WriteLine();
-            str = Console.ReadLine();
+            str = Console.ReadLine().ToUpper();
             foreach (var drive in Drivers)
             {
                 if (str == drive.Name)
@@ -65,19 +65,19 @@ namespace Task1.BL
                     {
                         Console.WriteLine("Disk is not ready. Try again.");
                         str = "";
-                        ChangeDisk(out str);
+                        ChangeDisk();
                         return;
                     }
 
                 }
             }
             Console.WriteLine("Mistake, try again!");
-            ChangeDisk(out str);
+            ChangeDisk();
         }
         /// <summary>
         /// Отображение директории
         /// </summary>
-        public void WalkDirectories()
+        public void DisplayDirectories()
         {
             Console.WriteLine("Directories :");
             foreach (string nameDir in _dirs)
@@ -86,7 +86,7 @@ namespace Task1.BL
         /// <summary>
         /// Отображение файлов
         /// </summary>
-        public void WalkFiles()
+        public void DisplayFiles()
         {
             Console.WriteLine("Files :");
             foreach (string nameFile in Directory.GetFiles(_path))
@@ -110,7 +110,7 @@ namespace Task1.BL
                         _dirs = Directory.GetDirectories(_path);
                         return;
                     }
-                    catch (UnauthorizedAccessException e)
+                    catch (UnauthorizedAccessException)
                     {
                         Console.WriteLine("Access is denied... Try again. \t*enter*");
                         Console.ReadLine();
@@ -157,7 +157,8 @@ namespace Task1.BL
         /// <param name="path">Местоположение директории</param>
         public void SetDireketories(string path)
         {
-            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException("Ошибка с получением списка директорий, так как неверный путь", nameof(path));
+            if (string.IsNullOrWhiteSpace(path)) 
+            throw new ArgumentNullException("Ошибка с получением списка директорий, так как неверный путь", nameof(path));
             _dirs = Directory.GetDirectories(path);
         }
     }
