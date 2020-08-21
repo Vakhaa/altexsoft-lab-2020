@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Task2.BL.Model
 {
-    //TODO Change List<string> Ingradients => Class Ingradients, а может и не надо
     /// <summary>
     /// Рецепт
     /// </summary>
@@ -16,9 +15,13 @@ namespace Task2.BL.Model
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// Категория
+        /// Kатегория
         /// </summary>
         public string Category { get; }
+        /// <summary>
+        /// Подкатегория
+        /// </summary>
+        public string Subcategory { get; }
         /// <summary>
         /// Описание
         /// </summary>
@@ -27,6 +30,10 @@ namespace Task2.BL.Model
         /// Ингредиенты
         /// </summary>
         public List<string> Ingredients { get; }
+        /// <summary>
+        /// Колличество ингредиентов
+        /// </summary>
+        public List<string> CountIngredients { get; }
         /// <summary>
         /// Пошаговый рецепт
         /// </summary>
@@ -38,7 +45,7 @@ namespace Task2.BL.Model
         /// <param name="Name">Имя.</param>
         /// <param name="Ingredients">ингредиенты.</param>
         /// <param name="StepsHowCooking">Рецепт.</param>
-        public Recipe(string Name, string Category,string Description, List<string> Ingredients, List<string> StepsHowCooking)
+        public Recipe(string Name,string Category, string Subcategory,string Description, List<string> Ingredients,List<string> CountIngredients, List<string> StepsHowCooking)
         {
             #region  Проверка условий
             if (string.IsNullOrWhiteSpace(Name))
@@ -49,6 +56,10 @@ namespace Task2.BL.Model
             {
                 throw new ArgumentNullException("Название категории не может быть пустым", nameof(Category));
             }
+            if (string.IsNullOrWhiteSpace(Subcategory))
+            {
+                throw new ArgumentNullException("Название подкатегории не может быть пустым", nameof(Subcategory));
+            }
             if (string.IsNullOrWhiteSpace(Description))
             {
                 throw new ArgumentNullException("Описание не может быть пустым", nameof(Description));
@@ -58,6 +69,13 @@ namespace Task2.BL.Model
                 if (string.IsNullOrWhiteSpace(ingredient))
                 {
                     throw new ArgumentNullException("Название ингредиента не может быть пустым", nameof(Ingredients));
+                }
+            }
+            foreach (var count in CountIngredients)
+            {
+                if (string.IsNullOrWhiteSpace(count))
+                {
+                    throw new ArgumentNullException("Колличество ингредиентов не может быть пустыми", nameof(count));
                 }
             }
             foreach (var steps in StepsHowCooking)
@@ -71,8 +89,10 @@ namespace Task2.BL.Model
 
             this.Name = Name;
             this.Category = Category;
+            this.Subcategory = Subcategory;
             this.Description = Description;
             this.Ingredients = Ingredients;
+            this.CountIngredients = CountIngredients;
             this.StepsHowCooking = StepsHowCooking;
         }
         public override string ToString()

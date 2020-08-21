@@ -8,7 +8,7 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Логика категорий
     /// </summary>
-    class CategoryControler
+    public class CategoryControler
     {
         /// <summary>
         /// Список категорий
@@ -51,7 +51,7 @@ namespace Task2.BL.Controler
                 if (category.Name == NameCategory) Console.WriteLine("Такая категория уже существует");
             }
 
-            Category c = new Category(NameCategory);
+            Category c = Category.NewCategory(NameCategory);
             Categories.Add(c ?? throw new ArgumentNullException("Нельзя добавить пустую категорию", nameof(NameCategory)));
             CurrentCategoties = c; //точно ли нужно делать категорию активной, возможно она уже будет активной на тот момент так или иначе
         }

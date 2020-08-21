@@ -28,7 +28,7 @@ namespace Task2.BL.Controler
                     {
                         try
                         {
-                            return JsonConvert.DeserializeObject<List<T>>(des.Deserialize<string>(reader)) ?? new List<T>();
+                            return JsonConvert.DeserializeObject<List<T>>(des.Deserialize<string>(reader));
                         }
                         catch (Exception)
                         {

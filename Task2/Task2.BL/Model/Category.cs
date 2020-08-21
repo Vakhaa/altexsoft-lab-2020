@@ -25,15 +25,43 @@ namespace Task2.BL.Model
         /// Создание категории
         /// </summary>
         /// <param name="NameCategory">Имя категории</param>
-        public Category(string NameCategory)
+        public Category(string Name, List<string> Subcategories)
         {
-            if(string.IsNullOrWhiteSpace(NameCategory))
+            if(string.IsNullOrWhiteSpace(Name))
             {
-                throw new ArgumentNullException("Должно быть имя категории", nameof(NameCategory));
+                throw new ArgumentNullException("Должно быть имя категории", nameof(Name));
             }
-            Name = NameCategory;
+            this.Name = Name;
+            if(Subcategories==null)
+            {
+                throw new ArgumentNullException("Должно быть хотя бы одна категория", nameof(Subcategories));
+            }
+            this.Subcategories = new List<string>();
+            foreach (var subcategory in Subcategories)
+            {
+                this.Subcategories.Add(subcategory);
+            }
+        }
+        /// <summary>
+        /// Конструктор, для создания категорий с названия
+        /// </summary>
+        /// <param name="Name">Название категории</param>
+        public static Category NewCategory(string Name)
+        {
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                throw new ArgumentNullException("Должно быть имя категории", nameof(Name));
+            }
+            
             Console.WriteLine("Ввидите подкатегорию: ");
-            AddSubcategories(Console.ReadLine());
+            var NameSubcategory = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(NameSubcategory))
+            {
+                throw new ArgumentNullException("Должно быть имя категории", nameof(NameSubcategory));
+            }
+            var Subcategories = new List<string>();
+            Subcategories.Add(NameSubcategory);
+            return new Category(Name,Subcategories);
         }
         /// <summary>
         /// Создание подкатегории
@@ -54,6 +82,24 @@ namespace Task2.BL.Model
                 }
             }
             Subcategories.Add(NameSubcategories);
+        }
+        /// <summary>
+        /// Поиск подкатегории.
+        /// </summary>
+        /// <param name="nameSubcategory">Названия подкатегории.</param>
+        /// <returns>Существует ли подкатегория.</returns>
+        public bool FindSubcategory(string nameSubcategory)
+        {
+            foreach (var subcategory in Subcategories)
+            {
+                if (subcategory == nameSubcategory)
+                {
+                    CurrentSubcategories = nameSubcategory;
+                    return true;
+                }
+                
+            }
+            return false;
         }
         public override string ToString()
         {

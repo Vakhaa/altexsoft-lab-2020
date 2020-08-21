@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Task2.BL.Model;
 
 namespace Task2.BL.Controler
@@ -44,7 +43,7 @@ namespace Task2.BL.Controler
         /// Добавить рецепт
         /// </summary>
         /// <param name="recipes">Рецепт</param>
-        public void AddRecipes(string NameRecipe, string categories, string description, List<string>ingradients,List<string>recipes)
+        public void AddRecipes(string NameRecipe,string category, string subcategories, string description, List<string>ingredients, List<string> countIngred, List<string>recipes)
         {
             foreach(var recip in Recipes)
             {
@@ -54,17 +53,26 @@ namespace Task2.BL.Controler
                 }
             }
             
-            Recipe r = new Recipe(NameRecipe, categories, description, ingradients, recipes);
+            Recipe r = new Recipe(NameRecipe,category ,subcategories, description, ingredients, countIngred, recipes);
             Recipes.Add(r ?? throw new ArgumentNullException("Нельзя добавить пустой рецепт",nameof(recipes)));
-            CurrentRecipes = r; //точно ли нужно делать рецепт активным, возможно он уже будет активным на тот момент так или иначе
+            CurrentRecipes = r;
         }
         /// <summary>
-        /// Поиск рецепта
+        /// Поиск рецепта.
         /// </summary>
-        /// <param name="NameRecipes">Название рецепта</param>
-        public void FindRecipes(string NameRecipes)
+        /// <param name="NameRecipes">Название рецепта.</param>
+        /// <return>Истину, есть ли такой рецепт.</return>
+        public bool FindRecipes(string NameRecipes)
         {
-            CurrentRecipes = Recipes.SingleOrDefault(r=>r.Name==NameRecipes);
+            foreach (var recipe in Recipes)
+            {
+                if(recipe.Name==NameRecipes)
+                {
+                    CurrentRecipes = recipe;
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
