@@ -5,7 +5,6 @@ namespace Task2.CMD
 {
     class Program
     {
-        //TODO добавить исключения в гит игнор
         static void Main(string[] args)
         {
             ConsoleManager cm = new ConsoleManager();

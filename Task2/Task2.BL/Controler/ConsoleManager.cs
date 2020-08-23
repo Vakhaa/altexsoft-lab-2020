@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using Task2.BL.Model;
 
 namespace Task2.BL.Controler
 {
     /// <summary>
-    /// Главный контроллер, для управления элементами логики
+    /// Главный контроллер, для управления элементами логики.
     /// </summary>
     public class ConsoleManager
     {
 
         /// <summary>
-        /// Указатель на кнотроллер категорий
+        /// Указатель на контроллер категорий.
         /// </summary>
         private CategoryControler _categoryControler;
         /// <summary>
-        /// Указать на контроллер рецептов
+        /// Указать на контроллер рецептов.
         /// </summary>
         private RecipesControler _recipesControler;
         /// <summary>
-        /// Указатель на кнотроллер ингредиентов
+        /// Указатель на кнотроллер ингредиентов.
         /// </summary>
         private IngradientControler _ingradientControler;
 
         /// <summary>
-        /// Конструктор класса
+        /// Конструктор класса.
         /// </summary>
         public ConsoleManager()
         {
@@ -32,17 +33,23 @@ namespace Task2.BL.Controler
             _ingradientControler = new IngradientControler();
         }
         /// <summary>
-        /// Метод для отображения логики: категории->подкатегории->рецепт
+        /// Метод для отображения логики: категории->подкатегории->рецепт.
         /// </summary>
         public void WalkBook()
         {
-            if (!WalkCategories()) return;
-            if (!WalkSubcategories()) return;
-            WalkRecipes();
-            DisplayCurrentRicepe();
+            while(!WalkCategories())
+            {
+                while(!WalkSubcategories())
+                {
+                    while(!WalkRecipes())
+                    {
+                        DisplayCurrentRicepe();
+                    }
+                }
+            }
         }
         /// <summary>
-        /// Метод для отбражения настроек книги рецептов и поиска элементов книги
+        /// Метод для отбражения настроек книги рецептов и поиска элементов книги.
         /// </summary>
         public void Settings()
         {
@@ -92,13 +99,13 @@ namespace Task2.BL.Controler
             }
         }
         /// <summary>
-        /// Метод для обработки выхода с текущей позиций или с программы
+        /// Метод для обработки выхода с текущей позиций или с программы.
         /// </summary>
-        /// <param name="str">Строка для обработки ответа пользователя</param>
-        /// <returns>Истина, хочет ли выйти пользователь</returns>
+        /// <param name="str">Строка для обработки ответа пользователя.</param>
+        /// <returns>Истина, хочет ли выйти пользователь.</returns>
         public bool isExit(string str)
         {
-            switch (str)
+            switch (str.ToLower())
             {
                 case "bye":
                     Environment.Exit(0);
@@ -112,7 +119,7 @@ namespace Task2.BL.Controler
         #region Private method
 
         /// <summary>
-        /// Метод для отображение методов поиска элементов
+        /// Метод для отображение методов поиска элементов.
         /// </summary>
         private void Find()
         {
@@ -148,7 +155,7 @@ namespace Task2.BL.Controler
             }
         }
         /// <summary>
-        /// Поиск рецептов
+        /// Поиск рецептов.
         /// </summary>
         private void FindRecipes()
         {
@@ -158,21 +165,23 @@ namespace Task2.BL.Controler
                 Console.Clear();
                 Console.Write("Ввидите название рецeпта : ");
                 str =Console.ReadLine();
-                if (str == "bye" | str == "back") return; 
+                if (str.ToLower() == "bye" || str.ToLower() == "back") return; 
             } while (!_recipesControler.FindRecipes(str));
-            foreach (var category in _categoryControler.Categories)
+
+            foreach (var category in _categoryControler.Categories)         
             {
                 if (category.Name == _recipesControler.CurrentRecipes.Category)
-                    _categoryControler.CurrentCategoties = category;
+                    _categoryControler.CurrentCategoties = category;        // Устанавливаем активную категорию
             }
+
             if(!string.IsNullOrWhiteSpace(_recipesControler.CurrentRecipes.Name))
             {
                 foreach(var subcategory in _categoryControler.CurrentCategoties.Subcategories)
                 {
                     if (subcategory == _recipesControler.CurrentRecipes.Subcategory) 
-                        _categoryControler.CurrentCategoties.CurrentSubcategories = subcategory;
+                        _categoryControler.CurrentCategoties.CurrentSubcategories = subcategory;        // Устанавливаем активную подкатегорию
                 }
-                DisplayCurrentRicepe();
+                DisplayCurrentRicepe();         // Показывает рецепт
             }
             else
             {
@@ -198,7 +207,7 @@ namespace Task2.BL.Controler
             }
         }
         /// <summary>
-        /// Поиск ингредиентов
+        /// Поиск ингредиентов.
         /// </summary>
         private void FindIngradient()
         {
@@ -234,7 +243,7 @@ namespace Task2.BL.Controler
             }
         }
         /// <summary>
-        /// Метод дя отображения выбранного рецепта
+        /// Метод дя отображения выбранного рецепта.
         /// </summary>
         private void DisplayCurrentRicepe()
         {
@@ -255,7 +264,7 @@ namespace Task2.BL.Controler
             }
             Console.WriteLine("\n\t\t*enter*");
             Console.ReadLine();
-            WalkRecipes();
+            //return WalkRecipes();
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
@@ -274,13 +283,13 @@ namespace Task2.BL.Controler
                 if (int.TryParse(str, out int result))
                 {
                     _categoryControler.CurrentCategoties = _categoryControler.Categories[result - 1];
-                    return true;
+                    return false;
                 }
                 else
                 {
                     if(isExit(str))
                     {
-                        return false;
+                        return true;
                     }
                 }
                 Console.WriteLine("\tSome mistake, try again...");
@@ -302,14 +311,13 @@ namespace Task2.BL.Controler
                 if (int.TryParse(str, out int result))
                 {
                     _categoryControler.CurrentCategoties.CurrentSubcategories = _categoryControler.CurrentCategoties.Subcategories[result - 1];
-                    return true;
+                    return false;
                 }
                 else
                 {
                     if(isExit(str))
                     {
-                        WalkCategories();
-                        return false;
+                        return true;
                     }
                 }
             }
@@ -324,32 +332,36 @@ namespace Task2.BL.Controler
             {
                 Console.Clear();
                 Console.WriteLine("\t\t*exit: bye, back: back*");
-                for (int recipe = 0; recipe < _recipesControler.Recipes.Count; recipe++)
+                var ListRecipes = new List<Recipe>(); // Список рецептов активной подкатегории
+                for (int recipe = 0,count=1; recipe < _recipesControler.Recipes.Count; recipe++)
                 {
                     if(_recipesControler.Recipes[recipe].Subcategory == _categoryControler.CurrentCategoties.CurrentSubcategories
                        & _recipesControler.Recipes[recipe].Category==_categoryControler.CurrentCategoties.Name)
-                    Console.WriteLine($"{recipe + 1}. {_recipesControler.Recipes[recipe].Name}");
+                    {
+                        Console.WriteLine($"{count++}. {_recipesControler.Recipes[recipe].Name}");
+                        ListRecipes.Add(_recipesControler.Recipes[recipe]);
+                    }
                 }
+
                 Console.WriteLine("Рецепт (id):");
                 str = Console.ReadLine();
                 if (int.TryParse(str, out int result))
                 {
-                    _recipesControler.CurrentRecipes = _recipesControler.Recipes[result-1];
-                    return true;
+                    _recipesControler.CurrentRecipes = ListRecipes[result - 1];
+                    return false;
                 }
                 else
                 {
                     if(isExit(str))
                     {
-                        WalkSubcategories();
-                        return false;
+                        return true;
                     }
                 }
                 Console.WriteLine("\tSome mistake, try again...");
             }
         }
         /// <summary>
-        /// Добавление нового рецепта
+        /// Добавление нового рецепта.
         /// </summary>
         private void AddRecipe()
         {

@@ -6,21 +6,21 @@ using System.IO;
 namespace Task2.BL.Controler
 {
     /// <summary>
-    /// Класс для работы с файлами формата json
+    /// Класс для работы с файлами формата json.
     /// </summary>
     static class JSONReader
     {
         /// <summary>
-        /// Загрузка данных
+        /// Загрузка данных.
         /// </summary>
-        /// <typeparam name="T">Возвращаемый тип</typeparam>
-        /// <param name="nameFile">Имя файла json</param>
-        /// <returns>Тип T</returns>
+        /// <typeparam name="T">Возвращаемый тип.</typeparam>
+        /// <param name="nameFile">Имя файла json<./param>
+        /// <returns>Тип T.</returns>
         public static List<T> DeserialezeFile<T>(Object o, String nameFile)
         {
             JsonSerializer des = new JsonSerializer();
 
-            if (File.Exists(nameFile))                //читаем файл, если он есть
+            if (File.Exists(nameFile))                           //читаем файл, если он есть
             {
                 using (StreamReader sr = new StreamReader(nameFile))
                 {
@@ -45,13 +45,12 @@ namespace Task2.BL.Controler
             }
         }
         /// <summary>
-        /// Сохранение данных
+        /// Сохранение данных.
         /// </summary>
         static public void Save(Object o, string nameFile)
         {
 
             JsonSerializer serializer = new JsonSerializer();
-            //     serializer.Converters.Add(new JavaScriptDateTimeConverter()); //dla daty
 
             serializer.NullValueHandling = NullValueHandling.Ignore;
 
