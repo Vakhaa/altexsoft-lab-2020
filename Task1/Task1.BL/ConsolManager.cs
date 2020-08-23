@@ -4,28 +4,28 @@ using Task1.BL.Interfaces;
 namespace Task1.BL
 {
     /// <summary>
-    /// Класс для отображение элементов в консоли
+    /// Класс для отображение элементов в консоли.
     /// </summary>
     public class ConsolManager
     {
         /// <summary>
-        /// Указатель на класс для чтения файла
+        /// Указатель на класс для чтения файла.
         /// </summary>
         private Reader _reader;
         /// <summary>
-        /// Указатель на класс для работы с текстом
+        /// Указатель на класс для работы с текстом.
         /// </summary>
         private TextWorker _fileText;
         /// <summary>
-        /// Указатель на класс для работы с директориями
+        /// Указатель на класс для работы с директориями.
         /// </summary>
         private WalkerDirectories _walker;
         /// <summary>
-        /// Конструтор класса ConsolManager
+        /// Конструтор класса ConsolManager.
         /// </summary>
         public ConsolManager()
         {
-            _walker = new WalkerDirectories();
+            _walker = new WalkerDirectories(); //инициализация папок и файлов
         }
         
 
@@ -54,7 +54,7 @@ namespace Task1.BL
                 case ".."://back
                     for (int i = _walker.Path.Length - 2; i > 0; i--)
                     {
-                        if (_walker.Path[i] == '\\')
+                        if (_walker.Path[i] == '\\')        // обрезаем последнюю директорию
                         {
                             _walker.SetPath(_walker.Path.Remove(i + 1, _walker.Path.Length - i - 1));
                             _walker.SetDireketories(_walker.Path);
@@ -99,7 +99,7 @@ namespace Task1.BL
                         }
                     }
                     break;
-                case "open": //Open File
+                case "open": //Open File //Работае иначе от full path
                     Console.Write("File: ");
                     str = Console.ReadLine();
                     Console.WriteLine();
@@ -141,9 +141,9 @@ namespace Task1.BL
             _walker.SearchDirectories(nameDirectory);
         }
         /// <summary>
-        /// Возвращает путь текущего местположения в директории
+        /// Возвращает путь текущего местположения в директории.
         /// </summary>
-        /// <returns>Строка</returns>
+        /// <returns>Строка.</returns>
         public string getPath()
         {
             return _walker.Path;
@@ -201,7 +201,7 @@ namespace Task1.BL
             }
         }
         /// <summary>
-        /// Приватный метод для чтения файла
+        /// Приватный метод для чтения файла.
         /// </summary>
         /// <param name="read">Экземпляр интерфейса IReadTxt.</param>
         private void OpenFile(IReadTxt read)
@@ -227,7 +227,7 @@ namespace Task1.BL
         /// <summary>
         /// Булевый метод для закрытия программы.
         /// </summary>
-        /// <returns>Булевая переменная - закрывается ли программа</returns>
+        /// <returns>Булевая переменная - закрывается ли программа</returns>    
         private static bool isExite()
         {
             String str;//Обработка ответа пользователя.

@@ -10,7 +10,7 @@ namespace Task1.BL
     public class Reader : IReadTxt //IRreadPDF and other
     {
         /// <summary>
-        /// Сохранения местоположения файла
+        /// Сохранения местоположения файла.
         /// </summary>
         private string _path;
         /// <summary>
@@ -24,7 +24,7 @@ namespace Task1.BL
         public Reader(string path)
         {
             _path = path;
-            FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\');
+            FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\'); // обрезаем от название файла путь
         }
         /// <summary>
         /// Метод для чтения текста в файле формата txt.

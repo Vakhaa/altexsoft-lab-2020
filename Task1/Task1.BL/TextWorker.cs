@@ -5,18 +5,18 @@ using System.Text.RegularExpressions;
 namespace Task1.BL
 {
     /// <summary>
-    /// Класс для работы с текстом в текстовом файле
+    /// Класс для работы с текстом в текстовом файле.
     /// </summary>
     public class TextWorker
     {
         /// <summary>
-        /// Содержимое текстового файла, по словам
+        /// Содержимое текстового файла, по словам.
         /// </summary>
         public String[] Text { get; }
         /// <summary>
-        /// Экзкмпляр класса 
+        /// Экзкмпляр класса.
         /// </summary>
-        /// <param name="text">Содержимое текстового файла</param>
+        /// <param name="text">Содержимое текстового файла.</param>
         public TextWorker(string text)
         {
             Text = text.Split(new char[] { ' ' });
@@ -38,11 +38,11 @@ namespace Task1.BL
             return str;
         }
         /// <summary>
-        /// Метод удаляет символы или слова с текстаю
+        /// Метод удаляет символы или слова с текста.
         /// </summary>
-        /// <param name="str">Обьект для удаления</param>
-        /// <param name="count">Итератор для foreach</param>
-        /// <param name="isExist">Булевая переменная для проверки существования удаляемого обьекта</param>
+        /// <param name="str">Обьект для удаления.</param>
+        /// <param name="count">Итератор для foreach.</param>
+        /// <param name="isExist">Булевая переменная для проверки существования удаляемого обьекта.</param>
         public void Delete(String str, int count = 0, bool isExist = false)
         {
             if (str.Length == 1) //Symbols
@@ -98,24 +98,24 @@ namespace Task1.BL
         /// <summary>
         /// Метод выводит третье предложение с конца до начала.
         /// </summary>
-        /// <param name="count">Необязательный параметр, для подсчета предложения.</param>
+        /// <param name="count">Необязательный параметр, для подсчета предложений.</param>
         public void ThirdSentenceReverse(int count = 0)
         {
             Console.WriteLine("\nReverse: ");
             var text = GetText();
-            for (int i = 0,temp=0; i < text.Length - 1; i++)
+            for (int i = 0,temp=0; i < text.Length - 1; i++) //Ищем третье предложения
             {
-                if (text[i]=='.')
+                if (text[i]=='.') 
                 {
                     count++;
                 }
-                if (count == 2&&temp==0)
+                if (count == 2&&temp==0) //Сохраняем индекс после 2 точки, это начало третьего предложения
                 {
                     temp = i+1;
                 }
                 if(count==3)
                 {
-                    var tempchararray = text.ToCharArray(temp,i-temp);
+                    var tempchararray = text.ToCharArray(temp,i-temp); // копируем 3 предложение указав начало первого индекса и длину
                     Array.Reverse(tempchararray, 0, tempchararray.Length);
                     Console.WriteLine(tempchararray);
                     Console.WriteLine();
