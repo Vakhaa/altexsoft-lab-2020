@@ -24,7 +24,7 @@ namespace Task1.BL
         public Reader(string path)
         {
             _path = path;
-            FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\'); // обрезаем от название файла путь
+            FileName = Path.GetFileName(path);
         }
         /// <summary>
         /// Метод для чтения текста в файле формата txt.
@@ -42,32 +42,12 @@ namespace Task1.BL
             }
         }
         /// <summary>
-        /// Метод для обрезки от пути названия файла.
-        /// </summary>
-        /// <param name="_path">Полный путь файла.</param>
-        /// <returns>Директорию файла.</returns>
-        public string CutFileName(string path)
-        {
-            for (int i = path.Length - 1; i > 0; i--)  //обрезаем от пути название файла
-            {
-                if (path[i] != '\\')
-                {
-                    path = path.TrimEnd(path[i]);
-                }
-                else
-                {
-                    return path;
-                }
-            }
-            return path;
-        }
-        /// <summary>
         /// Создает backup файла.
         /// </summary>
         /// <param name="text">Содержимое файла.</param>
         public void CreateFile(string text)
         {
-            File.WriteAllText(CutFileName(_path) + "~" + FileName,text);
+            File.WriteAllText(Path.GetFullPath(_path) + "~" + FileName,text);
             Console.WriteLine("Текст записан в файл ~" + FileName);
             Console.ReadLine();
         }

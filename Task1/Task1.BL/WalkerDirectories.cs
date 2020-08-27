@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using Task1.BL.Interfaces;
 
 namespace Task1.BL
 {
     /// <summary>
     /// Класс для работы с директориями и файлами.
     /// </summary>
-    public class WalkerDirectories
+    public class WalkerDirectories:IWalkerDirectories
     {
         #region Поля и свойтсва
         /// <summary>
@@ -147,7 +148,7 @@ namespace Task1.BL
         {
             if(string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("Нет сохранения предыдущего место положения в директории", nameof(_tempPath));
+                throw new ArgumentNullException("Нельзя сохранить пустой путь", nameof(path));
             }
             _tempPath = path;
         }

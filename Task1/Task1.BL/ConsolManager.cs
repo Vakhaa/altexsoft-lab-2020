@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Task1.BL.ClassForText;
 using Task1.BL.Interfaces;
 
 namespace Task1.BL
@@ -13,21 +15,20 @@ namespace Task1.BL
         /// </summary>
         private Reader _reader;
         /// <summary>
-        /// Указатель на класс для работы с текстом.
+        /// Указатель на класс для хранения текста.
         /// </summary>
         private TextWorker _fileText;
         /// <summary>
         /// Указатель на класс для работы с директориями.
         /// </summary>
-        private WalkerDirectories _walker;
+        private IWalkerDirectories _walker;
         /// <summary>
         /// Конструтор класса ConsolManager.
         /// </summary>
-        public ConsolManager()
+        public ConsolManager(IWalkerDirectories walker)
         {
-            _walker = new WalkerDirectories(); //инициализация папок и файлов
+            _walker = walker; //инициализация папок и файлов
         }
-        
 
         /// <summary>
         /// Отображение директории.
@@ -88,10 +89,9 @@ namespace Task1.BL
                     }
                     else
                     {
-                        if(str.Contains("\\")) // проверка на наличие полного пути
-                        {
+                        if(File.Exists(str))                        {
                             if (_reader == null) _reader = new Reader(str);
-                            _walker.SetPath(_reader.CutFileName(str)); //обрезаем от пути название файла
+                            _walker.SetPath(Path.GetDirectoryName(str)); //обрезаем от пути название файла
 
                             Console.Clear();
                             OpenFile((IReadTxt)_reader);
@@ -120,7 +120,7 @@ namespace Task1.BL
                         {
                             if (_reader == null) _reader = new Reader(str);
 
-                            _walker.SetPath(_reader.CutFileName(str));
+                            _walker.SetPath(Path.GetDirectoryName(str));
                             Console.Clear();
                             OpenFile((IReadTxt)_reader);
                             return;
@@ -128,7 +128,7 @@ namespace Task1.BL
                     }
                     break;
                 case "bye": //Exite
-                    if (isExite()) Environment.Exit(0);
+                    if (IsExite()) Environment.Exit(0);
                     break;
             }
         }
@@ -144,7 +144,7 @@ namespace Task1.BL
         /// Возвращает путь текущего местположения в директории.
         /// </summary>
         /// <returns>Строка.</returns>
-        public string getPath()
+        public string GetPath()
         {
             return _walker.Path;
         }
@@ -162,9 +162,10 @@ namespace Task1.BL
                 Console.WriteLine(_fileText.GetText());
                 Console.Write(
                    "1. Delete symbol or word.\n" +
-                   "2. Count words and every tenth word.\n" +
-                   "3. Backward third sentence.\n" +
-                   "4. Close file.\n" +
+                   "2. Count words.\n" +
+                   "3. Every tenth word.\n" +
+                   "4. Backward third sentence.\n" +
+                   "5. Close file.\n" +
                    "(number) :"
                    );
                 str = Console.ReadLine();
@@ -174,15 +175,18 @@ namespace Task1.BL
                     {
                         case 1:
                             Console.WriteLine("Symbol or word: ");
-                            _fileText.Delete(Console.ReadLine());
+                            DeleteStringOrChar.Delete(Console.ReadLine(), _fileText.Text);
                             break;
                         case 2:
-                            _fileText.CountWordsAndTenWords();
+                            WordsCounter.CountWords(_fileText.GetText());
                             break;
                         case 3:
-                            _fileText.ThirdSentenceReverse();
+                            EveryTenерWord.Words(_fileText.Text);
                             break;
                         case 4:
+                            Reverse.ThirdSentenceReverse(_fileText.GetText());
+                            break;
+                        case 5:
                             Console.WriteLine("Save changes ?(yes,no)");
                             str = Console.ReadLine().ToLower();
                             if (str == "yes" || str == "y")
@@ -228,7 +232,7 @@ namespace Task1.BL
         /// Булевый метод для закрытия программы.
         /// </summary>
         /// <returns>Булевая переменная - закрывается ли программа</returns>    
-        private static bool isExite()
+        private static bool IsExite()
         {
             String str;//Обработка ответа пользователя.
             Console.Write("Close console? (yes,no): ");
@@ -243,7 +247,7 @@ namespace Task1.BL
                 return false;
             }
             Console.WriteLine("Mistake, try again");
-            return isExite();
+            return IsExite();
         }
     }
 }
