@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
+using Task1.BL.Interfaces;
 
 namespace Task1.BL
 {
     /// <summary>
-    /// Класс для работы с директориями и файлами
+    /// Класс для работы с директориями и файлами.
     /// </summary>
-    public class WalkerDirectories
+    public class WalkerDirectories:IWalkerDirectories
     {
         #region Поля и свойтсва
         /// <summary>
@@ -31,69 +32,69 @@ namespace Task1.BL
         public string Path { get { return _path; } }
         #endregion
         /// <summary>
-        /// Конструктор класса
+        /// Конструктор класса.
         /// </summary>
         public WalkerDirectories()
         {
-            ChangeDisk(out String str);
-            _dirs = Directory.GetDirectories(_path);
+            ChangeDisk(); // Задаем изначально диск, с ктогорого начинаем работу.
+            _dirs = Directory.GetDirectories(_path); // Теперь можем инициализировать файлы и папки
         }
         /// <summary>
         /// Метод для смены диска.
         /// </summary>
-        /// <param name="str">Строковая перемена, для хранения ответа пользователя.</param>
-        public void ChangeDisk(out String str)
+        public void ChangeDisk()
         {
+            String str;//Строковая перемена, для хранения ответа пользователя.
             Console.WriteLine("Choose disk: ");
-            foreach (var drive in Drivers)
+            foreach (var drive in Drivers) // Отображает диски в наличие, так же дисководы и другую перефирию
             {
                 Console.Write(drive.Name + " ");
             }
             Console.WriteLine();
-            str = Console.ReadLine();
+            str = Console.ReadLine().ToUpper();
             foreach (var drive in Drivers)
             {
-                if (str == drive.Name)
+                if (str == drive.Name) 
                 {
-                    if (drive.IsReady)
+                    if (drive.IsReady) // Проверяем готов ли диск к использованию
                     {
-                        _path = str;
-                        _dirs = Directory.GetDirectories(_path);
+                        _path = str;    // устанавливаем путь
+                        _dirs = Directory.GetDirectories(_path); // и папки с выбраной директории
                         return;
                     }
                     else
                     {
                         Console.WriteLine("Disk is not ready. Try again.");
                         str = "";
-                        ChangeDisk(out str);
+                        ChangeDisk();
                         return;
                     }
 
                 }
             }
             Console.WriteLine("Mistake, try again!");
-            ChangeDisk(out str);
+            ChangeDisk();
         }
         /// <summary>
-        /// Отображение директории
+        /// Отображение директории.
         /// </summary>
-        public void WalkDirectories()
+        public void DisplayDirectories()
         {
             Console.WriteLine("Directories :");
             foreach (string nameDir in _dirs)
                 Console.WriteLine("\t" + nameDir);
         }
         /// <summary>
-        /// Отображение файлов
+        /// Отображение файлов.
         /// </summary>
-        public void WalkFiles()
+        public void DisplayFiles()
         {
             Console.WriteLine("Files :");
             foreach (string nameFile in Directory.GetFiles(_path))
                 Console.WriteLine("\t" + nameFile);
         }
         /// <summary>
-        /// Поиск директории
+        /// Поиск директории.
         /// </summary>
         /// <param name="str">Название директории</param>
         public void SearchDirectories(string str)
@@ -102,26 +103,26 @@ namespace Task1.BL
             {
                 if (_path + str == nameDir)
                 {
-                    _tempPath = _path;
-                    _path += str + "\\";
+                    _tempPath = _path; // сохраняем путь, на случай ошибки, что б вернуться
+                    _path += str + "\\"; // задаем новый путь
 
                     try
                     {
                         _dirs = Directory.GetDirectories(_path);
                         return;
                     }
-                    catch (UnauthorizedAccessException e)
+                    catch (UnauthorizedAccessException) // Директория может быть недоступна по уровню доступа
                     {
                         Console.WriteLine("Access is denied... Try again. \t*enter*");
                         Console.ReadLine();
-                        _path = _tempPath;
+                        _path = _tempPath; //бэкап
                         return;
                     }
                 }
             }
         }
         /// <summary>
-        /// Востановление предыдущей директории
+        /// Востановление предыдущей директории.
         /// </summary>
         public void BackupPath()
         {
@@ -132,9 +133,9 @@ namespace Task1.BL
             _path = _tempPath;
         }
         /// <summary>
-        /// Сетер для пути 
+        /// Сетер для пути директории.
         /// </summary>
-        /// <param name="path">Путь</param>
+        /// <param name="path">Путь директории.</param>
         public void SetPath(string path)
         {
             _path = path;
@@ -147,17 +148,18 @@ namespace Task1.BL
         {
             if(string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException("Нет сохранения предыдущего место положения в директории", nameof(_tempPath));
+                throw new ArgumentNullException("Нельзя сохранить пустой путь", nameof(path));
             }
             _tempPath = path;
         }
         /// <summary>
-        /// Устанавливает директорию, по заданому пути
+        /// Устанавливает директорию, по заданому пути.
         /// </summary>
-        /// <param name="path">Местоположение директории</param>
+        /// <param name="path">Местоположение директории.</param>
         public void SetDireketories(string path)
         {
-            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException("Ошибка с получением списка директорий, так как неверный путь", nameof(path));
+            if (string.IsNullOrWhiteSpace(path)) 
+            throw new ArgumentNullException("Ошибка с получением списка директорий, так как неверный путь", nameof(path));
             _dirs = Directory.GetDirectories(path);
         }
     }

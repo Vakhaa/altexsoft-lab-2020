@@ -1,19 +1,32 @@
 ﻿using System;
 using Task1.BL;
+using Task1.BL.Interfaces;
 
 namespace Task1
 {
 
     class Program
-    {   
+    {
         static void Main(string[] args)
         {
-            ConsolManager cm = new ConsolManager();
+            IWalkerDirectories wd = new WalkerDirectories();
+            ConsolManager cm = new ConsolManager(wd);
+            string str;//Строка для обработки ответа пользователя.
             while (true)
             {
-                cm.Walk(out String str);
+                Console.Clear();
+                Console.WriteLine("{0} \t| Change disk: \"cd\", Back: \"..\", Full Path: \"fp\", Open File: \"open\", Exit: \"bye\"", cm.GetPath()) ; //toolbar
 
-                if (ConsolManager.isExite(out str)) return;
+                cm.DisplayDirectories();
+
+                cm.DisplayFiles();
+
+                Console.WriteLine("Next directory :");
+                str = Console.ReadLine();
+
+                cm.MenuBar(str);
+
+                cm.SearchDirectories(str);
             }
         }
     }
