@@ -1,13 +1,12 @@
-﻿using System;
-
-namespace Task1.BL.Interfaces
+﻿namespace Task1.BL.Interfaces
 {   
     /// <summary>
      /// Интерфейс для чтения файлов формата txt.
      /// </summary>
-    public interface IReadTxt
+    public interface IFileTxt
     {
-        public String ReadTxt();
+        public string ReadTxt();
         public void CreateFile(string text);
+        public void OpenFile(string path);
     }
 }
