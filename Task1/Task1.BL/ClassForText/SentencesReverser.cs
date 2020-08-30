@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Task1.BL.ClassForText
 {
-    public static class Reverse
+    public static class SentencesReverser
     {
         /// <summary>
         /// Метод выводит третье предложение с конца до начала.
         /// </summary>
         /// <param name="text">Текст.</param>
-        public static void ThirdSentenceReverse(String text)
+        public static void ReverseThirdSentence(string text)
         {
             int count = 0;//параметр, для подсчета предложений
             Console.WriteLine("\nReverse: ");
