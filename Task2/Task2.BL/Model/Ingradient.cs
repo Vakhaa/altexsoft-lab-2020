@@ -3,24 +3,24 @@
 namespace Task2.BL.Model
 {
     /// <summary>
-    /// Ингредиенты
+    /// Ингредиент.
     /// </summary>
     [Serializable]
     public class Ingradient
     {
         /// <summary>
-        /// Название ингредиента
+        /// Название ингредиента.
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// Созадние ингредиента
+        /// Конструктор.
         /// </summary>
-        /// <param name="Name">Название ингредиента</param>
+        /// <param name="Name">Название ингредиента.</param>
         public Ingradient(string Name)
         {
             if(string.IsNullOrWhiteSpace(Name))
             {
-                throw new ArgumentNullException("Имя ингредиента не должно быть пустое.", nameof(Name));
+                throw new ArgumentNullException("Имя ингредиента не должно быть пустым.", nameof(Name));
             }
             this.Name = Name;
         }

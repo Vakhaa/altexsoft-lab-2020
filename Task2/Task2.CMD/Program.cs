@@ -1,5 +1,6 @@
 ﻿using System;
 using Task2.BL.Controler;
+using Task2.BL.Interfaces;
 
 namespace Task2.CMD
 {
@@ -7,17 +8,23 @@ namespace Task2.CMD
     {
         static void Main(string[] args)
         {
-            ConsoleManager cm = new ConsoleManager();
-            Console.WriteLine("Hello World!" +
-                "\n\t\t*enter*");
+            UnitOfWork uow = new UnitOfWork();
+
+            ConsoleManager cm = new ConsoleManager(
+                new CategoryControler((ICategoryRepository)uow), 
+                new RecipesControler((IRecipeRepository)uow), 
+                new IngradientControler((IIngradientRepository)uow));
+            
+            Console.WriteLine("Hello World!" + "\n\t\t*enter*");
             Console.ReadLine();
+            
             while(true) //главное меню программы
             {
                 Console.Clear();
                 Console.WriteLine("1. Книга рецептов.\n" +
                 "2. Настройка книги.\n" +
                 "3. Выйти.");
-                if (int.TryParse(Console.ReadLine(), out int result))
+                if (int.TryParse(Console.ReadLine(), out int result)) //обработка ответа
                 {
                     switch (result)
                     {
@@ -35,7 +42,7 @@ namespace Task2.CMD
                             Console.WriteLine("Ошибка в вводе данных.");
                             break;
                     }
-                } //обработка ответа
+                }
                 else
                 {
                     Console.WriteLine("Ошибка в вводе данных.");

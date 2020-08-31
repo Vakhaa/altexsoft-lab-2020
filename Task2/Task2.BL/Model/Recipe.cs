@@ -4,47 +4,51 @@ using System.Collections.Generic;
 namespace Task2.BL.Model
 {
     /// <summary>
-    /// Рецепт
+    /// Рецепт.
     /// </summary>
     [Serializable]
     public class Recipe
     {
         #region Свойства
         /// <summary>
-        /// Название
+        /// Название.
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// Kатегория
+        /// Kатегория.
         /// </summary>
         public string Category { get; }
         /// <summary>
-        /// Подкатегория
+        /// Подкатегория.
         /// </summary>
         public string Subcategory { get; }
         /// <summary>
-        /// Описание
+        /// Описание.
         /// </summary>
         public string Description { get; }
         /// <summary>
-        /// Ингредиенты
+        /// Ингредиенты.
         /// </summary>
         public List<string> Ingredients { get; }
         /// <summary>
-        /// Колличество ингредиентов
+        /// Количество ингредиентов.
         /// </summary>
         public List<string> CountIngredients { get; }
         /// <summary>
-        /// Пошаговый рецепт
+        /// Шаги приготовления.
         /// </summary>
         public List<string> StepsHowCooking { get; }
         #endregion
         /// <summary>
-        /// Создать новый рецепт.
+        /// Конструктор.
         /// </summary>
-        /// <param name="Name">Имя.</param>
-        /// <param name="Ingredients">ингредиенты.</param>
-        /// <param name="StepsHowCooking">Рецепт.</param>
+        /// <param name="Name">Название рецепта.</param>
+        /// <param name="Category">Название ктегории.</param>
+        /// <param name="Subcategory">Название подкатегории.</param>
+        /// <param name="Description">Описание.</param>
+        /// <param name="Ingredients">Инргедиенты.</param>
+        /// <param name="CountIngredients">Количевство ингредиентов.</param>
+        /// <param name="StepsHowCooking">Шаги приготовления</param>
         public Recipe(string Name,string Category, string Subcategory,string Description, List<string> Ingredients,List<string> CountIngredients, List<string> StepsHowCooking)
         {
             #region  Проверка условий
@@ -82,7 +86,7 @@ namespace Task2.BL.Model
             {
                 if (string.IsNullOrWhiteSpace(steps))
                 {
-                    throw new ArgumentNullException("Должен быть рецепта блюда", nameof(StepsHowCooking));
+                    throw new ArgumentNullException("Должен быть рецепта блюда.", nameof(StepsHowCooking));
                 }
             }
             #endregion

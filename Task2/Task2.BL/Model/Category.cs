@@ -4,27 +4,28 @@ using System.Collections.Generic;
 namespace Task2.BL.Model
 {
     /// <summary>
-    /// Категории
+    /// Категории.
     /// </summary>
     [Serializable]
     public class Category
     {
         /// <summary>
-        /// Название категории
+        /// Название категории.
         /// </summary>
         public string Name { get; }
         /// <summary>
-        /// Список подкатегорий
+        /// Список подкатегорий.
         /// </summary>
         public List<string> Subcategories { get; set;  }
         /// <summary>
-        /// Выбраная категория
+        /// Выбраная категория.
         /// </summary>
         public string CurrentSubcategories { get; set; }    
         /// <summary>
-        /// Создание категории
+        /// Конструктор.
         /// </summary>
-        /// <param name="NameCategory">Имя категории</param>
+        /// <param name="Name">Название категории.</param>
+        /// <param name="Subcategories">Список подкатегорий.</param>
         public Category(string Name, List<string> Subcategories)
         {
             if(string.IsNullOrWhiteSpace(Name))
@@ -34,7 +35,7 @@ namespace Task2.BL.Model
             this.Name = Name;
             if(Subcategories==null)
             {
-                throw new ArgumentNullException("Должно быть хотя бы одна категория", nameof(Subcategories));
+                throw new ArgumentNullException("Должна быть хотя бы одна категория", nameof(Subcategories));
             }
             this.Subcategories = new List<string>();
             foreach (var subcategory in Subcategories)
@@ -43,9 +44,9 @@ namespace Task2.BL.Model
             }
         }
         /// <summary>
-        /// Конструктор, для создания категорий с названия
+        /// Создания новой категории.
         /// </summary>
-        /// <param name="Name">Название категории</param>
+        /// <param name="Name">Название категории.</param>
         public static Category NewCategory(string Name)
         {
             if (string.IsNullOrWhiteSpace(Name))
@@ -92,7 +93,7 @@ namespace Task2.BL.Model
         {
             foreach (var subcategory in Subcategories)
             {
-                if (subcategory == nameSubcategory)
+                if (subcategory.ToLower() == nameSubcategory.ToLower())
                 {
                     CurrentSubcategories = nameSubcategory;
                     return true;
