@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Task1.BL\**" />
+    <EmbeddedResource Remove="Task1.BL\**" />
+    <None Remove="Task1.BL\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Task1.BL\Task1.BL.csproj" />
+  </ItemGroup>
+
+</Project>
