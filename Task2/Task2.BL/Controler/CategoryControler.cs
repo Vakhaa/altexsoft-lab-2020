@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Task2.BL.Interfaces;
 using Task2.BL.Model;
 
@@ -13,7 +14,7 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Репозиторий категории.
         /// </summary>
-        private ICategoryRepository _categoryReposyitory;
+        private ICategoryUnityOfWork _categoryUnityOfWork;
         /// <summary>
         /// Активная категория.
         /// </summary>
@@ -22,9 +23,9 @@ namespace Task2.BL.Controler
         /// Конструктор.
         /// </summary>
         /// <param name="categoryRepository">Репозиторий категории.</param>
-        public CategoryControler(ICategoryRepository categoryRepository)
+        public CategoryControler(ICategoryUnityOfWork categoryUnityOfWork)
         {
-            _categoryReposyitory = categoryRepository;
+            _categoryUnityOfWork = categoryUnityOfWork;
         }
         /// <summary>
         /// Загрузка списка категорий в приложение.
@@ -32,14 +33,14 @@ namespace Task2.BL.Controler
         /// <returns>Список категорий.</returns>
         public List<Category> GetCategories()
         {
-            return _categoryReposyitory.CategoryRepository.Get();
+            return _categoryUnityOfWork.CategoryRepository.Get();
         }
         /// <summary>
         /// Сохранение категорий.
         /// </summary>
         public void Save()
         {
-            _categoryReposyitory.Save((UnitOfWork)_categoryReposyitory);
+            _categoryUnityOfWork.Save((UnitOfWork)_categoryUnityOfWork);
         }
 
         /*/// <summary>
@@ -64,7 +65,7 @@ namespace Task2.BL.Controler
         /// <param name="idCategory">Id категории.</param>
         public void FindCategory(int idCategory)
         {
-            CurrentCategories = _categoryReposyitory.CategoryRepository.GetByID(idCategory); 
+            CurrentCategories = _categoryUnityOfWork.CategoryRepository.GetByID(idCategory); 
                 //Categories.SingleOrDefault(c => c.Name == nameCategory);
         }
         /// <summary>
@@ -73,7 +74,7 @@ namespace Task2.BL.Controler
         public void DisplayCategory()
         {
             int count = 1;
-            foreach (var category in _categoryReposyitory.CategoryRepository.Get())
+            foreach (var category in _categoryUnityOfWork.CategoryRepository.Get())
             {
                 Console.WriteLine(count.ToString() + ". " + category.Name);
                 count++;
@@ -83,9 +84,8 @@ namespace Task2.BL.Controler
         /// Метод для выбора пользователем конкретной категории из списка.
         /// </summary>
         /// <returns>Истина, если пользователь выходит, то он выходит в главное меню.</returns>
-        public bool WalkCategories()
+        public bool WalkCategories(string str="")
         {
-            string str;
             while (true)
             {
                 Console.Clear();
@@ -111,25 +111,24 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Установка конкретной категории.
         /// </summary>
-        public void SetCurrentCategory()
+        public void SetCurrentCategory(string Name="", bool isExist = false)
         {
-            bool _isExist = false;
-            int categories;
             while (true)
-            {
+            {   
                 Console.Clear();
                 DisplayCategory();
                 Console.Write("Ввидите категорию блюда (id) : ");
-                if (int.TryParse(Console.ReadLine(), out categories))
-                    foreach (var category in GetCategories())
+                if (int.TryParse(Console.ReadLine(), out int categories))
+                {
+                    Name = GetCategories()[categories - 1].Name;
+                    var answer = GetCategories().FirstOrDefault(category => category.Name == Name);
+                    if (answer!=null)
                     {
-                        if (category.Name == GetCategories()[categories - 1].Name)
-                        {
-                            CurrentCategories = category;
-                            _isExist = true;
-                        }
+                        CurrentCategories = (Category)answer;
+                        isExist = true;
                     }
-                if (_isExist)
+                }
+                if (isExist)
                 {
                     break;
                 }
@@ -145,7 +144,6 @@ namespace Task2.BL.Controler
                 Console.WriteLine($"{subcategory + 1}. {CurrentCategories.Subcategories[subcategory]}");
             }
         }
-
         /// <summary>
         /// Добавления новой подкатегории.
         /// </summary>
@@ -170,9 +168,8 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Метод для выбора пользователем конкретной подкатегории из списка.
         /// </summary>
-        public bool WalkSubcategories()
+        public bool WalkSubcategories(string str="")
         {
-            string str;
             while (true)
             {
                 Console.Clear();

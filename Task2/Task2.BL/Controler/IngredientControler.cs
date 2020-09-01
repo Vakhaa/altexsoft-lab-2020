@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Task2.BL.Interfaces;
 using Task2.BL.Model;
 
@@ -8,39 +9,39 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Логика ингредиентов.
     /// </summary>
-    public class IngradientControler
+    public class IngredientControler
     {
         /// <summary>
         /// Репозиторий ингредиентов.
         /// </summary>
-        private IIngradientRepository _ingradientRepository;
+        private IIngredientUnityOfWork _ingredientUnityOfWork;
         /// <summary>
         /// Конструктор класса.
         /// </summary>
-        public IngradientControler(IIngradientRepository ingradientRepository)
+        public IngredientControler(IIngredientUnityOfWork ingredientUnityOfWork)
         {
-            _ingradientRepository = ingradientRepository;
+            _ingredientUnityOfWork = ingredientUnityOfWork;
         }
         /// <summary>
         /// Загрузка списка ингрендиентов.
         /// </summary>
         /// <returns>Список нгредиентов.</returns>
-        private List<Ingradient> GetIngradients()
+        private List<Ingredient> GetIngredients()
         {
-            return _ingradientRepository.IngradientRepository.Get();
+            return _ingredientUnityOfWork.IngredientRepository.Get();
         }
         /// <summary>
         /// Сохранение ингредиента.
         /// </summary>
         public void Save()
         {
-            _ingradientRepository.Save((UnitOfWork)_ingradientRepository);
+            _ingredientUnityOfWork.Save((UnitOfWork)_ingredientUnityOfWork);
         }
         /// <summary>
-        /// Добавление ингредиентов.
-        /// </summary>
-        /// <param name="ingradients">Список новых ингредиентов.</param>
-        public void AddIngradients(out List<string> ingradients)
+        /// Добавляет ингредиенты и возвращает готовый список ингредиентов.
+        /// </summary
+        /// <param name="ingredients">Список новых ингредиентов.</param>
+        public List<string> AddIngredients()
         {
             string str;
             int result;
@@ -54,59 +55,57 @@ namespace Task2.BL.Controler
                 }
             } while (true);
 
-            ingradients = new List<string>();
+            var ingredients = new List<string>();
+
             for (int count = 1; count <= result; count++)
             {
                 Console.WriteLine("Введите ингредиент:");
                 Console.Write($"{count}. ");
                 str = Console.ReadLine();
-                ingradients.Add(str);
-                AddIngradient(str);
+                ingredients.Add(str);
+                AddIngredient(str);
                 Save();
             }
             Console.ReadLine();
+            return ingredients;
         }
         /// <summary>
         /// Добавление ингрендиента.
         /// </summary>
-        /// <param name="nameIngradient">Название ингрендиента.</param>
-        private void AddIngradient(string nameIngradient)
+        /// <param name="nameIngredient">Название ингрендиента.</param>
+        private void AddIngredient(string nameIngredient)
         {
-            foreach (var ingradient in _ingradientRepository.IngradientRepository.Get())
+            foreach (var ingredient in _ingredientUnityOfWork.IngredientRepository.Get())
             {
-                if (ingradient.Name == nameIngradient)
+                if (ingredient.Name == nameIngredient)
                 {
                     Console.WriteLine("Такой ингредиент уже существует.");
                     return;
                 }
             }
-            _ingradientRepository.IngradientRepository.Insert(new Ingradient(nameIngradient) ?? throw new ArgumentNullException("Нельзя добавить пустой ингрендиент.", "ingradient"));
+            _ingredientUnityOfWork.IngredientRepository.Insert(new Ingredient(nameIngredient));
         }
         /// <summary>
         /// Поиск ингредиента.
         /// </summary>
-        /// <param name="nameIngradient">Название ингредиента.</param>
+        /// <param name="nameIngredient">Название ингредиента.</param>
         /// <returns>Ингредиент.</returns>
-        public Ingradient FindAndGetIngrandient(string nameIngradient)
+        public Ingredient FindAndGetIngredient(string nameIngredient)
         {
-            var Ingradients = _ingradientRepository.IngradientRepository;
-            for (int id=0; id<Ingradients.Get().Count;id++)
-            {
-                if(Ingradients.GetByID(id).Name.ToLower()==nameIngradient)
-                {
-                    return Ingradients.GetByID(id);
-                }
-            }
+            var ingredients = _ingredientUnityOfWork.IngredientRepository.Get();
+            if(ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient))
+            return ingredients.First(ingr => ingr.Name.ToLower()==nameIngredient);
             return null;
+            
         }
         /// <summary>
         /// Метод для отображения ингредиентов.
         /// </summary>
-        public void DisplayIngradients()
+        public void DisplayIngredients()
         {
-            foreach (var ingradient in GetIngradients())
+            foreach (var ingredient in GetIngredients())
             {
-                Console.WriteLine(ingradient.Name);
+                Console.WriteLine(ingredient.Name);
             }
             Console.WriteLine("\t\t*enter*");
             Console.ReadLine();
@@ -114,11 +113,11 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Поиск ингредиента.
         /// </summary>
-        public void FindIngradient()
+        public void FindIngredient()
         {
             Console.Clear();
             Console.Write("Введите название ингредиента : ");
-            var ingr = FindAndGetIngrandient(Console.ReadLine().ToLower());
+            var ingr = FindAndGetIngredient(Console.ReadLine().ToLower());
             if (ingr != null)
             {
                 Console.WriteLine(ingr.Name + " есть в списке.");
@@ -138,7 +137,7 @@ namespace Task2.BL.Controler
                         switch (result)
                         {
                             case 1:
-                                AddIngradients(out List<string> ingradients);
+                                AddIngredients();
                                 return;
                             case 2:
                                 return;

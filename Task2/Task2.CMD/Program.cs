@@ -11,9 +11,9 @@ namespace Task2.CMD
             UnitOfWork uow = new UnitOfWork();
 
             ConsoleManager cm = new ConsoleManager(
-                new CategoryControler((ICategoryRepository)uow), 
-                new RecipesControler((IRecipeRepository)uow), 
-                new IngradientControler((IIngradientRepository)uow));
+                new CategoryControler((ICategoryUnityOfWork)uow), 
+                new RecipesControler((IRecipeUnityOfWork)uow), 
+                new IngredientControler((IIngredientUnityOfWork)uow));
             
             Console.WriteLine("Hello World!" + "\n\t\t*enter*");
             Console.ReadLine();
@@ -36,6 +36,7 @@ namespace Task2.CMD
                             break;
                         case 3:
                             Console.WriteLine("Have a nice day! =)");
+                            uow.Dispose();
                             Environment.Exit(0);
                             break;
                         default:

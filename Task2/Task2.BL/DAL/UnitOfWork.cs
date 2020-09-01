@@ -5,12 +5,13 @@ using Task2.BL.Model;
 
 namespace Task2.BL.Controler
 {
-    public class UnitOfWork : ICategoryRepository,IRecipeRepository, IIngradientRepository, IDisposable
+    public class UnitOfWork : ICategoryUnityOfWork, IRecipeUnityOfWork, IIngredientUnityOfWork
     {
 
         private GenericRepository<List<Category>, Category> _categoryRepository;
         private GenericRepository<List<Recipe>, Recipe> _recipesRepository;
-        private GenericRepository<List<Ingradient>, Ingradient> _ingradientRepository;
+        private GenericRepository<List<Ingredient>, Ingredient> _ingredientRepository;
+        private bool disposedValue;
 
         public GenericRepository<List<Category>, Category> CategoryRepository
         {
@@ -37,31 +38,61 @@ namespace Task2.BL.Controler
             }
         }
 
-        public GenericRepository<List<Ingradient>, Ingradient> IngradientRepository
+        public GenericRepository<List<Ingredient>, Ingredient> IngredientRepository
         {
             get
             {
 
-                if (_ingradientRepository == null)
+                if (_ingredientRepository == null)
                 {
-                    _ingradientRepository = new GenericRepository<List<Ingradient>, Ingradient>("igrdt.json");
+                    _ingredientRepository = new GenericRepository<List<Ingredient>, Ingredient>("igrdt.json");
                 }
-                return _ingradientRepository;
+                return _ingredientRepository;
             }
         }
 
         public void Save(UnitOfWork uow)
         {
-            if(uow is ICategoryRepository)
-                _categoryRepository.Save();
-            if (uow is IRecipeRepository)
-                _recipesRepository.Save();
-            if (uow is IIngradientRepository)
-            _ingradientRepository.Save();
+            if (uow is ICategoryUnityOfWork)
+            {
+                if (_categoryRepository != null)
+                    _categoryRepository.Save();
+            }
+            if (uow is IRecipeUnityOfWork)
+            {
+                if (_recipesRepository != null)
+                    _recipesRepository.Save();
+            }
+            if (uow is IIngredientUnityOfWork)
+            {
+                if(_ingredientRepository!=null)
+                    _ingredientRepository.Save();
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    if(_categoryRepository!=null)
+                    _categoryRepository.Dispose();
+                    if(_ingredientRepository!=null) 
+                        _ingredientRepository.Dispose();
+                    if(_recipesRepository!=null)
+                    _recipesRepository.Dispose();
+                }
+                _categoryRepository = null;
+                _ingredientRepository = null;
+                _recipesRepository = null;
+                disposedValue = true;
+            }
         }
 
         public void Dispose()
         {
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }

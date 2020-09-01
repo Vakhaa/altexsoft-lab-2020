@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Task2.BL.Model
 {
@@ -49,55 +50,46 @@ namespace Task2.BL.Model
         /// <param name="Ingredients">Инргедиенты.</param>
         /// <param name="CountIngredients">Количевство ингредиентов.</param>
         /// <param name="StepsHowCooking">Шаги приготовления</param>
-        public Recipe(string Name,string Category, string Subcategory,string Description, List<string> Ingredients,List<string> CountIngredients, List<string> StepsHowCooking)
+        public Recipe(string name,string category, string subcategory,string description, List<string> ingredients,List<string> countIngredients, List<string> stepsHowCooking)
         {
             #region  Проверка условий
-            if (string.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException("Название рецепта не может быть пустым", nameof(Name));
+                throw new ArgumentNullException("Название рецепта не может быть пустым", nameof(name));
             }
-            if (string.IsNullOrWhiteSpace(Category))
+            if (string.IsNullOrWhiteSpace(category))
             {
-                throw new ArgumentNullException("Название категории не может быть пустым", nameof(Category));
+                throw new ArgumentNullException("Название категории не может быть пустым", nameof(category));
             }
-            if (string.IsNullOrWhiteSpace(Subcategory))
+            if (string.IsNullOrWhiteSpace(subcategory))
             {
-                throw new ArgumentNullException("Название подкатегории не может быть пустым", nameof(Subcategory));
+                throw new ArgumentNullException("Название подкатегории не может быть пустым", nameof(subcategory));
             }
-            if (string.IsNullOrWhiteSpace(Description))
+            if (string.IsNullOrWhiteSpace(description))
             {
-                throw new ArgumentNullException("Описание не может быть пустым", nameof(Description));
+                throw new ArgumentNullException("Описание не может быть пустым", nameof(description));
             }
-            foreach (var ingredient  in Ingredients)
+            if (!ingredients.All(i=>i.Length>0))
             {
-                if (string.IsNullOrWhiteSpace(ingredient))
-                {
-                    throw new ArgumentNullException("Название ингредиента не может быть пустым", nameof(Ingredients));
-                }
+                throw new ArgumentNullException("Название ингредиента не может быть пустым", nameof(ingredients));
             }
-            foreach (var count in CountIngredients)
+            if (!countIngredients.All(ci => ci.Length > 0))
             {
-                if (string.IsNullOrWhiteSpace(count))
-                {
-                    throw new ArgumentNullException("Колличество ингредиентов не может быть пустыми", nameof(count));
-                }
+                throw new ArgumentNullException("Колличество ингредиентов не может быть пустыми", nameof(countIngredients));
             }
-            foreach (var steps in StepsHowCooking)
+            if (!stepsHowCooking.All(s => s.Length > 0))
             {
-                if (string.IsNullOrWhiteSpace(steps))
-                {
-                    throw new ArgumentNullException("Должен быть рецепта блюда.", nameof(StepsHowCooking));
-                }
+                throw new ArgumentNullException("Должен быть пошаговый рецепта блюда.", nameof(stepsHowCooking));
             }
             #endregion
 
-            this.Name = Name;
-            this.Category = Category;
-            this.Subcategory = Subcategory;
-            this.Description = Description;
-            this.Ingredients = Ingredients;
-            this.CountIngredients = CountIngredients;
-            this.StepsHowCooking = StepsHowCooking;
+            Name = name;
+            Category = category;
+            Subcategory = subcategory;
+            Description = description;
+            Ingredients = ingredients;
+            CountIngredients = countIngredients;
+            StepsHowCooking = stepsHowCooking;
         }
         public override string ToString()
         {

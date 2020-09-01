@@ -6,7 +6,7 @@ namespace Task2.BL.Model
     /// Ингредиент.
     /// </summary>
     [Serializable]
-    public class Ingradient
+    public class Ingredient
     {
         /// <summary>
         /// Название ингредиента.
@@ -16,7 +16,7 @@ namespace Task2.BL.Model
         /// Конструктор.
         /// </summary>
         /// <param name="Name">Название ингредиента.</param>
-        public Ingradient(string Name)
+        public Ingredient(string Name)
         {
             if(string.IsNullOrWhiteSpace(Name))
             {
@@ -26,7 +26,7 @@ namespace Task2.BL.Model
         }
         public override string ToString()
         {
-            return "Ingradient";
+            return "Ingredient";
         }
     }
 }

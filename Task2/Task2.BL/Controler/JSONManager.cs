@@ -8,18 +8,21 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Класс для работы с файлами формата json.
     /// </summary>
-    static class JSONManager
+    public class JSONManager
     {
+        private JsonSerializer _des;
+        public JSONManager()
+        {
+            _des = new JsonSerializer();
+        }
         /// <summary>
         /// Загрузка данных.
         /// </summary>
         /// <typeparam name="T">Возвращаемый тип.</typeparam>
         /// <param name="nameFile">Имя файла json<./param>
         /// <returns>Тип T.</returns>
-        public static List<T> DeserialezeFile<T>(string nameFile)
+        public List<T> DeserialezeFile<T>(string nameFile)
         {
-            JsonSerializer des = new JsonSerializer();
-
             if (File.Exists(nameFile))                           //читаем файл, если он есть
             {
                 using (StreamReader sr = new StreamReader(nameFile))
@@ -28,7 +31,7 @@ namespace Task2.BL.Controler
                     {
                         try
                         {
-                            return JsonConvert.DeserializeObject<List<T>>(des.Deserialize<string>(reader));
+                            return JsonConvert.DeserializeObject<List<T>>(_des.Deserialize<string>(reader));
                         }
                         catch (Exception)
                         {
@@ -48,7 +51,7 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Сохранение данных.
         /// </summary>
-        static public void Save( Object o, string nameFile)
+        public void Save( Object o, string nameFile)
         {
 
             JsonSerializer serializer = new JsonSerializer();

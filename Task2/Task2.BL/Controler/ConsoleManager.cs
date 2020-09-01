@@ -19,16 +19,16 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Указатель на кнотроллер ингредиентов.
         /// </summary>
-        private IngradientControler _ingradientControler;
+        private IngredientControler _ingredientControler;
 
         /// <summary>
         /// Конструктор класса.
         /// </summary>
-        public ConsoleManager(CategoryControler categoryControler, RecipesControler recipesControler, IngradientControler ingradientControler)
+        public ConsoleManager(CategoryControler categoryControler, RecipesControler recipesControler, IngredientControler ingredientControler)
         {
             _categoryControler = categoryControler;
             _recipesControler = recipesControler;
-            _ingradientControler = ingradientControler;
+            _ingredientControler = ingredientControler;
         }
         /// <summary>
         /// Метод для отображения логики: категории->подкатегории->рецепт.
@@ -39,7 +39,7 @@ namespace Task2.BL.Controler
             {
                 while(!_categoryControler.WalkSubcategories())
                 {
-                    while(!_recipesControler.WalkRecipes(ref _categoryControler))
+                    while(!_recipesControler.WalkRecipes( _categoryControler.CurrentCategories))
                     {
                         _recipesControler.DisplayCurrentRicepe();
                     }
@@ -49,7 +49,7 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Метод для отбражения настроек книги рецептов и поиска элементов книги.
         /// </summary>
-        public void Settings()
+        public void Settings(string str = "")
         {
             while(true)
             {
@@ -66,21 +66,69 @@ namespace Task2.BL.Controler
                     switch(result)
                     {
                         case 1:
-                            _ingradientControler.DisplayIngradients();
+                            _ingredientControler.DisplayIngredients();
                             break;
                         case 2:
                             _categoryControler.AddSubcategoris();
                             break;
                         case 3:
-                            _recipesControler.AddRecipe(ref _categoryControler, ref _ingradientControler);
+                            Console.Clear();
+
+                            Console.WriteLine("Введите название рецепта: ");
+                            var name = Console.ReadLine();
+
+                            _categoryControler.AddSubcategoris();
+
+                            var subcategories = _categoryControler.CurrentCategories.CurrentSubcategories;
+                            Console.Clear();
+                            
+                            Console.WriteLine("Введите описание блюда: ");
+                            var description = Console.ReadLine();
+                            Console.Clear();
+
+                            var ingredients = _ingredientControler.AddIngredients();
+                            Console.WriteLine("\t\t*enter*");
+                            Console.Clear();
+                            
+                            List<string> countIngred = new List<string>();
+                            for (int i = 0; i < ingredients.Count; i++)
+                            {
+                                Console.WriteLine($"Введите колличество для \"{ingredients[i]}\": ");
+                                countIngred.Add(Console.ReadLine());
+                            }
+
+                            int steps = 0;
+
+                            do
+                            {
+                                Console.WriteLine();
+                                Console.Clear();
+                                Console.Write("Введите колличество шагов приготовления: ");
+                                str = Console.ReadLine();
+                                if (int.TryParse(str, out steps))
+                                {
+                                    break;
+                                }
+                            } while (true);
+                            List<string> recipes = new List<string>();
+
+                            Console.WriteLine();
+                            for (int count = 1; count <= steps; count++)
+                            {
+                                Console.WriteLine($"Введите описания шага {count} : ");
+                                str = Console.ReadLine();
+                                recipes.Add(str);
+                            }
+                            _recipesControler.AddRecipe(name, _categoryControler.CurrentCategories.Name, subcategories, description, ingredients, countIngred, recipes);
+                            _recipesControler.Save();
                             break;
                         case 4:
-                            _ingradientControler.AddIngradients(out List<string> ingradients);
+                            _ingredientControler.AddIngredients();
                             break;
                         case 5:
                             Find();
                             break;
-                        case 6:
+                        case 6: 
                             return;
                         case 7:
                             Environment.Exit(0);
@@ -130,11 +178,11 @@ namespace Task2.BL.Controler
                 switch (result)
                 {
                     case 1:
-
-                        _recipesControler.OpenRecipe(ref _categoryControler,ref _ingradientControler);
+                        var currentCategory = _categoryControler.CurrentCategories;
+                        _recipesControler.OpenRecipe(_categoryControler.GetCategories(), ref currentCategory); // по ссылке, что бы установить активную категорию
                         break;
                     case 2:
-                        _ingradientControler.FindIngradient();
+                        _ingredientControler.FindIngredient();
                         break;
                     case 3:
                         return;
