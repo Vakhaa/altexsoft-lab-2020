@@ -13,7 +13,11 @@ namespace Task1.BL
         /// </summary>
         private Reader _reader;
         /// <summary>
+<<<<<<< HEAD
         /// Указатель на класс для работы с текстом
+=======
+        /// Указатель на класс для работы с текстом.
+>>>>>>> parent of dc673c1... Fixed all
         /// </summary>
         private TextWorker _fileText;
         /// <summary>
@@ -25,7 +29,11 @@ namespace Task1.BL
         /// </summary>
         public ConsolManager()
         {
+<<<<<<< HEAD
             _walker = new WalkerDirectories();
+=======
+            _walker = new WalkerDirectories(); //инициализация папок и файлов
+>>>>>>> parent of dc673c1... Fixed all
         }
         
 
@@ -143,7 +151,11 @@ namespace Task1.BL
         /// <summary>
         /// Возвращает путь текущего местположения в директории
         /// </summary>
+<<<<<<< HEAD
         /// <returns>Строка</returns>
+=======
+        /// <returns>Строка.</returns>
+>>>>>>> parent of dc673c1... Fixed all
         public string getPath()
         {
             return _walker.Path;
@@ -227,7 +239,11 @@ namespace Task1.BL
         /// <summary>
         /// Булевый метод для закрытия программы.
         /// </summary>
+<<<<<<< HEAD
         /// <returns>Булевая переменная - закрывается ли программа</returns>
+=======
+        /// <returns>Булевая переменная - закрывается ли программа</returns>    
+>>>>>>> parent of dc673c1... Fixed all
         private static bool isExite()
         {
             String str;//Обработка ответа пользователя.

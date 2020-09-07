@@ -9,6 +9,7 @@ namespace Task1
         static void Main(string[] args)
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
             IFileTxt reader = new FileManager();
             WalkerDirectories wd = new WalkerDirectories();
             ConsolManager cm = new ConsolManager((IWalkerDirectories)wd,reader);
@@ -16,12 +17,19 @@ namespace Task1
             ConsolManager cm = new ConsolManager();
 <<<<<<< HEAD
 >>>>>>> parent of dc673c1... Fixed all
+=======
+            ConsolManager cm = new ConsolManager();
+>>>>>>> parent of dc673c1... Fixed all
             string str;//Строка для обработки ответа пользователя.
             while (true)
             {
                 Console.Clear();
 <<<<<<< HEAD
+<<<<<<< HEAD
                 Console.WriteLine("{0} \t| Change disk: \"cd\", Back: \"..\", Full Path: \"fp\", Open File: \"open\", Exit: \"bye\"", PathManager.Path) ; //toolbar
+=======
+                Console.WriteLine("{0} \t| Change disk: \"cd\", Back: \"..\", Full Path: \"fp\", Open File: \"open\", Exit: \"bye\"", cm.getPath()) ; //toolbar
+>>>>>>> parent of dc673c1... Fixed all
 =======
                 Console.WriteLine("{0} \t| Change disk: \"cd\", Back: \"..\", Full Path: \"fp\", Open File: \"open\", Exit: \"bye\"", cm.getPath()) ; //toolbar
 >>>>>>> parent of dc673c1... Fixed all
