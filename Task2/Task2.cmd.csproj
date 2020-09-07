@@ -6,13 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Task1.BL\**" />
-    <EmbeddedResource Remove="Task1.BL\**" />
-    <None Remove="Task1.BL\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="Task1.BL\Task1.BL.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
 </Project>
