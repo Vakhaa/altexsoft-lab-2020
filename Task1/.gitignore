@@ -347,4 +347,12 @@ healthchecksdb
 MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
+<<<<<<< HEAD
 .ionide/
+=======
+.ionide/
+
+!rcps.json
+!ctgrs.json
+!igrdt.json
+>>>>>>> parent of d80a129... Delete .gitignore
