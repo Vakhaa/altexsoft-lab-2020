@@ -4,7 +4,7 @@ using System.IO;
 namespace Task1.BL
 {
     /// <summary>
-    /// Класс для работы с директориями и файлами.
+    /// Класс для работы с директориями и файлами
     /// </summary>
 <<<<<<< HEAD
     public class WalkerDirectories :IWalkerDirectories
@@ -23,10 +23,11 @@ namespace Task1.BL
         private static string[] _dirs;
         #endregion
         /// <summary>
-        /// Конструктор класса.
+        /// Конструктор класса
         /// </summary>
         public WalkerDirectories()
         {
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
 <<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
             ChangeDisk(); // Задаем изначально диск, с ктогорого начинаем работу.
             _dirs = Directory.GetDirectories(PathManager.Path); // Теперь можем инициализировать файлы и папки
@@ -34,6 +35,10 @@ namespace Task1.BL
             ChangeDisk(out String str);
             _dirs = Directory.GetDirectories(_path);
 >>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
+=======
+            ChangeDisk();
+            _dirs = Directory.GetDirectories(_path);
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
         }
         /// <summary>
         /// Метод для смены диска.
@@ -46,7 +51,7 @@ namespace Task1.BL
 =======
 >>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
             Console.WriteLine("Choose disk: ");
-            foreach (var drive in Drivers) // Отображает диски в наличие, так же дисководы и другую перефирию
+            foreach (var drive in Drivers)
             {
                 Console.Write(drive.Name + " ");
             }
@@ -54,12 +59,17 @@ namespace Task1.BL
             str = Console.ReadLine();
             foreach (var drive in Drivers)
             {
-                if (str == drive.Name) 
+                if (str == drive.Name)
                 {
-                    if (drive.IsReady) // Проверяем готов ли диск к использованию
+                    if (drive.IsReady)
                     {
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
                         PathManager.Path=str;    // устанавливаем путь
                         _dirs = Directory.GetDirectories(PathManager.Path); // и папки с выбраной директории
+=======
+                        _path = str;
+                        _dirs = Directory.GetDirectories(_path);
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
                         return;
                     }
                     else
@@ -76,7 +86,7 @@ namespace Task1.BL
             ChangeDisk(out str);
         }
         /// <summary>
-        /// Отображение директории.
+        /// Отображение директории
         /// </summary>
         public void WalkDirectories()
         {
@@ -85,7 +95,11 @@ namespace Task1.BL
                 Console.WriteLine("\t" + nameDir);
         }
         /// <summary>
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
         /// Отображение файлов директории.
+=======
+        /// Отображение файлов
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
         /// </summary>
 <<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
         public void DisplayFilesDirectory()
@@ -98,7 +112,7 @@ namespace Task1.BL
                 Console.WriteLine("\t" + nameFile);
         }
         /// <summary>
-        /// Поиск директории.
+        /// Поиск директории
         /// </summary>
         /// <param name="str">Название директории</param>
         public void SearchDirectories(string str)
@@ -107,14 +121,20 @@ namespace Task1.BL
             {
                 if (PathManager.Path + str == nameDir)
                 {
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
                     PathManager.SetBackupPath(PathManager.Path); // сохраняем путь, на случай ошибки, что бы вернуться
                     PathManager.Path+=str + "\\"; // задаем новый путь
+=======
+                    _tempPath = _path;
+                    _path += str + "\\";
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
 
                     try
                     {
                         _dirs = Directory.GetDirectories(PathManager.Path);
                         return;
                     }
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
 <<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
                     catch (UnauthorizedAccessException) // Директория может быть недоступна по уровню доступа
 =======
@@ -124,15 +144,26 @@ namespace Task1.BL
                         Console.WriteLine("Access is denied... Try again. \t*enter*");
                         Console.ReadLine();
                         PathManager.BackupPath(); //бэкап
+=======
+                    catch (UnauthorizedAccessException)
+                    {
+                        Console.WriteLine("Access is denied... Try again. \t*enter*");
+                        Console.ReadLine();
+                        _path = _tempPath;
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
                         return;
                     }
                 }
             }
         }
         /// <summary>
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
 <<<<<<< HEAD
 =======
         /// Востановление предыдущей директории.
+=======
+        /// Востановление предыдущей директории
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
         /// </summary>
         public void BackupPath()
         {
@@ -143,9 +174,9 @@ namespace Task1.BL
             _path = _tempPath;
         }
         /// <summary>
-        /// Сетер для пути директории.
+        /// Сетер для пути 
         /// </summary>
-        /// <param name="path">Путь директории.</param>
+        /// <param name="path">Путь</param>
         public void SetPath(string path)
         {
             _path = path;
@@ -163,11 +194,18 @@ namespace Task1.BL
             _tempPath = path;
         }
         /// <summary>
+<<<<<<< HEAD:Task1.BL/WalkerDirectories.cs
 >>>>>>> parent of dc673c1... Fixed all
         /// Устанавливает директорию, по заданому пути.
         /// </summary>
         /// <param name="path">Местоположение директории.</param>
         public void SetDirectories(string path)
+=======
+        /// Устанавливает директорию, по заданому пути
+        /// </summary>
+        /// <param name="path">Местоположение директории</param>
+        public void SetDireketories(string path)
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/WalkerDirectories.cs
         {
 <<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
             if (string.IsNullOrWhiteSpace(path)) 

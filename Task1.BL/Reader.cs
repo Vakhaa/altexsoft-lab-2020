@@ -17,7 +17,7 @@ namespace Task1.BL
     public class Reader : IReadTxt //IRreadPDF and other
     {
         /// <summary>
-        /// Сохранения местоположения файла.
+        /// Сохранения местоположения файла
         /// </summary>
         private string _path;
         /// <summary>
@@ -32,11 +32,15 @@ namespace Task1.BL
         {
 <<<<<<< HEAD:Task1/Task1.BL/Reader.cs
             _path = path;
+<<<<<<< HEAD:Task1.BL/Reader.cs
             FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\'); // обрезаем от название файла путь
 =======
             this._path = path;
             FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\');
 >>>>>>> parent of e10b476... Fixed:Task1.BL/Reader.cs
+=======
+            FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\');
+>>>>>>> parent of 9b86173... Added comments:Task1/Task1.BL/Reader.cs
         }
         /// <summary>
         /// Метод для чтения текста в файле формата txt.
