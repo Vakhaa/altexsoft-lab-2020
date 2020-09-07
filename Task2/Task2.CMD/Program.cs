@@ -11,42 +11,54 @@ namespace Task2.CMD
             UnitOfWork uow = new UnitOfWork();
 
             ConsoleManager cm = new ConsoleManager(
-                new CategoryControler((ICategoryUnityOfWork)uow), 
-                new RecipesControler((IRecipeUnityOfWork)uow), 
-                new IngredientControler((IIngredientUnityOfWork)uow));
+                new CategoryController((ICategoryUnityOfWork)uow), 
+                new SubcategoryController(uow),
+                new RecipesController((IRecipeUnityOfWork)uow), 
+                new IngredientController((IIngredientUnityOfWork)uow));
             
             Console.WriteLine("Hello World!" + "\n\t\t*enter*");
             Console.ReadLine();
             
             while(true) //главное меню программы
             {
-                Console.Clear();
-                Console.WriteLine("1. Книга рецептов.\n" +
-                "2. Настройка книги.\n" +
-                "3. Выйти.");
-                if (int.TryParse(Console.ReadLine(), out int result)) //обработка ответа
+                try
                 {
-                    switch (result)
+                    Console.Clear();
+                    Console.WriteLine("1. Книга рецептов.\n" +
+                    "2. Настройка книги.\n" +
+                    "3. Выйти.");
+                    if (int.TryParse(Console.ReadLine(), out int result)) //обработка ответа
                     {
-                        case 1:
-                            cm.WalkBook();
-                            break;
-                        case 2:
-                            cm.Settings();
-                            break;
-                        case 3:
-                            Console.WriteLine("Have a nice day! =)");
-                            uow.Dispose();
-                            Environment.Exit(0);
-                            break;
-                        default:
-                            Console.WriteLine("Ошибка в вводе данных.");
-                            break;
+                        switch (result)
+                        {
+                            case 1:
+                                cm.WalkBook();
+                                break;
+                            case 2:
+                                
+                                cm.Settings();
+                                break;
+                            case 3:
+                                Console.WriteLine("Have a nice day! =)");
+                                uow.Dispose();
+                                Environment.Exit(0);
+                                break;
+                            default:
+                                Console.WriteLine("Ошибка в вводе данных.");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка в вводе данных.");
                     }
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine("Ошибка в вводе данных.");
+                    Console.Clear();
+                    Console.WriteLine(e.Message);
+                    Console.ReadLine();
+                    Console.Clear();
                 }
             }
         }

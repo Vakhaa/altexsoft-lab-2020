@@ -10,10 +10,10 @@ namespace Task2.BL.Controler
     /// </summary>
     public class JSONManager
     {
-        private JsonSerializer _des;
+        private JsonSerializer _serializer;
         public JSONManager()
         {
-            _des = new JsonSerializer();
+            _serializer = new JsonSerializer();
         }
         /// <summary>
         /// Загрузка данных.
@@ -31,7 +31,7 @@ namespace Task2.BL.Controler
                     {
                         try
                         {
-                            return JsonConvert.DeserializeObject<List<T>>(_des.Deserialize<string>(reader));
+                            return JsonConvert.DeserializeObject<List<T>>(_serializer.Deserialize<string>(reader));
                         }
                         catch (Exception)
                         {
@@ -53,15 +53,12 @@ namespace Task2.BL.Controler
         /// </summary>
         public void Save( Object o, string nameFile)
         {
-
-            JsonSerializer serializer = new JsonSerializer();
-
-            serializer.NullValueHandling = NullValueHandling.Ignore;
+            _serializer.NullValueHandling = NullValueHandling.Ignore;
 
             using (StreamWriter sw = new StreamWriter(nameFile))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                serializer.Serialize(writer, JsonConvert.SerializeObject(o, Formatting.Indented));
+                _serializer.Serialize(writer, JsonConvert.SerializeObject(o, Formatting.Indented));
             }
         }
     }

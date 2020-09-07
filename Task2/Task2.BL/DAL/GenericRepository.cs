@@ -10,11 +10,10 @@ namespace Task2.BL.Controler
         private JSONManager _jsonManager;
         private bool disposedValue;
 
-        public GenericRepository( string fileName)
+        public GenericRepository( string fileName )
         {
             _jsonManager = new JSONManager();
             _context = (T)_jsonManager.DeserialezeFile<T1>(fileName);
-
             _fileName =fileName;
         }
         public virtual T Get()

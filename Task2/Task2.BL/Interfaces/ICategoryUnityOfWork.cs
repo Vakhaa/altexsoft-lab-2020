@@ -8,6 +8,6 @@ namespace Task2.BL.Interfaces
     public interface ICategoryUnityOfWork :IDisposable
     {
         GenericRepository<List<Category>, Category> CategoryRepository { get; }
-        void Save(UnitOfWork uow);
+        void Save();
     }
 }

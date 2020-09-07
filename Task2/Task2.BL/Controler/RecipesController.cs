@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Task2.BL.Interfaces;
 using Task2.BL.Model;
 
@@ -8,7 +9,7 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Логика рецептов.
     /// </summary>
-    public class RecipesControler
+    public class RecipesController
     {
         /// <summary>
         /// Репозиторий рецептов.
@@ -21,12 +22,12 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Создает контролер моделью рецепта.
         /// </summary>
-        public RecipesControler(IRecipeUnityOfWork recipeUnityOfWork)
+        public RecipesController(IRecipeUnityOfWork recipeUnityOfWork)
         {
             _recipeUnityOfWork = recipeUnityOfWork;
         }
         /// <summary>
-        /// Загрузка списка рецепта в приложение.
+        /// Загрузка списка рецепта.
         /// </summary>
         /// <returns>Список рецептов.</returns>
         public List<Recipe> GetRecipes()
@@ -38,94 +39,84 @@ namespace Task2.BL.Controler
         /// </summary>
         public void Save()
         {
-            _recipeUnityOfWork.Save((UnitOfWork)_recipeUnityOfWork);
+            _recipeUnityOfWork.Save();
         }
         /// <summary>
         /// Добавить рецепт.
         /// </summary>
         /// <param name="nameRecipe">Название рецепта.</param>
-        /// <param name="category">Категория рецепта.</param>
-        /// <param name="subcategories">Подкатегория рецепта.</param>
+        /// <param name="categoryId">Индекс категории рецепта.</param>
+        /// <param name="subcategoriesId">Индекс подкатегории рецепта.</param>
         /// <param name="description">Описание.</param>
-        /// <param name="ingredients">Ингредиенты.</param>
+        /// <param name="ingredientsId">Индекс ингредиентов.</param>
         /// <param name="countIngred">Количество ингредиентов.</param>
         /// <param name="recipes">Пошаговая инструкция.</param>
-        public void AddRecipe(string nameRecipe,string category, string subcategories, string description, List<string>ingredients, List<string> countIngred, List<string>recipes)
+        public void AddRecipe(string nameRecipe,int categoryId, int subcategoriesId, string description, List<int> ingredientsId, List<string> countIngred, List<string>recipes)
         {
             var getRecipes = _recipeUnityOfWork.RecipesRepository.Get();
-            foreach (var recip in getRecipes)
+            foreach (var recipe in getRecipes)
             {
-                if(recip.Name==nameRecipe)
+                if(recipe.Name==nameRecipe)
                 {
                     Console.WriteLine("Такой рецепт уже существует.");
                 }
             }
             
-            Recipe r = new Recipe(nameRecipe,category ,subcategories, description, ingredients, countIngred, recipes);
-            _recipeUnityOfWork.RecipesRepository.Insert(r ?? throw new ArgumentNullException("Нельзя добавить пустой рецепт.",nameof(recipes)));
+            Recipe r = new Recipe(nameRecipe, categoryId ,subcategoriesId, description, ingredientsId, countIngred, recipes);
+            _recipeUnityOfWork.RecipesRepository.Insert(r);
             CurrentRecipes = r;
         }
         /// <summary>
         /// Поиск рецепта.
         /// </summary>
-        /// <param name="nameRecipes">Название рецепта.</param>
-        /// <return>Истина, есть ли такой рецепт.</return>
-        private bool FindRecipe(string nameRecipes)
+        /// <param name="recipesId">Индекс рецепта.</param>
+        /// <return>Рецепт.</return>
+        public Recipe FindRecipe(int recipesId)
         {
-            for(int recipe=0; recipe< _recipeUnityOfWork.RecipesRepository.Get().Count;recipe++)
-            {
-                if(_recipeUnityOfWork.RecipesRepository.Get()[recipe].Name.ToLower() ==nameRecipes.ToLower())
-                {
-                    CurrentRecipes = _recipeUnityOfWork.RecipesRepository.Get()[recipe];
-                    return true;
-                }
-            }
-            return false;
+            return GetRecipes().First(r=>r.Id == recipesId);
         }
         /// <summary>
         /// Открытие рецепта.
         /// </summary>
-        /// <param name="categoryControler">Контролер категориями.</param>
-        /// <param name="ingredientControler">Контролер ингредиентами.</param>
-        public void OpenRecipe(List<Category> categories, ref Category currentCategory, string str="") //TODO работают ли комменты
+        /// <param name="ingredients">Список ингредиентов.</param>
+        public void OpenRecipe(List<Ingredient> ingredients)
         {
-            do
+            Console.Clear();
+            
+            foreach (var recipes in GetRecipes())
             {
-                Console.Clear();
-                Console.Write("Введите название рецeпта : ");
-                str = Console.ReadLine();
-                if (str.ToLower() == "bye" || str.ToLower() == "back") return;
-            } while (!FindRecipe(str));
-
-            foreach (var category in categories)
-            {
-                if (category.Name == CurrentRecipes.Category)
-                    currentCategory = category;        // Устанавливаем активную категорию
+                Console.WriteLine($"{recipes.Id}. {recipes.Name}.");
             }
+
+            Console.Write("Введите id рецeпта : ");
+            var str = Console.ReadLine();
+            if (str.ToLower() == "bye" || str.ToLower() == "back") return;
+            if (!int.TryParse(str, out int result)) return;
+
+            CurrentRecipes = FindRecipe(result);
+
 
             if (!string.IsNullOrWhiteSpace(CurrentRecipes.Name))
             {
-                foreach (var subcategory in currentCategory.Subcategories)
-                {
-                    if (subcategory == CurrentRecipes.Subcategory)
-                        currentCategory.CurrentSubcategories = subcategory;        // Устанавливаем активную подкатегорию
-                }
-                DisplayCurrentRicepe();         // Показывает рецепт
+                DisplayCurrentRicepe(ingredients);         // Показывает рецепт
             }
         }
         /// <summary>
         /// Метод дя отображения выбранного рецепта.
         /// </summary>
-        public void DisplayCurrentRicepe()
+        /// <param name="ingredients">Список ингредиентов.</param>
+        public void DisplayCurrentRicepe(List<Ingredient> ingredients)
         {
             Console.Clear();
             Console.WriteLine("Название : " + CurrentRecipes.Name);
             Console.WriteLine(CurrentRecipes.Description);
 
             Console.WriteLine("Ингридиенты : ");
-            for (int ingredient = 0; ingredient < CurrentRecipes.Ingredients.Count; ingredient++)
+            var currentIngredients = CurrentRecipes.IngredientsId;
+            for (int id = 1; id <= currentIngredients.Count; id++)
             {
-                Console.WriteLine((ingredient + 1).ToString() + $". {CurrentRecipes.Ingredients[ingredient]} - {CurrentRecipes.CountIngredients[ingredient]} ");
+                Console.WriteLine((id).ToString() + 
+                    $". {ingredients.First(i=>i.Id == currentIngredients[id-1]).Name} - {CurrentRecipes.CountIngredients[id-1]} ");
             }
 
             Console.WriteLine("Шаги приготовления : ");
@@ -139,21 +130,24 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Метод для выбора пользователем конкретного рецепта из списка.
         /// </summary>
-        /// <param name="categoryControler">Контролер категориями.</param>
-        public bool WalkRecipes(Category category, string str="")
+        /// <param name="categoryId">Индекс активной категории.</param>
+        /// <param name="subcategoryId">Индекс активной подкатегории.</param>
+        /// <param name="str">Переменная для обработки ответа пользователя.</param>
+        public bool WalkRecipes(int categoryId, int subcategoryId, string str = "")
         {
             while (true)
             {
                 Console.Clear();
                 Console.WriteLine("\t\t*exit: bye, back: back*");
+                var getRecipes = GetRecipes();
                 var listRecipes = new List<Recipe>(); // Список рецептов активной подкатегории
-                for (int recipe = 0, count = 1; recipe < GetRecipes().Count; recipe++)
+                for (int recipe = 0, count = 1; recipe < getRecipes.Count; recipe++)
                 {
-                    if (GetRecipes()[recipe].Subcategory == category.CurrentSubcategories
-                       & GetRecipes()[recipe].Category == category.Name)
+                    if (getRecipes[recipe].SubcategoryId == subcategoryId
+                       && getRecipes[recipe].CategoryId == categoryId)
                     {
-                        Console.WriteLine($"{count++}. {GetRecipes()[recipe].Name}");
-                        listRecipes.Add(GetRecipes()[recipe]);
+                        Console.WriteLine($"{count++}. {getRecipes[recipe].Name}");
+                        listRecipes.Add(getRecipes[recipe]);
                     }
                 }
 

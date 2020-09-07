@@ -9,7 +9,7 @@ namespace Task2.BL.Controler
     /// <summary>
     /// Логика ингредиентов.
     /// </summary>
-    public class IngredientControler
+    public class IngredientController
     {
         /// <summary>
         /// Репозиторий ингредиентов.
@@ -18,15 +18,15 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Конструктор класса.
         /// </summary>
-        public IngredientControler(IIngredientUnityOfWork ingredientUnityOfWork)
+        public IngredientController(IIngredientUnityOfWork ingredientUnityOfWork)
         {
             _ingredientUnityOfWork = ingredientUnityOfWork;
         }
         /// <summary>
-        /// Загрузка списка ингрендиентов.
+        /// Загрузка списка ингредиентов.
         /// </summary>
-        /// <returns>Список нгредиентов.</returns>
-        private List<Ingredient> GetIngredients()
+        /// <returns>Список ингредиентов.</returns>
+        public List<Ingredient> GetIngredients()
         {
             return _ingredientUnityOfWork.IngredientRepository.Get();
         }
@@ -35,16 +35,15 @@ namespace Task2.BL.Controler
         /// </summary>
         public void Save()
         {
-            _ingredientUnityOfWork.Save((UnitOfWork)_ingredientUnityOfWork);
+            _ingredientUnityOfWork.Save();
         }
         /// <summary>
         /// Добавляет ингредиенты и возвращает готовый список ингредиентов.
         /// </summary
-        /// <param name="ingredients">Список новых ингредиентов.</param>
-        public List<string> AddIngredients()
+        /// <param name="str">Переменная для обработки ответа пользователя.</param>
+        /// <param name="result">Переменная для обработки ответа пользователя в формат int.</param>
+        public List<int> AddIngredients(string str="", int result=0)
         {
-            string str;
-            int result;
             do
             {
                 Console.WriteLine("Введите колличество ингредиентов: ");
@@ -55,29 +54,32 @@ namespace Task2.BL.Controler
                 }
             } while (true);
 
-            var ingredients = new List<string>();
+            var ingredients = new List<int>();
 
             for (int count = 1; count <= result; count++)
             {
                 Console.WriteLine("Введите ингредиент:");
                 Console.Write($"{count}. ");
                 str = Console.ReadLine();
-                ingredients.Add(str);
-                AddIngredient(str);
-                Save();
+                if(!GetIngredients().Any(i => i.Name.ToLower() == str.ToLower()))
+                {
+                    AddIngredient(str);
+                    Save();
+                }
+                ingredients.Add(GetIngredients().First(i => i.Name.ToLower() == str.ToLower()).Id);
             }
             Console.ReadLine();
             return ingredients;
         }
         /// <summary>
-        /// Добавление ингрендиента.
+        /// Добавление ингредиента.
         /// </summary>
-        /// <param name="nameIngredient">Название ингрендиента.</param>
+        /// <param name="nameIngredient">Название ингредиента.</param>
         private void AddIngredient(string nameIngredient)
         {
             foreach (var ingredient in _ingredientUnityOfWork.IngredientRepository.Get())
             {
-                if (ingredient.Name == nameIngredient)
+                if (ingredient.Name.ToLower() == nameIngredient.ToLower())
                 {
                     Console.WriteLine("Такой ингредиент уже существует.");
                     return;
@@ -93,10 +95,10 @@ namespace Task2.BL.Controler
         public Ingredient FindAndGetIngredient(string nameIngredient)
         {
             var ingredients = _ingredientUnityOfWork.IngredientRepository.Get();
+
             if(ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient))
             return ingredients.First(ingr => ingr.Name.ToLower()==nameIngredient);
             return null;
-            
         }
         /// <summary>
         /// Метод для отображения ингредиентов.
@@ -105,7 +107,7 @@ namespace Task2.BL.Controler
         {
             foreach (var ingredient in GetIngredients())
             {
-                Console.WriteLine(ingredient.Name);
+                Console.WriteLine($"{ingredient.Id}. {ingredient.Name}.");
             }
             Console.WriteLine("\t\t*enter*");
             Console.ReadLine();

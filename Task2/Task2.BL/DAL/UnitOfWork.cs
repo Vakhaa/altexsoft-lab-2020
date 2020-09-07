@@ -5,12 +5,13 @@ using Task2.BL.Model;
 
 namespace Task2.BL.Controler
 {
-    public class UnitOfWork : ICategoryUnityOfWork, IRecipeUnityOfWork, IIngredientUnityOfWork
+    public class UnitOfWork : ICategoryUnityOfWork, IRecipeUnityOfWork, IIngredientUnityOfWork, ISubcategoryUnityOfWork
     {
 
         private GenericRepository<List<Category>, Category> _categoryRepository;
         private GenericRepository<List<Recipe>, Recipe> _recipesRepository;
         private GenericRepository<List<Ingredient>, Ingredient> _ingredientRepository;
+        private GenericRepository<List<Subcategory>, Subcategory> _subcategoryRepository;
         private bool disposedValue;
 
         public GenericRepository<List<Category>, Category> CategoryRepository
@@ -51,23 +52,29 @@ namespace Task2.BL.Controler
             }
         }
 
-        public void Save(UnitOfWork uow)
+        public GenericRepository<List<Subcategory>, Subcategory> SubcategoryRepository
         {
-            if (uow is ICategoryUnityOfWork)
+            get
             {
-                if (_categoryRepository != null)
-                    _categoryRepository.Save();
+
+                if (_subcategoryRepository == null)
+                {
+                    _subcategoryRepository = new GenericRepository<List<Subcategory>, Subcategory>("Subcategory.json");
+                }
+                return _subcategoryRepository;
             }
-            if (uow is IRecipeUnityOfWork)
-            {
-                if (_recipesRepository != null)
-                    _recipesRepository.Save();
-            }
-            if (uow is IIngredientUnityOfWork)
-            {
-                if(_ingredientRepository!=null)
-                    _ingredientRepository.Save();
-            }
+        }
+
+        public void Save()
+        {
+            if (_categoryRepository != null)
+                _categoryRepository.Save();
+            if (_subcategoryRepository != null)
+                _subcategoryRepository.Save();
+            if (_recipesRepository != null)
+                _recipesRepository.Save();
+            if (_ingredientRepository != null)
+                _ingredientRepository.Save();
         }
 
         protected virtual void Dispose(bool disposing)

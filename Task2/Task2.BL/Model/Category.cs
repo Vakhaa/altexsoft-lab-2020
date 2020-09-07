@@ -9,6 +9,8 @@ namespace Task2.BL.Model
     [Serializable]
     public class Category
     {
+        private static int _lastId=0;
+        public int Id { get; }
         /// <summary>
         /// Название категории.
         /// </summary>
@@ -16,95 +18,44 @@ namespace Task2.BL.Model
         /// <summary>
         /// Список подкатегорий.
         /// </summary>
-        public List<string> Subcategories { get; set;  }
-        /// <summary>
-        /// Выбраная категория.
-        /// </summary>
-        public string CurrentSubcategories { get; set; }    
+        public List<int> SubcategoriesId { get; set; }    
         /// <summary>
         /// Конструктор.
         /// </summary>
         /// <param name="Name">Название категории.</param>
         /// <param name="Subcategories">Список подкатегорий.</param>
-        public Category(string Name, List<string> Subcategories)
+        public Category(int id, string name, List<int> subcategoriesId)
         {
-            if(string.IsNullOrWhiteSpace(Name))
+            if(string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException("Должно быть имя категории", nameof(Name));
+                throw new ArgumentNullException("Должно быть имя категории", nameof(name));
             }
-            this.Name = Name;
-            if(Subcategories==null)
+            Name = name;
+            if(subcategoriesId==null)
             {
-                throw new ArgumentNullException("Должна быть хотя бы одна категория", nameof(Subcategories));
+                SubcategoriesId = new List<int>();
             }
-            this.Subcategories = new List<string>();
-            foreach (var subcategory in Subcategories)
+            else
             {
-                this.Subcategories.Add(subcategory);
-            }
-        }
-        /// <summary>
-        /// Создания новой категории.
-        /// </summary>
-        /// <param name="Name">Название категории.</param>
-        public static Category NewCategory(string Name)
-        {
-            if (string.IsNullOrWhiteSpace(Name))
-            {
-                throw new ArgumentNullException("Должно быть имя категории", nameof(Name));
-            }
-            
-            Console.WriteLine("Ввидите подкатегорию: ");
-            var NameSubcategory = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(NameSubcategory))
-            {
-                throw new ArgumentNullException("Должно быть имя категории", nameof(NameSubcategory));
-            }
-            var Subcategories = new List<string>();
-            Subcategories.Add(NameSubcategory);
-            return new Category(Name,Subcategories);
-        }
-        /// <summary>
-        /// Создание подкатегории
-        /// </summary>
-        /// <param name="NameSubcategories">Название подкатегории</param>
-        public void AddSubcategories(string NameSubcategories)
-        {
-            if (string.IsNullOrWhiteSpace(NameSubcategories))
-            {
-                throw new ArgumentNullException("Должно быть имя подкатегории", nameof(NameSubcategories));
-            }
-            foreach(var subcategory in Subcategories)
-            {
-                if (subcategory == NameSubcategories)
+                SubcategoriesId = new List<int>();
+                foreach (var subcategory in subcategoriesId)
                 {
-                    Console.WriteLine("Такая категория уже есть.");
-                    return;
+                    this.SubcategoriesId.Add(subcategory);
                 }
             }
-            Subcategories.Add(NameSubcategories);
-        }
-        /// <summary>
-        /// Поиск подкатегории.
-        /// </summary>
-        /// <param name="nameSubcategory">Названия подкатегории.</param>
-        /// <returns>Существует ли подкатегория.</returns>
-        public bool FindSubcategory(string nameSubcategory)
-        {
-            foreach (var subcategory in Subcategories)
+            _lastId++;
+            if (Id == 0)
             {
-                if (subcategory.ToLower() == nameSubcategory.ToLower())
-                {
-                    CurrentSubcategories = nameSubcategory;
-                    return true;
-                }
-                
+                Id = _lastId;
             }
-            return false;
+            else
+            {
+                Id = id; 
+            }
         }
         public override string ToString()
         {
-            return "Category";
+            return Name;
         }
     }
 }

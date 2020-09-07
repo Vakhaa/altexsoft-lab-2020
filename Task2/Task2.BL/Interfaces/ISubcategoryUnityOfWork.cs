@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Task2.BL.Controler;
 using Task2.BL.Model;
 
 namespace Task2.BL.Interfaces
 {
-    public interface IIngredientUnityOfWork:IDisposable
+    public interface ISubcategoryUnityOfWork:IDisposable
     {
-        GenericRepository<List<Ingredient>, Ingredient> IngredientRepository { get; }
+        GenericRepository<List<Subcategory>, Subcategory> SubcategoryRepository { get; }
         void Save();
     }
 }

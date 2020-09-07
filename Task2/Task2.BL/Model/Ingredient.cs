@@ -8,6 +8,8 @@ namespace Task2.BL.Model
     [Serializable]
     public class Ingredient
     {
+        private static int _lastId = 0;
+        public int Id { get; }
         /// <summary>
         /// Название ингредиента.
         /// </summary>
@@ -16,17 +18,18 @@ namespace Task2.BL.Model
         /// Конструктор.
         /// </summary>
         /// <param name="Name">Название ингредиента.</param>
-        public Ingredient(string Name)
+        public Ingredient(string name)
         {
-            if(string.IsNullOrWhiteSpace(Name))
+            if(string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException("Имя ингредиента не должно быть пустым.", nameof(Name));
+                throw new ArgumentNullException("Имя ингредиента не должно быть пустым.", nameof(name));
             }
-            this.Name = Name;
+            Name = name;
+            Id = ++_lastId;
         }
         public override string ToString()
         {
-            return "Ingredient";
+            return Name;
         }
     }
 }

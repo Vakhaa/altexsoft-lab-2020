@@ -10,7 +10,9 @@ namespace Task2.BL.Model
     [Serializable]
     public class Recipe
     {
+        private static int _lastId = 0;
         #region Свойства
+        public int Id { get; }
         /// <summary>
         /// Название.
         /// </summary>
@@ -18,11 +20,11 @@ namespace Task2.BL.Model
         /// <summary>
         /// Kатегория.
         /// </summary>
-        public string Category { get; }
+        public int CategoryId { get; }
         /// <summary>
         /// Подкатегория.
         /// </summary>
-        public string Subcategory { get; }
+        public int SubcategoryId { get; }
         /// <summary>
         /// Описание.
         /// </summary>
@@ -30,7 +32,7 @@ namespace Task2.BL.Model
         /// <summary>
         /// Ингредиенты.
         /// </summary>
-        public List<string> Ingredients { get; }
+        public List<int> IngredientsId { get; }
         /// <summary>
         /// Количество ингредиентов.
         /// </summary>
@@ -50,28 +52,28 @@ namespace Task2.BL.Model
         /// <param name="Ingredients">Инргедиенты.</param>
         /// <param name="CountIngredients">Количевство ингредиентов.</param>
         /// <param name="StepsHowCooking">Шаги приготовления</param>
-        public Recipe(string name,string category, string subcategory,string description, List<string> ingredients,List<string> countIngredients, List<string> stepsHowCooking)
+        public Recipe(string name, int categoryId, int subcategoryId,string description, List<int> ingredientsId,List<string> countIngredients, List<string> stepsHowCooking)
         {
             #region  Проверка условий
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentNullException("Название рецепта не может быть пустым", nameof(name));
             }
-            if (string.IsNullOrWhiteSpace(category))
+            if (categoryId==0)
             {
-                throw new ArgumentNullException("Название категории не может быть пустым", nameof(category));
+                throw new ArgumentNullException("Должна быть категория.", nameof(categoryId));
             }
-            if (string.IsNullOrWhiteSpace(subcategory))
+            if (subcategoryId==0)
             {
-                throw new ArgumentNullException("Название подкатегории не может быть пустым", nameof(subcategory));
+                throw new ArgumentNullException("Должна быть указана подкатегория", nameof(subcategoryId));
             }
             if (string.IsNullOrWhiteSpace(description))
             {
                 throw new ArgumentNullException("Описание не может быть пустым", nameof(description));
             }
-            if (!ingredients.All(i=>i.Length>0))
+            if (ingredientsId.Count==0)
             {
-                throw new ArgumentNullException("Название ингредиента не может быть пустым", nameof(ingredients));
+                throw new ArgumentNullException("Блюдо должно иметь ингредиенты.", nameof(ingredientsId));
             }
             if (!countIngredients.All(ci => ci.Length > 0))
             {
@@ -84,16 +86,17 @@ namespace Task2.BL.Model
             #endregion
 
             Name = name;
-            Category = category;
-            Subcategory = subcategory;
+            CategoryId = categoryId;
+            SubcategoryId = subcategoryId;
             Description = description;
-            Ingredients = ingredients;
+            IngredientsId = ingredientsId;
             CountIngredients = countIngredients;
             StepsHowCooking = stepsHowCooking;
+            Id = ++_lastId;
         }
         public override string ToString()
         {
-            return "Recipes";
+            return Name;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Task2.BL.Controler
 {
@@ -11,37 +12,40 @@ namespace Task2.BL.Controler
         /// <summary>
         /// Указатель на контроллер категорий.
         /// </summary>
-        private CategoryControler _categoryControler;
+        private CategoryController _categoryControler;
         /// <summary>
         /// Указать на контроллер рецептов.
         /// </summary>
-        private RecipesControler _recipesControler;
+        private RecipesController _recipesControler;
         /// <summary>
         /// Указатель на кнотроллер ингредиентов.
         /// </summary>
-        private IngredientControler _ingredientControler;
+        private IngredientController _ingredientControler;
+
+        private SubcategoryController _subcategoryControler;
 
         /// <summary>
         /// Конструктор класса.
         /// </summary>
-        public ConsoleManager(CategoryControler categoryControler, RecipesControler recipesControler, IngredientControler ingredientControler)
+        public ConsoleManager(CategoryController categoryControler, SubcategoryController subcategoryControler ,RecipesController recipesControler, IngredientController ingredientControler)
         {
+            _subcategoryControler = subcategoryControler;
             _categoryControler = categoryControler;
             _recipesControler = recipesControler;
             _ingredientControler = ingredientControler;
         }
         /// <summary>
-        /// Метод для отображения логики: категории->подкатегории->рецепт.
+        /// Метод для отображения логики: категории->подкатегории->рецепты->рецепт.
         /// </summary>
         public void WalkBook()
         {
             while(!_categoryControler.WalkCategories())
             {
-                while(!_categoryControler.WalkSubcategories())
+                while(!_subcategoryControler.WalkSubcategories(_categoryControler.CurrentCategories.SubcategoriesId))
                 {
-                    while(!_recipesControler.WalkRecipes( _categoryControler.CurrentCategories))
+                    while(!_recipesControler.WalkRecipes( _categoryControler.CurrentCategories.Id,_subcategoryControler.CurrentSubcategories.Id))
                     {
-                        _recipesControler.DisplayCurrentRicepe();
+                        _recipesControler.DisplayCurrentRicepe(_ingredientControler.GetIngredients());
                     }
                 }
             }
@@ -68,32 +72,57 @@ namespace Task2.BL.Controler
                         case 1:
                             _ingredientControler.DisplayIngredients();
                             break;
-                        case 2:
-                            _categoryControler.AddSubcategoris();
+                        case 2: //Добавление подкатегории
+                            _categoryControler.SetCurrentCategory(); //Выбираем категорию, в которую хотим добавить подкатегорию     
+
+                            Console.Clear();
+                            _subcategoryControler.DisplaySubcategory(_categoryControler.CurrentCategories.SubcategoriesId);
+                            var subcategoryNew = _subcategoryControler.AddSubcategory(); //Создаем или добавляем подкатегорию
+                            if (subcategoryNew != null)//Если подкатегория пустая, это значит, что в категории уже есть такая подкатегория 
+                                _categoryControler.CurrentCategories.SubcategoriesId.Add(subcategoryNew.Id);
+                            _categoryControler.Save();
+
                             break;
-                        case 3:
+                        case 3: //Добавления рецепта
                             Console.Clear();
 
                             Console.WriteLine("Введите название рецепта: ");
                             var name = Console.ReadLine();
 
-                            _categoryControler.AddSubcategoris();
+                            _categoryControler.SetCurrentCategory();
 
-                            var subcategories = _categoryControler.CurrentCategories.CurrentSubcategories;
+                            Console.Clear();
+                            _subcategoryControler.DisplaySubcategory(_categoryControler.CurrentCategories.SubcategoriesId);
+                            subcategoryNew = _subcategoryControler.AddSubcategory();
+                            if (subcategoryNew != null)
+                            {
+                                _categoryControler.CurrentCategories.SubcategoriesId.Add(subcategoryNew.Id);
+                            }
+                            else
+                            { //Добавляем новоую подкатегорию в категорию, если там ее нет
+                                if(!_categoryControler.CurrentCategories.SubcategoriesId.Any(
+                                    s=>s == _subcategoryControler.CurrentSubcategories.Id))
+                                _categoryControler.CurrentCategories.SubcategoriesId.Add(_subcategoryControler.CurrentSubcategories.Id);
+                            }
+
+                            var subcategories = _subcategoryControler.CurrentSubcategories;
                             Console.Clear();
                             
                             Console.WriteLine("Введите описание блюда: ");
                             var description = Console.ReadLine();
                             Console.Clear();
 
+                            
                             var ingredients = _ingredientControler.AddIngredients();
+                            
                             Console.WriteLine("\t\t*enter*");
                             Console.Clear();
-                            
+
                             List<string> countIngred = new List<string>();
-                            for (int i = 0; i < ingredients.Count; i++)
+                            for (int id = 0; id < ingredients.Count; id++)
                             {
-                                Console.WriteLine($"Введите колличество для \"{ingredients[i]}\": ");
+                                Console.WriteLine($"Введите колличество для " +
+                                    $"\"{_ingredientControler.GetIngredients().First(i => i.Id == ingredients[id]).Name}\": ");
                                 countIngred.Add(Console.ReadLine());
                             }
 
@@ -119,7 +148,7 @@ namespace Task2.BL.Controler
                                 str = Console.ReadLine();
                                 recipes.Add(str);
                             }
-                            _recipesControler.AddRecipe(name, _categoryControler.CurrentCategories.Name, subcategories, description, ingredients, countIngred, recipes);
+                            _recipesControler.AddRecipe(name, _categoryControler.CurrentCategories.Id, subcategories.Id, description, ingredients, countIngred, recipes);
                             _recipesControler.Save();
                             break;
                         case 4:
@@ -178,8 +207,7 @@ namespace Task2.BL.Controler
                 switch (result)
                 {
                     case 1:
-                        var currentCategory = _categoryControler.CurrentCategories;
-                        _recipesControler.OpenRecipe(_categoryControler.GetCategories(), ref currentCategory); // по ссылке, что бы установить активную категорию
+                        _recipesControler.OpenRecipe(_ingredientControler.GetIngredients());
                         break;
                     case 2:
                         _ingredientControler.FindIngredient();
