@@ -1,0 +1,17 @@
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.BL.dll
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.AssemblyInfoInputs.cache
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.AssemblyInfo.cs
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.CMD.exe
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.CMD.deps.json
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.CMD.runtimeconfig.json
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.CMD.runtimeconfig.dev.json
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.CMD.dll
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.CMD.pdb
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\bin\Debug\netcoreapp3.1\Task2.BL.pdb
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.csprojAssemblyReference.cache
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.csproj.CoreCompileInputs.cache
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.csproj.CopyComplete
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.dll
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.pdb
+D:\dev\altexsoft-lab-2020\Task2\Task2.CMD\obj\Debug\netcoreapp3.1\Task2.CMD.genruntimeconfig.cache

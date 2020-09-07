@@ -1,13 +1,16 @@
 ﻿using System;
 using System.IO;
-using Task1.BL.Interfaces;
 
 namespace Task1.BL
 {
     /// <summary>
     /// Класс для работы с директориями и файлами.
     /// </summary>
+<<<<<<< HEAD
     public class WalkerDirectories :IWalkerDirectories
+=======
+    public class WalkerDirectories
+>>>>>>> parent of dc673c1... Fixed all
     {
         #region Поля
         /// <summary>
@@ -110,6 +113,40 @@ namespace Task1.BL
             }
         }
         /// <summary>
+<<<<<<< HEAD
+=======
+        /// Востановление предыдущей директории.
+        /// </summary>
+        public void BackupPath()
+        {
+            if(string.IsNullOrWhiteSpace(_tempPath))
+            {
+                throw new ArgumentNullException("Нет сохранения предыдущего место положения в директории", nameof(_tempPath));
+            }
+            _path = _tempPath;
+        }
+        /// <summary>
+        /// Сетер для пути директории.
+        /// </summary>
+        /// <param name="path">Путь директории.</param>
+        public void SetPath(string path)
+        {
+            _path = path;
+        }
+        /// <summary>
+        /// Сохраняет указанный путь для backup-а.
+        /// </summary>
+        /// <param name="path">Местоположения в директории</param>
+        public void SetBackupPath(string path)
+        {
+            if(string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException("Нет сохранения предыдущего место положения в директории", nameof(_tempPath));
+            }
+            _tempPath = path;
+        }
+        /// <summary>
+>>>>>>> parent of dc673c1... Fixed all
         /// Устанавливает директорию, по заданому пути.
         /// </summary>
         /// <param name="path">Местоположение директории.</param>

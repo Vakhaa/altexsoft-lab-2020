@@ -1,0 +1,1 @@
+"[\r\n  {\r\n    \"Id\": 1,\r\n    \"Name\": \"Первое блюдо\",\r\n    \"SubcategoriesId\": [\r\n      2,\r\n      3\r\n    ]\r\n  },\r\n  {\r\n    \"Id\": 2,\r\n    \"Name\": \"Второе блюдо\",\r\n    \"SubcategoriesId\": [\r\n      4\r\n    ]\r\n  },\r\n  {\r\n    \"Id\": 3,\r\n    \"Name\": \"Десерты\",\r\n    \"SubcategoriesId\": [\r\n      1,\r\n      5\r\n    ]\r\n  }\r\n]"

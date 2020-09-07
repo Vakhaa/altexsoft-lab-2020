@@ -1,6 +1,5 @@
 ﻿using System;
 using Task1.BL;
-using Task1.BL.Interfaces;
 
 namespace Task1
 {
@@ -9,14 +8,22 @@ namespace Task1
     {
         static void Main(string[] args)
         {
+<<<<<<< HEAD
             IFileTxt reader = new FileManager();
             WalkerDirectories wd = new WalkerDirectories();
             ConsolManager cm = new ConsolManager((IWalkerDirectories)wd,reader);
+=======
+            ConsolManager cm = new ConsolManager();
+>>>>>>> parent of dc673c1... Fixed all
             string str;//Строка для обработки ответа пользователя.
             while (true)
             {
                 Console.Clear();
+<<<<<<< HEAD
                 Console.WriteLine("{0} \t| Change disk: \"cd\", Back: \"..\", Full Path: \"fp\", Open File: \"open\", Exit: \"bye\"", PathManager.Path) ; //toolbar
+=======
+                Console.WriteLine("{0} \t| Change disk: \"cd\", Back: \"..\", Full Path: \"fp\", Open File: \"open\", Exit: \"bye\"", cm.getPath()) ; //toolbar
+>>>>>>> parent of dc673c1... Fixed all
 
                 wd.DisplayDirectories();
 

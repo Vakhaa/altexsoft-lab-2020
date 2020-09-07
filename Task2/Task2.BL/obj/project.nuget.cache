@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "illfVn5OO/+QDs83sTdzdLe1YTv/p3GZReU9xpBUTnY/9ipCiGJQHFFwKKogzHOctrGkY3SgXDooWcgg8+sOWg==",
+  "success": true,
+  "projectFilePath": "D:\\dev\\altexsoft-lab-2020\\Task2\\Task2.BL\\Task2.BL.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\den_v\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
