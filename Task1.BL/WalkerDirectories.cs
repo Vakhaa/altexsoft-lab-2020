@@ -27,22 +27,31 @@ namespace Task1.BL
         /// </summary>
         public WalkerDirectories()
         {
+<<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
             ChangeDisk(); // Задаем изначально диск, с ктогорого начинаем работу.
             _dirs = Directory.GetDirectories(PathManager.Path); // Теперь можем инициализировать файлы и папки
+=======
+            ChangeDisk(out String str);
+            _dirs = Directory.GetDirectories(_path);
+>>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
         }
         /// <summary>
         /// Метод для смены диска.
         /// </summary>
-        public void ChangeDisk()
+        /// <param name="str">Строковая перемена, для хранения ответа пользователя.</param>
+        public void ChangeDisk(out String str)
         {
+<<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
             string str;//Строковая перемена, для хранения ответа пользователя.
+=======
+>>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
             Console.WriteLine("Choose disk: ");
             foreach (var drive in Drivers) // Отображает диски в наличие, так же дисководы и другую перефирию
             {
                 Console.Write(drive.Name + " ");
             }
             Console.WriteLine();
-            str = Console.ReadLine().ToUpper();
+            str = Console.ReadLine();
             foreach (var drive in Drivers)
             {
                 if (str == drive.Name) 
@@ -57,19 +66,19 @@ namespace Task1.BL
                     {
                         Console.WriteLine("Disk is not ready. Try again.");
                         str = "";
-                        ChangeDisk();
+                        ChangeDisk(out str);
                         return;
                     }
 
                 }
             }
             Console.WriteLine("Mistake, try again!");
-            ChangeDisk();
+            ChangeDisk(out str);
         }
         /// <summary>
         /// Отображение директории.
         /// </summary>
-        public void DisplayDirectories()
+        public void WalkDirectories()
         {
             Console.WriteLine("Directories :");
             foreach (string nameDir in _dirs)
@@ -78,7 +87,11 @@ namespace Task1.BL
         /// <summary>
         /// Отображение файлов директории.
         /// </summary>
+<<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
         public void DisplayFilesDirectory()
+=======
+        public void WalkFiles()
+>>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
         {
             Console.WriteLine("Files :");
             foreach (string nameFile in Directory.GetFiles(PathManager.Path))
@@ -102,7 +115,11 @@ namespace Task1.BL
                         _dirs = Directory.GetDirectories(PathManager.Path);
                         return;
                     }
+<<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
                     catch (UnauthorizedAccessException) // Директория может быть недоступна по уровню доступа
+=======
+                    catch (UnauthorizedAccessException e)
+>>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
                     {
                         Console.WriteLine("Access is denied... Try again. \t*enter*");
                         Console.ReadLine();
@@ -152,8 +169,12 @@ namespace Task1.BL
         /// <param name="path">Местоположение директории.</param>
         public void SetDirectories(string path)
         {
+<<<<<<< HEAD:Task1/Task1.BL/WalkerDirectories.cs
             if (string.IsNullOrWhiteSpace(path)) 
             throw new ArgumentNullException("Ошибка с получением списка каталогов, так как неверный путь", nameof(path));
+=======
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException("Ошибка с получением списка директорий, так как неверный путь", nameof(path));
+>>>>>>> parent of e10b476... Fixed:Task1.BL/WalkerDirectories.cs
             _dirs = Directory.GetDirectories(path);
         }
     }

@@ -348,7 +348,10 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+<<<<<<< HEAD:Task1/.gitignore
 
 !rcps.json
 !ctgrs.json
 !igrdt.json
+=======
+>>>>>>> parent of e10b476... Fixed:.gitignore

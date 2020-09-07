@@ -1,9 +1,16 @@
 ﻿using System;
 using System.IO;
-using Task1.BL.Interfaces;
 
 namespace Task1.BL
 {
+    /// <summary>
+    /// Интерфейс для чтения файлов формата txt.
+    /// </summary>
+     public interface IReadTxt
+    {
+        public String ReadTxt();
+        public void CreateFile(string text);
+    }
     /// <summary>
     /// Класс для чтения файлов.
     /// </summary>
@@ -23,8 +30,13 @@ namespace Task1.BL
         /// <param name="_path">Местоположения файла.</param>
         public Reader(string path)
         {
+<<<<<<< HEAD:Task1/Task1.BL/Reader.cs
             _path = path;
             FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\'); // обрезаем от название файла путь
+=======
+            this._path = path;
+            FileName = path.Substring(path.LastIndexOf('\\')).Trim('\\');
+>>>>>>> parent of e10b476... Fixed:Task1.BL/Reader.cs
         }
         /// <summary>
         /// Метод для чтения текста в файле формата txt.
@@ -34,9 +46,17 @@ namespace Task1.BL
         {
             try
             {
-                return File.ReadAllText(_path);
+                using (FileStream fstream = File.OpenRead(_path))
+                {
+                    // преобразуем строку в байты
+                    byte[] array = new byte[fstream.Length];
+                    // считываем данные
+                    fstream.Read(array, 0, array.Length);
+                    // декодируем байты в строку
+                    return System.Text.Encoding.Default.GetString(array);
+                }
             }
-            catch (FileNotFoundException)
+            catch (FileNotFoundException e)
             {
                 return "No file with this name";
             }
@@ -67,9 +87,14 @@ namespace Task1.BL
         /// <param name="text">Содержимое файла.</param>
         public void CreateFile(string text)
         {
-            File.WriteAllText(CutFileName(_path) + "~" + FileName,text);
-            Console.WriteLine("Текст записан в файл ~" + FileName);
-            Console.ReadLine();
+            using (FileStream fstream = new FileStream(CutFileName(_path) + "~" + FileName, FileMode.OpenOrCreate))
+            {
+                // преобразуем строку в байты
+                byte[] array = System.Text.Encoding.Default.GetBytes(text);
+                // запись массива байтов в файл
+                fstream.Write(array, 0, array.Length);
+                Console.WriteLine("Текст записан в файл ~" + FileName);
+            }
         }
     }
 }

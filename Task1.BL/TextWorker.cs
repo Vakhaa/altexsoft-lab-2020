@@ -86,7 +86,7 @@ namespace Task1.BL
             Console.WriteLine("\nCount words: {0}", Regex.Matches(GetText(), @"[\S]+").Count);
             foreach (string word in Text)
             {
-                if (count % 10 == 0 && count != 1)
+                if (count % 10 == 0 & count != 1)
                 {
                     Console.Write(word);
                     if (count < Text.Length - 9) Console.Write(", ");
@@ -102,6 +102,7 @@ namespace Task1.BL
         public void ThirdSentenceReverse(int count = 0)
         {
             Console.WriteLine("\nReverse: ");
+<<<<<<< HEAD:Task1/Task1.BL/TextWorker.cs
             var text = GetText();
             for (int i = 0,temp=0; i < text.Length - 1; i++) //Ищем третье предложения
             {
@@ -118,6 +119,20 @@ namespace Task1.BL
                     var tempchararray = text.ToCharArray(temp,i-temp); // копируем 3 предложение указав начало первого индекса и длину
                     Array.Reverse(tempchararray, 0, tempchararray.Length);
                     Console.WriteLine(tempchararray);
+=======
+            for (int i = 0; i < Text.Length - 1; i++)
+            {
+                if (Text[i].Contains('.'))
+                {
+                    count++;
+                }
+                if (count == 2)
+                {
+                    foreach (string words in Text.Reverse(startIndex: i)) //Reverse
+                    {
+                        if (words != null) Console.Write(words + " ");
+                    }
+>>>>>>> parent of e10b476... Fixed:Task1.BL/TextWorker.cs
                     Console.WriteLine();
                     return;
                 }

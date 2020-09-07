@@ -5,7 +5,7 @@ namespace Task1
 {
 
     class Program
-    {
+    {   
         static void Main(string[] args)
         {
 <<<<<<< HEAD
@@ -14,6 +14,7 @@ namespace Task1
             ConsolManager cm = new ConsolManager((IWalkerDirectories)wd,reader);
 =======
             ConsolManager cm = new ConsolManager();
+<<<<<<< HEAD
 >>>>>>> parent of dc673c1... Fixed all
             string str;//Строка для обработки ответа пользователя.
             while (true)
@@ -35,6 +36,13 @@ namespace Task1
                 cm.MenuBar(str);
 
                 wd.SearchDirectories(str);
+=======
+            while (true)
+            {
+                cm.Walk(out String str);
+
+                if (ConsolManager.isExite(out str)) return;
+>>>>>>> parent of e10b476... Fixed
             }
         }
     }
