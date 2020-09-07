@@ -1,9 +1,0 @@
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\bin\Debug\netcoreapp3.1\Task2.BL.deps.json
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\bin\Debug\netcoreapp3.1\Task2.BL.dll
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\obj\Debug\netcoreapp3.1\Task2.BL.csprojAssemblyReference.cache
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\obj\Debug\netcoreapp3.1\Task2.BL.AssemblyInfoInputs.cache
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\obj\Debug\netcoreapp3.1\Task2.BL.AssemblyInfo.cs
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\bin\Debug\netcoreapp3.1\Task2.BL.pdb
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\obj\Debug\netcoreapp3.1\Task2.BL.csproj.CoreCompileInputs.cache
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\obj\Debug\netcoreapp3.1\Task2.BL.dll
-D:\dev\altexsoft-lab-2020\Task2\Task2.BL\obj\Debug\netcoreapp3.1\Task2.BL.pdb
