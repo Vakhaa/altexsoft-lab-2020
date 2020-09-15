@@ -7,7 +7,7 @@ namespace Task2.BL.Interfaces
 {
     public interface IIngredientUnityOfWork:IDisposable
     {
-        GenericRepository<List<Ingredient>, Ingredient> IngredientRepository { get; }
+        GenericRepository<Ingredient> IngredientRepository { get; }
         void Save();
     }
 }

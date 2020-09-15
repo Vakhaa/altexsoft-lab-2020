@@ -19,6 +19,7 @@ namespace Task2.BL.Controler
         /// Активная категория.
         /// </summary>
         public Category CurrentCategories { get; set; }
+
         /// <summary>
         /// Конструктор.
         /// </summary>

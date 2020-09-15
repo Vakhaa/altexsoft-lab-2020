@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Task2.BL.Interfaces;
 using Task2.BL.Model;
 
@@ -8,58 +7,58 @@ namespace Task2.BL.Controler
     public class UnitOfWork : ICategoryUnityOfWork, IRecipeUnityOfWork, IIngredientUnityOfWork, ISubcategoryUnityOfWork
     {
 
-        private GenericRepository<List<Category>, Category> _categoryRepository;
-        private GenericRepository<List<Recipe>, Recipe> _recipesRepository;
-        private GenericRepository<List<Ingredient>, Ingredient> _ingredientRepository;
-        private GenericRepository<List<Subcategory>, Subcategory> _subcategoryRepository;
+        private GenericRepository<Category> _categoryRepository;
+        private GenericRepository<Recipe> _recipesRepository;
+        private GenericRepository<Ingredient> _ingredientRepository;
+        private GenericRepository<Subcategory> _subcategoryRepository;
         private bool disposedValue;
 
-        public GenericRepository<List<Category>, Category> CategoryRepository
+        public GenericRepository<Category> CategoryRepository
         {
             get
             {
                 if (_categoryRepository== null)
                 {
-                    _categoryRepository = new GenericRepository<List<Category>, Category>( "ctgrs.json");
+                    _categoryRepository = new GenericRepository<Category>();
                 }
                 return _categoryRepository;
             }
         }
 
-        public GenericRepository<List<Recipe>, Recipe> RecipesRepository
+        public GenericRepository<Recipe> RecipesRepository
         {
             get
             {
 
                 if (_recipesRepository == null)
                 {
-                    _recipesRepository = new GenericRepository<List<Recipe>, Recipe>("rcps.json");
+                    _recipesRepository = new GenericRepository<Recipe>();
                 }
                 return _recipesRepository;
             }
         }
 
-        public GenericRepository<List<Ingredient>, Ingredient> IngredientRepository
+        public GenericRepository<Ingredient> IngredientRepository
         {
             get
             {
 
                 if (_ingredientRepository == null)
                 {
-                    _ingredientRepository = new GenericRepository<List<Ingredient>, Ingredient>("igrdt.json");
+                    _ingredientRepository = new GenericRepository< Ingredient>();
                 }
                 return _ingredientRepository;
             }
         }
 
-        public GenericRepository<List<Subcategory>, Subcategory> SubcategoryRepository
+        public GenericRepository<Subcategory> SubcategoryRepository
         {
             get
             {
 
                 if (_subcategoryRepository == null)
                 {
-                    _subcategoryRepository = new GenericRepository<List<Subcategory>, Subcategory>("Subcategory.json");
+                    _subcategoryRepository = new GenericRepository<Subcategory>();
                 }
                 return _subcategoryRepository;
             }

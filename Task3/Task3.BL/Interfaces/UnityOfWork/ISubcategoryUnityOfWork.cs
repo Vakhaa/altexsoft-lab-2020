@@ -8,7 +8,7 @@ namespace Task2.BL.Interfaces
 {
     public interface ISubcategoryUnityOfWork:IDisposable
     {
-        GenericRepository<List<Subcategory>, Subcategory> SubcategoryRepository { get; }
+        GenericRepository<Subcategory> SubcategoryRepository { get; }
         void Save();
     }
 }

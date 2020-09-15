@@ -1,36 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using Task2.BL.BD;
 
 namespace Task2.BL.Controler
 {
-    public class GenericRepository<T,T1>:IDisposable where T : List<T1>
+    public class GenericRepository<T>:IDisposable where T : class
     {
-        private T _context;
-        private string _fileName;
-        private JSONManager _jsonManager;
+        private List<T> _context;
+        private readonly DatabaseDataServer _databaseDataServer;
         private bool disposedValue;
 
-        public GenericRepository( string fileName )
+        public GenericRepository( )
         {
-            _jsonManager = new JSONManager();
-            _context = (T)_jsonManager.DeserialezeFile<T1>(fileName);
-            _fileName =fileName;
+            _databaseDataServer = new DatabaseDataServer();
+            _context = _databaseDataServer.Load<T>();
         }
-        public virtual T Get()
+        public virtual List<T> Get()
         {
             return _context;
         }
-        public virtual T1 GetByID(int id)
+        public virtual T GetByID(int id)
         {
             return _context[id];
         }
-        public virtual void Insert(T1 item)
+        public virtual void Insert(T item)
         {
             _context.Add(item);
         }
         public virtual void Save()
         {
-            _jsonManager.Save(_context, _fileName);
+            _databaseDataServer.Save(_context);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -43,8 +42,6 @@ namespace Task2.BL.Controler
                 }
 
                 _context = null;
-                _fileName = null;
-                _jsonManager = null;
                 disposedValue = true;
             }
         }

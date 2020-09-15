@@ -9,11 +9,12 @@ namespace Task2.BL.Model
     public class Ingredient
     {
         private static int _lastId = 0;
-        public int Id { get; }
+        public int Id { get; set; }
         /// <summary>
         /// Название ингредиента.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
+        public Ingredient() { }
         /// <summary>
         /// Конструктор.
         /// </summary>

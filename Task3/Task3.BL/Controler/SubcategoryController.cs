@@ -33,6 +33,16 @@ namespace Task2.BL.Controler
                 count++;
             }
         }
+        public void DisplaySubcategory(int categoryId, int count = 1)
+        {
+            var Subcategories = GetSubcategories().Where(c => c.CategoryId == categoryId);
+            foreach (var subcategory in Subcategories)
+            {
+                Console.WriteLine($"{count}." +
+                    $"{subcategory.Name}");
+                count++;
+            }
+        }
         /// <summary>
         /// Добавления новой подкатегории.
         /// </summary>

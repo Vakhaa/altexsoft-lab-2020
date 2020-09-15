@@ -5,9 +5,9 @@ using Task2.BL.Model;
 
 namespace Task2.BL.Interfaces
 {
-    public interface IRecipeUnityOfWork:IDisposable
+    public interface ICategoryUnityOfWork :IDisposable
     {
-        GenericRepository<List<Recipe>, Recipe> RecipesRepository { get; }
+        GenericRepository< Category> CategoryRepository { get; }
         void Save();
     }
 }

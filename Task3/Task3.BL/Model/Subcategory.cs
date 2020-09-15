@@ -8,17 +8,18 @@ namespace Task2.BL.Model
     [Serializable]
     public class Subcategory
     {
-        private static int _lastId=0;
-        public int Id { get; }
+        private static int _lastId = 0;
+        public int Id { get; set; }
         /// <summary>
         /// Название подкатегории.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
+        public int CategoryId { get; set; }
+        public Subcategory() { }
         /// <summary>
         /// Конструктор.
         /// </summary>
         /// <param name="Name">Название категории.</param>
-        /// <param name="Subcategories">Список подкатегорий.</param>
         public Subcategory(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

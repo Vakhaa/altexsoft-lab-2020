@@ -12,36 +12,37 @@ namespace Task2.BL.Model
     {
         private static int _lastId = 0;
         #region Свойства
-        public int Id { get; }
+        public int Id { get; set; }
         /// <summary>
         /// Название.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; set; }
         /// <summary>
         /// Kатегория.
         /// </summary>
-        public int CategoryId { get; }
+        public int CategoryId { get; set; }
         /// <summary>
         /// Подкатегория.
         /// </summary>
-        public int SubcategoryId { get; }
+        public int SubcategoryId { get; set; }
         /// <summary>
         /// Описание.
         /// </summary>
-        public string Description { get; }
+        public string Description { get; set; }
         /// <summary>
         /// Ингредиенты.
         /// </summary>
-        public List<int> IngredientsId { get; }
+        public List<int> IngredientsId { get; set; }
         /// <summary>
         /// Количество ингредиентов.
         /// </summary>
-        public List<string> CountIngredients { get; }
+        public List<string> CountIngredients { get; set; }
         /// <summary>
         /// Шаги приготовления.
         /// </summary>
-        public List<string> StepsHowCooking { get; }
+        public List<string> StepsHowCooking { get; set; }
         #endregion
+        public Recipe() { }
         /// <summary>
         /// Конструктор.
         /// </summary>

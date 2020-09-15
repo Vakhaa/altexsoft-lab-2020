@@ -9,6 +9,14 @@ namespace Task2.CMD
         static void Main(string[] args)
         {
             UnitOfWork uow = new UnitOfWork();
+            CategoryController cc = new CategoryController(uow);
+            SubcategoryController sc = new SubcategoryController(uow);
+            cc.DisplayCategory();
+            sc.DisplaySubcategory(2);
+        }
+       /* static void Main(string[] args)
+        {
+            UnitOfWork uow = new UnitOfWork();
 
             ConsoleManager cm = new ConsoleManager(
                 new CategoryController((ICategoryUnityOfWork)uow), 
@@ -61,6 +69,6 @@ namespace Task2.CMD
                     Console.Clear();
                 }
             }
-        }
+        }*/
     }
 }
