@@ -1,4 +1,5 @@
 ﻿using System;
+using Task2.BL.BD;
 using Task2.BL.Interfaces;
 using Task2.BL.Model;
 
@@ -19,7 +20,7 @@ namespace Task2.BL.Controler
             {
                 if (_categoryRepository== null)
                 {
-                    _categoryRepository = new GenericRepository<Category>();
+                    _categoryRepository = new GenericRepository<Category>( new DatabaseDataServer());
                 }
                 return _categoryRepository;
             }
@@ -32,7 +33,7 @@ namespace Task2.BL.Controler
 
                 if (_recipesRepository == null)
                 {
-                    _recipesRepository = new GenericRepository<Recipe>();
+                    _recipesRepository = new GenericRepository<Recipe>(new DatabaseDataServer());
                 }
                 return _recipesRepository;
             }
@@ -45,7 +46,7 @@ namespace Task2.BL.Controler
 
                 if (_ingredientRepository == null)
                 {
-                    _ingredientRepository = new GenericRepository< Ingredient>();
+                    _ingredientRepository = new GenericRepository<Ingredient>(new DatabaseDataServer());
                 }
                 return _ingredientRepository;
             }
@@ -58,7 +59,7 @@ namespace Task2.BL.Controler
 
                 if (_subcategoryRepository == null)
                 {
-                    _subcategoryRepository = new GenericRepository<Subcategory>();
+                    _subcategoryRepository = new GenericRepository<Subcategory>(new DatabaseDataServer());
                 }
                 return _subcategoryRepository;
             }

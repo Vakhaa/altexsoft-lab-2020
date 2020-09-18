@@ -1,6 +1,5 @@
 ﻿using System;
 using Task2.BL.Controler;
-using Task2.BL.Interfaces;
 
 namespace Task2.CMD
 {
@@ -9,25 +8,17 @@ namespace Task2.CMD
         static void Main(string[] args)
         {
             UnitOfWork uow = new UnitOfWork();
-            CategoryController cc = new CategoryController(uow);
-            SubcategoryController sc = new SubcategoryController(uow);
-            cc.DisplayCategory();
-            sc.DisplaySubcategory(2);
-        }
-       /* static void Main(string[] args)
-        {
-            UnitOfWork uow = new UnitOfWork();
 
             ConsoleManager cm = new ConsoleManager(
-                new CategoryController((ICategoryUnityOfWork)uow), 
+                new CategoryController(uow),
                 new SubcategoryController(uow),
-                new RecipesController((IRecipeUnityOfWork)uow), 
-                new IngredientController((IIngredientUnityOfWork)uow));
-            
+                new RecipesController(uow),
+                new IngredientController(uow));
+
             Console.WriteLine("Hello World!" + "\n\t\t*enter*");
             Console.ReadLine();
-            
-            while(true) //главное меню программы
+
+            while (true) //главное меню программы
             {
                 try
                 {
@@ -43,7 +34,7 @@ namespace Task2.CMD
                                 cm.WalkBook();
                                 break;
                             case 2:
-                                
+
                                 cm.Settings();
                                 break;
                             case 3:
@@ -69,6 +60,6 @@ namespace Task2.CMD
                     Console.Clear();
                 }
             }
-        }*/
+        }
     }
-}
+} 

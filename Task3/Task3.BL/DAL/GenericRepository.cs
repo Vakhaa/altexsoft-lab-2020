@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Task2.BL.BD;
+using Task3.BL.Interfaces;
 
 namespace Task2.BL.Controler
 {
     public class GenericRepository<T>:IDisposable where T : class
     {
         private List<T> _context;
-        private readonly DatabaseDataServer _databaseDataServer;
+        private readonly IDataManager _dataManager;
         private bool disposedValue;
 
-        public GenericRepository( )
+        public GenericRepository(IDataManager dataManager)
         {
-            _databaseDataServer = new DatabaseDataServer();
-            _context = _databaseDataServer.Load<T>();
+            _dataManager = dataManager;
+            _context = _dataManager.Load<T>();
         }
         public virtual List<T> Get()
         {
@@ -26,12 +26,12 @@ namespace Task2.BL.Controler
         public virtual void Insert(T item)
         {
             _context.Add(item);
+            _dataManager.Save(item);
         }
         public virtual void Save()
         {
-            _databaseDataServer.Save(_context);
+            _dataManager.Save();
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

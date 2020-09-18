@@ -64,11 +64,9 @@ namespace Task2.BL.Controler
                 if(!GetIngredients().Any(i => i.Name.ToLower() == str.ToLower()))
                 {
                     AddIngredient(str);
-                    Save();
                 }
                 ingredients.Add(GetIngredients().First(i => i.Name.ToLower() == str.ToLower()).Id);
             }
-            Console.ReadLine();
             return ingredients;
         }
         /// <summary>
@@ -85,7 +83,7 @@ namespace Task2.BL.Controler
                     return;
                 }
             }
-            _ingredientUnityOfWork.IngredientRepository.Insert(new Ingredient(nameIngredient));
+            _ingredientUnityOfWork.IngredientRepository.Insert(new Ingredient(GetIngredients().Last().Id+1,nameIngredient));
         }
         /// <summary>
         /// Поиск ингредиента.
@@ -96,8 +94,8 @@ namespace Task2.BL.Controler
         {
             var ingredients = _ingredientUnityOfWork.IngredientRepository.Get();
 
-            if(ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient))
-            return ingredients.First(ingr => ingr.Name.ToLower()==nameIngredient);
+            if(ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient.ToLower()))
+            return ingredients.First(ingr => ingr.Name.ToLower()== nameIngredient.ToLower());
             return null;
         }
         /// <summary>

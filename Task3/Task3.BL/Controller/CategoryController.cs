@@ -43,12 +43,10 @@ namespace Task2.BL.Controler
         {
             _categoryUnityOfWork.Save();
         }
- 
-        /*public void Add()
+        public void AddCategory()
         {
-            _categoryUnityOfWork.CategoryRepository.Insert(new Category(0,Console.ReadLine(), new List<int>()));
-        }*/
-
+            _categoryUnityOfWork.CategoryRepository.Insert(new Category(GetCategories().Last().Id+1,Console.ReadLine()));
+        }
         /// <summary>
         /// Поиск категории.
         /// </summary>

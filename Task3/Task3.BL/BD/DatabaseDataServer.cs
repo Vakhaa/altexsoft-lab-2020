@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Task2.BL.DAL;
+using Task3.BL.Interfaces;
 
 namespace Task2.BL.BD
 {
-    public class DatabaseDataServer
+    public class DatabaseDataServer :IDataManager
     {
         public List<T> Load<T>() where T : class
         {
@@ -14,11 +15,19 @@ namespace Task2.BL.BD
             }
         }
 
-        public void Save<T>(List<T> item) where T : class
+        public void Save<T>(T item) where T : class
         {
             using (var db = new BookRecipesContext())
             {
-                db.Set<T>().AddRange(item);
+                db.Set<T>().Add(item);  
+                db.SaveChanges();
+            }
+        }
+
+        public void Save()
+        {
+            using (var db = new BookRecipesContext())
+            {
                 db.SaveChanges();
             }
         }

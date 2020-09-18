@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Task3.BL.BD;
+using Task3.BL.Model;
 
 namespace Task2.BL.Model
 {
@@ -10,17 +12,12 @@ namespace Task2.BL.Model
     [Serializable]
     public class Recipe
     {
-        private static int _lastId = 0;
         #region Свойства
         public int Id { get; set; }
         /// <summary>
         /// Название.
         /// </summary>
         public string Name { get; set; }
-        /// <summary>
-        /// Kатегория.
-        /// </summary>
-        public int CategoryId { get; set; }
         /// <summary>
         /// Подкатегория.
         /// </summary>
@@ -30,17 +27,13 @@ namespace Task2.BL.Model
         /// </summary>
         public string Description { get; set; }
         /// <summary>
-        /// Ингредиенты.
+        /// Ссылка на таблицу, что содержит в себе список ингредиентов для рецпта и их колличество 
         /// </summary>
-        public List<int> IngredientsId { get; set; }
+        public string Ingredients { get; set; }
         /// <summary>
-        /// Количество ингредиентов.
+        /// Ссылка на таблицу где описаны шаги приготовления.
         /// </summary>
-        public List<string> CountIngredients { get; set; }
-        /// <summary>
-        /// Шаги приготовления.
-        /// </summary>
-        public List<string> StepsHowCooking { get; set; }
+        public string StepsHowCooking { get; set; }
         #endregion
         public Recipe() { }
         /// <summary>
@@ -53,16 +46,12 @@ namespace Task2.BL.Model
         /// <param name="Ingredients">Инргедиенты.</param>
         /// <param name="CountIngredients">Количевство ингредиентов.</param>
         /// <param name="StepsHowCooking">Шаги приготовления</param>
-        public Recipe(string name, int categoryId, int subcategoryId,string description, List<int> ingredientsId,List<string> countIngredients, List<string> stepsHowCooking)
+        public Recipe(int id, string name, int subcategoryId, string description,List<int> ingredientsId, List<string> countIngredients , List<string> stepsHowCooking)
         {
             #region  Проверка условий
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentNullException("Название рецепта не может быть пустым", nameof(name));
-            }
-            if (categoryId==0)
-            {
-                throw new ArgumentNullException("Должна быть категория.", nameof(categoryId));
             }
             if (subcategoryId==0)
             {
@@ -87,13 +76,38 @@ namespace Task2.BL.Model
             #endregion
 
             Name = name;
-            CategoryId = categoryId;
             SubcategoryId = subcategoryId;
             Description = description;
-            IngredientsId = ingredientsId;
-            CountIngredients = countIngredients;
-            StepsHowCooking = stepsHowCooking;
-            Id = ++_lastId;
+            Id = id;
+            Ingredients = "IngredientsInRecipe_" + Id;
+            if (SQLScriptManager.IsExists<IngredientsInRecipe>(Ingredients))
+            {
+                throw new Exception("IngredientsInRecipe_" + Id+" уже существует");
+            }
+            else
+            {
+                SQLScriptManager.CreateTabelIngredirntsForRecipes(Id);
+                for (int i =0; i<ingredientsId.Count;i++)
+                {
+                    SQLScriptManager.SQLQuerry($"INSERT INTO {Ingredients} VALUES(" +
+                    $"{ingredientsId[i]}," +
+                    $"N\'{countIngredients[i]}\')");
+                }
+            }
+            StepsHowCooking = "StepsInRecipe_" + Id;
+            if (SQLScriptManager.IsExists<StepsInRecipe>(StepsHowCooking))
+            {
+                throw new Exception("StepsInRecipe_" + Id + " уже существует");
+            }
+            else
+            {
+                SQLScriptManager.CreateTabelStepsForRecipes(Id);
+                for (int i = 0; i < ingredientsId.Count; i++)
+                {
+                    SQLScriptManager.SQLQuerry($"INSERT INTO {StepsHowCooking} VALUES(" +
+                    $"N\'{stepsHowCooking[i]}\')");
+                }
+            }
         }
         public override string ToString()
         {
