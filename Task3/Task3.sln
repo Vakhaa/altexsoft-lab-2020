@@ -7,6 +7,37 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task3.BL", "Task3.BL\Task3.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Task3.CMD", "Task3.CMD\Task3.CMD.csproj", "{5B7A5A77-2877-4987-B374-BB055DEC0232}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schema", "schema", "{EBD60C6B-32D8-4BA4-81E0-92128DA45D2C}"
+	ProjectSection(SolutionItems) = preProject
+		schema\1.CreateCategory.sql = schema\1.CreateCategory.sql
+		2.CreateSubcategories.sql = 2.CreateSubcategories.sql
+		3.CreateIngredients.sql = 3.CreateIngredients.sql
+		4.CreateRecipes.sql = 4.CreateRecipes.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{929EAEBC-99E8-4A73-BE26-C5C7ECBF0AA7}"
+	ProjectSection(SolutionItems) = preProject
+		1. InsertCategories.sql = 1. InsertCategories.sql
+		2.InsertSubcategory.sql = 2.InsertSubcategory.sql
+		3.InsertIngredients.sql = 3.InsertIngredients.sql
+		4.InsertRecipe.sql = 4.InsertRecipe.sql
+		5.FilLLIngredientsAndSteps.sql = 5.FilLLIngredientsAndSteps.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedure", "Procedure", "{07889A64-D851-4A48-B8D7-A46BEA59CAAD}"
+	ProjectSection(SolutionItems) = preProject
+		CreateIngredientsInRecipe.sql = CreateIngredientsInRecipe.sql
+		CreateStepsInRecipe.sql = CreateStepsInRecipe.sql
+		InsertIntoRecipeIngredients.sql = InsertIntoRecipeIngredients.sql
+		InsertIntoRecipes.sql = InsertIntoRecipes.sql
+		InsertIntoRecipeSteps.sql = InsertIntoRecipeSteps.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "queries", "queries", "{06700F1C-29A1-44D3-9F89-88F0332EF3BD}"
+	ProjectSection(SolutionItems) = preProject
+		task.sql = task.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
