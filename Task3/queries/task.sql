@@ -8,15 +8,13 @@
     FROM Categories AS c1  
         INNER JOIN CTE_Categories AS c2  
         ON c1.ParentId = c2.Id   
-),
-FirstLayerCategories (Id, InheritorId, Name)AS
-(
-    SELECT c1.Id AS Id, c.Id AS InheritorId, c1.Name AS Name FROM CTE_Categories AS c INNER JOIN CTE_Categories AS c1 ON c.ParentId = c1.Id
-    WHERE c.LevelLayer<2
 )
-
-SELECT Recipes.Name As Recipe , Ingredients.Name As Ingredient, CountIngredient FROM	
-		Recipes INNER JOIN FirstLayerCategories AS c ON Recipes.CategoryId = c.InheritorId,
+SELECT Recipe,Ingredient, CountIngredient, Iterator FROM (
+        SELECT Recipes.Name As Recipe , Ingredients.Name As Ingredient, CountIngredient , DENSE_RANK() OVER(ORDER BY Recipes.Name ) AS Iterator FROM	
+		Recipes INNER JOIN Categories AS c ON Recipes.CategoryId = c.Id
+        INNER JOIN CTE_Categories AS c1 ON c.ParentId = c1.Id,
 		Ingredients INNER JOIN IngredientsInRecipe AS IR1 ON IR1.IngredientId = Ingredients.Id
-		WHERE IR1.RecipeId =Recipes.Id AND c.Id = 3
-		GROUP BY Recipes.Name , Ingredients.Name , CountIngredient;
+		WHERE IR1.RecipeId = Recipes.Id AND c1.Id = 3 AND c1.LevelLayer<2
+		GROUP BY  Recipes.Name, Ingredients.Name , CountIngredient 
+                    ) AS t
+                    WHERE Iterator<=3
