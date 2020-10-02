@@ -9,11 +9,11 @@
         INNER JOIN CTE_Categories AS c2  
         ON c1.ParentId = c2.Id   
 )
-SELECT Recipe,Ingredient, CountIngredient, Iterator FROM (
+
+SELECT Recipe, Ingredient, CountIngredient, Iterator FROM (
         SELECT Recipes.Name As Recipe , Ingredients.Name As Ingredient, CountIngredient , DENSE_RANK() OVER(ORDER BY Recipes.Name ) AS Iterator FROM	
 		Recipes INNER JOIN CTE_Categories AS c1 ON Recipes.CategoryId = c1.Id,
 		Ingredients INNER JOIN IngredientsInRecipe AS IR1 ON IR1.IngredientId = Ingredients.Id
 		WHERE IR1.RecipeId = Recipes.Id AND c1.ParentId = 3 AND c1.LevelLayer<2
-		GROUP BY  Recipes.Name, Ingredients.Name , CountIngredient 
-                    ) AS t
-                    WHERE Iterator<=3
+) AS t
+WHERE Iterator<=3
