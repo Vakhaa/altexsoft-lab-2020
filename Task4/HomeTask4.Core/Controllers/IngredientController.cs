@@ -5,18 +5,9 @@ using HomeTask4.SharedKernel.Interfaces;
 
 namespace HomeTask4.Core.Controllers
 {
-    /// <summary>
-    /// Логика ингредиентов.
-    /// </summary>
     public class IngredientController
     {
-        /// <summary>
-        /// Репозиторий ингредиентов.
-        /// </summary>
         private IUnitOfWork _unitOfWork;
-        /// <summary>
-        /// Конструктор класса.
-        /// </summary>
         public IngredientController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -49,7 +40,7 @@ namespace HomeTask4.Core.Controllers
             {
                 AddIngredient(str);
             }
-            return GetIngredients().First(i => i.Name.ToLower() == str.ToLower()).Id;
+            return GetIngredients().FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;
         }
         /// <summary>
         /// Добавление ингредиента.
@@ -76,7 +67,7 @@ namespace HomeTask4.Core.Controllers
             var ingredients = GetIngredients();
 
             if (ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient.ToLower()))
-                return ingredients.First(ingr => ingr.Name.ToLower() == nameIngredient.ToLower());
+                return ingredients.FirstOrDefault(ingr => ingr.Name.ToLower() == nameIngredient.ToLower());
             return null;
         }
     }

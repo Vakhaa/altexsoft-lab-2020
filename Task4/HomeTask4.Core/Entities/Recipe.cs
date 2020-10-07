@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using HomeTask4.SharedKernel;
 
 namespace HomeTask4.Core.Entities
 {
-    /// <summary>
-    /// Рецепт.
-    /// </summary>
     public class Recipe : BaseEntity
     {
         #region Свойства
@@ -61,35 +56,6 @@ namespace HomeTask4.Core.Entities
             Name = name;
             CategoryId = categoryId;
             Description = description;
-            /*Ingredients = "IngredientsInRecipe_" + Id;
-            if (SQLScriptManager.IsExists<IngredientsInRecipe>(Ingredients))
-            {
-                throw new Exception("IngredientsInRecipe_" + Id + " уже существует");
-            }
-            else
-            {
-                SQLScriptManager.CreateTabelIngredirntsForRecipes(Id);
-                for (int i = 0; i < ingredientsId.Count; i++)
-                {
-                    SQLScriptManager.SQLQuerry($"INSERT INTO {Ingredients} VALUES(" +
-                    $"{ingredientsId[i]}," +
-                    $"N\'{countIngredients[i]}\')");
-                }
-            }
-            StepsHowCooking = "StepsInRecipe_" + Id;
-            if (SQLScriptManager.IsExists<StepsInRecipe>(StepsHowCooking))
-            {
-                throw new Exception("StepsInRecipe_" + Id + " уже существует");
-            }
-            else
-            {
-                SQLScriptManager.CreateTabelStepsForRecipes(Id);
-                for (int i = 0; i < ingredientsId.Count; i++)
-                {
-                    SQLScriptManager.SQLQuerry($"INSERT INTO {StepsHowCooking} VALUES(" +
-                    $"N\'{stepsHowCooking[i]}\')");
-                }
-            }*/
         }
     }
 }

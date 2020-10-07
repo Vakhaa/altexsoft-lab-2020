@@ -24,38 +24,40 @@ namespace HomeTask4.Core.Controllers
         /// <summary>
         /// Добавления новой подкатегории.
         /// </summary>
-        public Category AddSubcategory(int categoryId,string str="")
+        /// <param name="categoryId">Идентификатор категории.</param>
+        /// <param name="nameSubcategory">Название новой подкатегории.</param>
+        public Category AddSubcategory(int categoryId, string nameSubcategory)
         {
             var subcategories = GetSubcategories();
 
-            if (!int.TryParse(str, out int result))
+            if (!int.TryParse(nameSubcategory, out int result))
             {
-                if (!subcategories.Any(s => s.Name.ToLower() == str.ToLower() && s.ParentId == categoryId))
+                if (!subcategories.Any(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId))
                 {
-                    CurrentSubcategory = new Category(str, categoryId);
+                    CurrentSubcategory = new Category(nameSubcategory, categoryId);
                     _unityOfWork.Repository.AddAsync(CurrentSubcategory);
                     return CurrentSubcategory;
                 }
                 else
                 {
-                    CurrentSubcategory = subcategories.First(s => s.Name.ToLower() == str.ToLower() && s.ParentId == categoryId);
+                    CurrentSubcategory = subcategories.FirstOrDefault(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId);
                     return null;
                 }
             }
             else
             {
-                return AddSubcategory(categoryId);
+                return null;
             }
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной подкатегории из списка.
         /// </summary>
         /// <param name="str">Параметр, для обработки ответа пользователя.</param>
-        public bool WalkSubcategories(string str = "")
+        public bool WalkSubcategories(string str)
         {
             if (int.TryParse(str, out int result))
             {
-                CurrentSubcategory = GetSubcategories().First(s => s.Id == CurrentSubcategoriesInCategory[result - 1]);
+                CurrentSubcategory = GetSubcategories().FirstOrDefault(s => s.Id == CurrentSubcategoriesInCategory[result - 1]);
                 return true;
             }
             else

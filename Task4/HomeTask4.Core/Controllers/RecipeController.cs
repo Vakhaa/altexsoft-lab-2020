@@ -5,22 +5,10 @@ using HomeTask4.SharedKernel.Interfaces;
 
 namespace HomeTask4.Core.Controllers
 {
-    /// <summary>
-    /// Логика рецептов.
-    /// </summary>
     public class RecipeController
     {
-        /// <summary>
-        /// Репозиторий рецептов.
-        /// </summary>
         private IUnitOfWork _unitOfWork;
-        /// <summary>
-        /// Активный рецепт.
-        /// </summary>
         public Recipe CurrentRecipe { get; set; }
-        /// <summary>
-        /// Создает контролер моделью рецепта.
-        /// </summary>
         public RecipeController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -68,7 +56,7 @@ namespace HomeTask4.Core.Controllers
             Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
             _unitOfWork.Repository.AddAsync(r).Wait();
             _unitOfWork.SaveChangesAsync().Wait();
-            var currentRecipe = GetRecipes().First(p => p.Name == r.Name);
+            var currentRecipe = GetRecipes().FirstOrDefault(p => p.Name == r.Name);
             for (int steps=0; steps<ingredientsId.Count;steps++)
             {
                 _unitOfWork.Repository.AddAsync(new IngredientsInRecipe(currentRecipe.Id, ingredientsId[steps], countIngred[steps])).Wait();
@@ -88,15 +76,15 @@ namespace HomeTask4.Core.Controllers
         /// <return>Рецепт.</return>
         public Recipe FindRecipe(int recipesId)
         {
-            return GetRecipes().First(r => r.Id == recipesId);
+            return GetRecipes().FirstOrDefault(r => r.Id == recipesId);
         }
         
         /// <summary>
         /// Метод для выбора пользователем конкретного рецепта из списка.
         /// </summary>
-        /// <param name="subcategoryId">Индекс активной подкатегории.</param>
+        /// <param name="listRecipes">Список рецептов активной подкатегории.</param>
         /// <param name="str">Переменная для обработки ответа пользователя.</param>
-        public bool WalkRecipes(List<Recipe> listRecipes, string str = "")
+        public bool WalkRecipes(List<Recipe> listRecipes, string str)
         {
             if (int.TryParse(str, out int result))
             {

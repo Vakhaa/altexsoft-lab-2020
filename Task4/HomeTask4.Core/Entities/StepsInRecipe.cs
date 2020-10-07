@@ -1,5 +1,4 @@
-﻿using System;
-using HomeTask4.SharedKernel;
+﻿using HomeTask4.SharedKernel;
 
 namespace HomeTask4.Core.Entities
 {

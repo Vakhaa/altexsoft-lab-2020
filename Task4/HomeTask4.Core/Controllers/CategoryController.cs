@@ -5,23 +5,14 @@ using HomeTask4.SharedKernel.Interfaces;
 
 namespace HomeTask4.Core.Controllers
 {
-    /// <summary>
-    /// Логика категорий.
-    /// </summary>
     public class CategoryController
     {
-        /// <summary>
-        /// Репозиторий категории.
-        /// </summary>
         private IUnitOfWork _unitOfWork;
         /// <summary>
         /// Активная категория.
         /// </summary>
-        public Category CurrentCategories { get; set; }
-        /// <summary>
-        /// Конструктор.
-        /// </summary>
-        /// <param name="categoryRepository">Репозиторий категории.</param>
+        public Category CurrentCategory { get; set; }
+        
         public CategoryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -51,13 +42,14 @@ namespace HomeTask4.Core.Controllers
         /// <param name="idCategory">Id категории.</param>
         public void FindCategory(int idCategory)
         {
-            CurrentCategories = GetCategories().First(c => c.Id == idCategory);
+            CurrentCategory = GetCategories().FirstOrDefault(c => c.Id == idCategory);
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
         /// </summary>
+        /// <param name="str">Переменная, для ответа пользователя.</param>
         /// <returns>Истина, если пользователь выходит, то он выходит в главное меню.</returns>
-        public bool WalkCategories(string str = "")
+        public bool WalkCategories(string str)
         {
             if (int.TryParse(str, out int result))
             {
@@ -68,13 +60,13 @@ namespace HomeTask4.Core.Controllers
             {
                 return false;
             }
-
         }
         /// <summary>
         /// Установка конкретной категории.
         /// </summary>
+        /// <param name="str">Переменная, для ответа пользователя.</param>
         /// <param name="isExist">Аргумент для выхода с цыкла.</param>
-        public void SetCurrentCategory(string str="",bool isExist = false)
+        public void SetCurrentCategory(string str,bool isExist = false)
         {
             while (true)
             {
@@ -83,7 +75,7 @@ namespace HomeTask4.Core.Controllers
                     var category = GetCategories().FirstOrDefault(category => category.Id == categoryId);
                     if (category != null)
                     {
-                        CurrentCategories = category;
+                        CurrentCategory = category;
                         isExist = true;
                     }
                 }

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using HomeTask4.Core.Controllers;
 using HomeTask4.Core.Entities;
-using HomeTask4.Infrastructure.Data;
 using HomeTask4.Infrastructure.Extensions;
-using HomeTask4.SharedKernel;
 using HomeTask4.SharedKernel.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -91,7 +88,7 @@ namespace HomeTask4.Cmd
                                                 break;
                                             case 1:
                                                 #region Walk into subcategory
-                                                var Subcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategories.Id).ToList();
+                                                var Subcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategory.Id).ToList();
                                                 foreach (var subcategory in Subcategories)
                                                 {
                                                     Console.WriteLine($"{++count}." + $" {subcategory.Name}");
@@ -239,7 +236,7 @@ namespace HomeTask4.Cmd
 
                             Console.Clear();
 
-                            var Subcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategories.Id);
+                            var Subcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategory.Id);
                             foreach (var subcategory in Subcategories)
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
@@ -247,7 +244,7 @@ namespace HomeTask4.Cmd
                             count = 0;
 
                             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-                            var temp = subcategoryController.AddSubcategory(categoryController.CurrentCategories.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
+                            var temp = subcategoryController.AddSubcategory(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
                             if (temp == null) Console.WriteLine("Такая подкатегория уже есть.");
                             #endregion
                             break;
@@ -268,14 +265,14 @@ namespace HomeTask4.Cmd
 
                             Console.Clear();
 
-                            var tempSubcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategories.Id);
+                            var tempSubcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategory.Id);
                             foreach (var subcategory in tempSubcategories)
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             }
                             count = 0;
                             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-                            var subcategoryNew = subcategoryController.AddSubcategory(categoryController.CurrentCategories.Id, Console.ReadLine()).Id;
+                            var subcategoryNew = subcategoryController.AddSubcategory(categoryController.CurrentCategory.Id, Console.ReadLine()).Id;
 
                             var subcategories = subcategoryController.CurrentSubcategory;
                             Console.Clear();

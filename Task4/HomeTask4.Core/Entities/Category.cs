@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using HomeTask4.SharedKernel;
 
 namespace HomeTask4.Core.Entities
 { 
-    /// <summary>
-    /// Категории.
-    /// </summary>
     public class Category : BaseEntity
     {
         /// <summary>

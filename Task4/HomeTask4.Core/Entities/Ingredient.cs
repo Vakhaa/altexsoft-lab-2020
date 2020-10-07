@@ -4,10 +4,6 @@ using HomeTask4.SharedKernel;
 
 namespace HomeTask4.Core.Entities
 {
-    /// <summary>
-    /// Ингредиент.
-    /// </summary>
-    [Serializable]
     public class Ingredient : BaseEntity
     {
         /// <summary>
