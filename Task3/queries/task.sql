@@ -10,8 +10,8 @@
         ON c1.ParentId = c2.Id   
 )
 
-SELECT Recipe, Ingredients.Name As Ingredient, CountIngredient , Iterator FROM (
-        SELECT Recipes.Id AS Id, Recipes.Name As Recipe , ROW_NUMBER() OVER(ORDER BY Recipes.Name ) AS Iterator FROM	
-		Recipes INNER JOIN CTE_Categories AS c1 ON Recipes.CategoryId = c1.Id
-) AS t ,Ingredients INNER JOIN IngredientsInRecipe AS IR1 ON IR1.IngredientId = Ingredients.Id
-WHERE Iterator<=3 AND IR1.RecipeId = t.Id
+SELECT Recipe,I.Name As Ingredient, CountIngredient , Iterator FROM (
+        SELECT  R.Id AS Id, R.Name As Recipe ,ROW_NUMBER() OVER(ORDER BY R.Name ) AS Iterator FROM
+        Recipes as R INNER JOIN CTE_Categories AS c1 ON R.CategoryId = c1.Id
+) AS t, Ingredients as I, IngredientsInRecipe AS IR1
+WHERE Iterator<=3 AND IR1.RecipeId = t.Id AND IR1.IngredientId = I.Id
