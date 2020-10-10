@@ -10,23 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-/// <summary>
-/// A skeleton for the Home Task 4 in AltexSoft Lab 2020
-/// For more details how to organize configuration, logging and dependency injections in console app
-/// watch https://www.youtube.com/watch?v=GAOCe-2nXqc
-///
-/// For more information about General Host
-/// read https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.1
-///
-/// For more information about Logging
-/// read https://docs.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-3.1
-/// 
-/// For more information about Dependency Injection
-/// read https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1
-/// </summary>
 namespace HomeTask4.Cmd
 {
-    public sealed class Program //TODO Migrciji
+    public sealed class Program
     {
 
         public static void Main(string[] args)
@@ -35,10 +21,10 @@ namespace HomeTask4.Cmd
 
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
             var unitOfWork = host.Services.GetRequiredService<IUnitOfWork>();
-            var categoryController = new CategoryController(unitOfWork);
-            var subcategoryController = new SubcategoryController(unitOfWork);
-            var ingredientController = new IngredientController(unitOfWork);
-            var recipeController = new RecipeController(unitOfWork);
+            var categoryController = host.Services.GetRequiredService<CategoryController>();
+            var subcategoryController = host.Services.GetRequiredService<SubcategoryController>();
+            var ingredientController = host.Services.GetRequiredService<IngredientController>();
+            var recipeController = host.Services.GetRequiredService<RecipeController>();
 
             string str = "";
             
@@ -47,7 +33,7 @@ namespace HomeTask4.Cmd
                 try
                 {
                     Console.Clear();
-                    logger.LogInformation(
+                    Console.WriteLine(
                     "1. Книга рецептов.\n" +
                     "2. Настройка книги.\n" +
                     "3. Выйти.");
@@ -72,7 +58,7 @@ namespace HomeTask4.Cmd
                                         {
                                             case 0:
                                                 #region Walk into categories
-                                                foreach (var category in categoryController.GetCategories())
+                                                foreach (var category in categoryController.GetCategoriesAsync().GetAwaiter().GetResult())
                                                 {
                                                     Console.WriteLine(++count + ". " + category.Name);
                                                 }
@@ -88,7 +74,8 @@ namespace HomeTask4.Cmd
                                                 break;
                                             case 1:
                                                 #region Walk into subcategory
-                                                var Subcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategory.Id).ToList();
+                                                var Subcategories = subcategoryController.GetSubcategoriesAsync().GetAwaiter().GetResult()
+                                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id).ToList();
                                                 foreach (var subcategory in Subcategories)
                                                 {
                                                     Console.WriteLine($"{++count}." + $" {subcategory.Name}");
@@ -110,7 +97,7 @@ namespace HomeTask4.Cmd
                                             #endregion
                                             case 2:
                                                 #region Walk into Recipes
-                                                var getRecipes = recipeController.GetRecipes();
+                                                var getRecipes = recipeController.GetRecipesAsync().GetAwaiter().GetResult();
                                                 var listRecipes = new List<Recipe>(); // Список рецептов активной подкатегории
 
                                                 for (int recipe = 0; recipe < getRecipes.Count; recipe++)
@@ -170,7 +157,7 @@ namespace HomeTask4.Cmd
                                 break;
                             case 3:
                                 logger.LogInformation("Have a nice day! =)");
-                                unitOfWork.SaveChangesAsync().Wait();
+                                unitOfWork.SaveChangesAsync().GetAwaiter().GetResult();
                                 Environment.Exit(0);
                                 break;
                             default:
@@ -213,7 +200,7 @@ namespace HomeTask4.Cmd
                     switch (result)
                     {
                         case 1:
-                            foreach (var ingredient in ingredientController.GetIngredients())
+                            foreach (var ingredient in ingredientController.GetIngredientsAsync().GetAwaiter().GetResult())
                             {
                                 Console.WriteLine($"{++count}. {ingredient.Name}.");
                             }
@@ -225,7 +212,7 @@ namespace HomeTask4.Cmd
                             #region Add subcategory
                             Console.Clear();
 
-                            foreach (var category in categoryController.GetCategories())
+                            foreach (var category in categoryController.GetCategoriesAsync().GetAwaiter().GetResult())
                             {
                                 Console.WriteLine(++count + ". " + category.Name);
                             }
@@ -236,7 +223,8 @@ namespace HomeTask4.Cmd
 
                             Console.Clear();
 
-                            var Subcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategory.Id);
+                            var Subcategories = subcategoryController.GetSubcategoriesAsync().GetAwaiter().GetResult()
+                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id);
                             foreach (var subcategory in Subcategories)
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
@@ -255,7 +243,7 @@ namespace HomeTask4.Cmd
                             Console.WriteLine("Введите название рецепта: ");
                             var name = Console.ReadLine();
 
-                            foreach (var category in categoryController.GetCategories())
+                            foreach (var category in categoryController.GetCategoriesAsync().GetAwaiter().GetResult())
                             {
                                 Console.WriteLine(++count + ". " + category.Name);
                             }
@@ -265,14 +253,19 @@ namespace HomeTask4.Cmd
 
                             Console.Clear();
 
-                            var tempSubcategories = subcategoryController.GetSubcategories().Where(c => c.ParentId == categoryController.CurrentCategory.Id);
+                            var tempSubcategories = subcategoryController.GetSubcategoriesAsync().GetAwaiter().GetResult()
+                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id);
                             foreach (var subcategory in tempSubcategories)
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             }
                             count = 0;
                             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-                            var subcategoryNew = subcategoryController.AddSubcategory(categoryController.CurrentCategory.Id, Console.ReadLine()).Id;
+                            var subcategoryNew = subcategoryController.AddSubcategory(categoryController.CurrentCategory.Id, Console.ReadLine())?.Id;
+                            if (subcategoryNew == null)
+                            {
+                                throw new ArgumentException(nameof(subcategoryNew), "Null subcategoryNew in new Recipe");
+                            }
 
                             var subcategories = subcategoryController.CurrentSubcategory;
                             Console.Clear();
@@ -306,7 +299,7 @@ namespace HomeTask4.Cmd
                             for (int id = 0; id < ingredientsId.Count; id++)
                             {
                                 Console.WriteLine($"Введите колличество для " +
-                                    $"\"{ingredientController.GetIngredients().First(i => i.Id == ingredientsId[id]).Name}\": ");
+                                    $"\"{ingredientController.GetIngredientsAsync().GetAwaiter().GetResult().First(i => i.Id == ingredientsId[id]).Name}\": ");
                                 countIngred.Add(Console.ReadLine());
                             }
 
@@ -332,7 +325,7 @@ namespace HomeTask4.Cmd
                                 stepsHowCooking.Add(str);
                             }
                             recipeController.AddRecipe(name, subcategories.Id, description, ingredientsId, countIngred, stepsHowCooking);
-                            recipeController.Save();
+                            recipeController.SaveAsync().GetAwaiter().GetResult();
                             #endregion
                             break;
                         case 4:
@@ -347,7 +340,7 @@ namespace HomeTask4.Cmd
                             } while (true);
 
                             ingredientsId = new List<int>();
-                            for (int i = 1; i<= count; i++)
+                            for (int i = 1; i <= count; i++)
                             {
                                 Console.WriteLine("Введите ингредиент:");
                                 Console.Write($"{i}. ");
@@ -372,7 +365,7 @@ namespace HomeTask4.Cmd
                                         #region Find Recipe
                                         Console.Clear();
 
-                                        foreach (var recipes in recipeController.GetRecipes())
+                                        foreach (var recipes in recipeController.GetRecipesAsync().GetAwaiter().GetResult())
                                         {
                                             Console.WriteLine($"{recipes.Id}. {recipes.Name}.");
                                         }
@@ -519,8 +512,8 @@ namespace HomeTask4.Cmd
         /// This method should be separate to support EF command-line tools in design time
         /// https://docs.microsoft.com/en-us/ef/core/miscellaneous/cli/dbcontext-creation
         /// </summary>
-        /// <param name="args"></param>
-        /// <returns><see cref="IHostBuilder" /> hostBuilder</returns>
+        /// <param name="args">Arguments</param>
+        /// <returns><see cref="IHostBuilder" />hostBuilder</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                .ConfigureServices((context, services) =>

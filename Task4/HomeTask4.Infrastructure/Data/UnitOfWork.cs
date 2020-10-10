@@ -24,9 +24,9 @@ namespace HomeTask4.Infrastructure.Data
             _context = context;
         }
 
-        public Task SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            return _context.SaveChangesAsync();
+           await _context.SaveChangesAsync();
         }
     }
 }

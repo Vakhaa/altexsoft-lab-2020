@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
 
@@ -11,24 +12,22 @@ namespace HomeTask4.Core.Controllers
         public IngredientController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            GetIngredients();
+            GetIngredientsAsync();
         }
         /// <summary>
         /// Загрузка списка ингредиентов.
         /// </summary>
         /// <returns>Список ингредиентов.</returns>
-        public List<Ingredient> GetIngredients()
+        public async Task<List<Ingredient>> GetIngredientsAsync()
         {
-            var temp = _unitOfWork.Repository.ListAsync<Ingredient>();
-            temp.Wait();
-            return temp.Result.OrderBy(i => i.Id).ToList();
+            return await _unitOfWork.Repository.ListAsync<Ingredient>();
         }
         /// <summary>
         /// Сохранение ингредиента.
         /// </summary>
-        public void Save()
+        public async Task SaveAsync()
         {
-            _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
         /// <summary>
         /// Добавляет ингредиенты и возвращает его.
@@ -36,26 +35,12 @@ namespace HomeTask4.Core.Controllers
         /// <param name="str">Переменная для обработки ответа пользователя.</param>
         public int AddedIfNew(string str)
         {
-            if (!GetIngredients().Any(i => i.Name.ToLower() == str.ToLower()))
+            if (!GetIngredientsAsync().GetAwaiter().GetResult().Any(i => i.Name.ToLower() == str.ToLower()))
             {
-                AddIngredient(str);
+               var t = _unitOfWork.Repository.AddAsync(new Ingredient(str)).GetAwaiter().GetResult(); // ! Wait
+                SaveAsync().GetAwaiter().GetResult();
             }
-            return GetIngredients().FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;
-        }
-        /// <summary>
-        /// Добавление ингредиента.
-        /// </summary>
-        /// <param name="nameIngredient">Название ингредиента.</param>
-        private void AddIngredient(string nameIngredient)
-        {
-            foreach (var ingredient in GetIngredients())
-            {
-                if (ingredient.Name.ToLower() == nameIngredient.ToLower())
-                {
-                    return;
-                }
-            }
-            _unitOfWork.Repository.AddAsync(new Ingredient(nameIngredient)).Wait();
+            return GetIngredientsAsync().GetAwaiter().GetResult().FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;
         }
         /// <summary>
         /// Поиск ингредиента.
@@ -64,7 +49,7 @@ namespace HomeTask4.Core.Controllers
         /// <returns>Ингредиент.</returns>
         public Ingredient FindAndGetIngredient(string nameIngredient)
         {
-            var ingredients = GetIngredients();
+            var ingredients = GetIngredientsAsync().GetAwaiter().GetResult();
 
             if (ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient.ToLower()))
                 return ingredients.FirstOrDefault(ingr => ingr.Name.ToLower() == nameIngredient.ToLower());

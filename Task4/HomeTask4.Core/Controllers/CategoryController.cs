@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
 
@@ -21,20 +22,20 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка категорий в приложение.
         /// </summary>
         /// <returns>Список категорий.</returns>
-        public List<Category> GetCategories()
+        public async Task<List<Category>> GetCategoriesAsync()
         {
-            return _unitOfWork.Repository.ListAsync<Category>().Result.Where(c => c.ParentId == null).ToList();
+            return await Task.Run(()=>_unitOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId == null).ToList());
         }
         /// <summary>
         /// Сохранение категорий.
         /// </summary>
-        public void Save()
+        public async Task SaveAsync()
         {
-            _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
-        public void AddCategory(string nameCategory)
+        public async Task AddCategory(string nameCategory)
         {
-            _unitOfWork.Repository.AddAsync(new Category(nameCategory)); //parentid
+            await _unitOfWork.Repository.AddAsync(new Category(nameCategory)); //parentid
         }
         /// <summary>
         /// Поиск категории.
@@ -42,7 +43,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="idCategory">Id категории.</param>
         public void FindCategory(int idCategory)
         {
-            CurrentCategory = GetCategories().FirstOrDefault(c => c.Id == idCategory);
+            CurrentCategory = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(c => c.Id == idCategory);
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
@@ -72,7 +73,7 @@ namespace HomeTask4.Core.Controllers
             {
                 if (int.TryParse(str, out int categoryId))
                 {
-                    var category = GetCategories().FirstOrDefault(category => category.Id == categoryId);
+                    var category = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(category => category.Id == categoryId);
                     if (category != null)
                     {
                         CurrentCategory = category;

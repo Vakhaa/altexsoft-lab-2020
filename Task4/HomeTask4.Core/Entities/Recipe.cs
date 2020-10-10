@@ -12,14 +12,14 @@ namespace HomeTask4.Core.Entities
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Описание.
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// Подкатегория.
         /// </summary>
         public int CategoryId { get; set; }
         public Category Category { get; set; }
-        /// <summary>
-        /// Описание.
-        /// </summary>
-        public string Description { get; set; }
         /// <summary>
         /// Ссылка на таблицу, что содержит в себе список ингредиентов для рецпта и их колличество 
         /// </summary>
