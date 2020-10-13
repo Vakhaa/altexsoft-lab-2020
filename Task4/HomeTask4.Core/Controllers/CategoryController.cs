@@ -33,9 +33,11 @@ namespace HomeTask4.Core.Controllers
         {
             await _unitOfWork.SaveChangesAsync();
         }
-        public async Task AddCategory(string nameCategory)
+        public async Task<Category> AddCategoryAsync(string nameCategory)
         {
-            await _unitOfWork.Repository.AddAsync(new Category(nameCategory)); //parentid
+           return  await _unitOfWork.Repository.AddAsync(new Category(nameCategory));
+            await _unitOfWork.SaveChangesAsync();
+            return GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(i => i.Name == nameCategory);
         }
         /// <summary>
         /// Поиск категории.
@@ -43,7 +45,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="idCategory">Id категории.</param>
         public void FindCategory(int idCategory)
         {
-            CurrentCategory = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(c => c.Id == idCategory);
+             CurrentCategory = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(c => c.Id == idCategory);
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
@@ -67,22 +69,14 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="str">Переменная, для ответа пользователя.</param>
         /// <param name="isExist">Аргумент для выхода с цыкла.</param>
-        public void SetCurrentCategory(string str,bool isExist = false)
+        public void SetCurrentCategory(string str)
         {
-            while (true)
+            if (int.TryParse(str, out int categoryId))
             {
-                if (int.TryParse(str, out int categoryId))
+                var category = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(category => category.Id == categoryId);
+                if (category != null)
                 {
-                    var category = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(category => category.Id == categoryId);
-                    if (category != null)
-                    {
-                        CurrentCategory = category;
-                        isExist = true;
-                    }
-                }
-                if (isExist)
-                {
-                    break;
+                    CurrentCategory = category;
                 }
             }
         } 

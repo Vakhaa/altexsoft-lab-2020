@@ -37,7 +37,7 @@ namespace HomeTask4.Core.Controllers
         {
             if (!GetIngredientsAsync().GetAwaiter().GetResult().Any(i => i.Name.ToLower() == str.ToLower()))
             {
-               var t = _unitOfWork.Repository.AddAsync(new Ingredient(str)).GetAwaiter().GetResult(); // ! Wait
+               var t = _unitOfWork.Repository.AddAsync(new Ingredient(str)).GetAwaiter().GetResult();
                 SaveAsync().GetAwaiter().GetResult();
             }
             return GetIngredientsAsync().GetAwaiter().GetResult().FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;

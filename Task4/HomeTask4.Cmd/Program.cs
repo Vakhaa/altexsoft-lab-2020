@@ -79,13 +79,13 @@ namespace HomeTask4.Cmd
                                                 foreach (var subcategory in Subcategories)
                                                 {
                                                     Console.WriteLine($"{++count}." + $" {subcategory.Name}");
-                                                subcategoryController.AddCurrentSubcategoriesInCategorr(subcategory.Id);
+                                                subcategoryController.AddCurrentSubcategoriesInCategory(subcategory.Id);
                                             }
                                                 count = 0;
                                                 logger.LogInformation("Подкатегория (id):");
                                                 if (subcategoryController.WalkSubcategories(Console.ReadLine()))
                                                 {
-                                                    subcategoryController.ClearCurrentSubcategoriesInCategorr();
+                                                    subcategoryController.ClearCurrentSubcategoriesInCategory();
                                                     iterator++;
                                                 }
                                                 else

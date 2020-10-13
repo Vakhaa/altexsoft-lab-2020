@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -65,7 +63,7 @@ namespace HomeTask4.Core.Controllers
                 return false;
             }
         }
-        public void AddCurrentSubcategoriesInCategorr(int id)
+        public void AddCurrentSubcategoriesInCategory(int id)
         {
             if(CurrentSubcategoriesInCategory is null)
             {
@@ -73,9 +71,17 @@ namespace HomeTask4.Core.Controllers
             }
             CurrentSubcategoriesInCategory.Add(id);
         }
-        public void ClearCurrentSubcategoriesInCategorr()
+        public void ClearCurrentSubcategoriesInCategory()
         {
             CurrentSubcategoriesInCategory = null;
+        }
+        /// <summary>
+        /// Метод возвращает CurrentSubcategoriesInCategory, используеться для тестов скрытого поля.
+        /// </summary>
+        /// <returns></returns>
+        public List<int> GetCurrentSubcategoriesInCategory()
+        {
+            return CurrentSubcategoriesInCategory;
         }
         public async Task SaveAsync()
         {
