@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -22,7 +23,7 @@ namespace HomeTask4.Core.Controllers
         {
             await _unitOfWork.Repository.ListAsync<IngredientsInRecipe>();
             await _unitOfWork.Repository.ListAsync<StepsInRecipe>();
-            return await Task.Run(()=> _unitOfWork.Repository.ListAsync<Recipe>().GetAwaiter().GetResult().ToList());
+            return await _unitOfWork.Repository.ListAsync<Recipe>();
         }
         /// <summary>
         /// Сохранение рецепта.
@@ -37,12 +38,9 @@ namespace HomeTask4.Core.Controllers
         /// <param name="nameRecipe">Название рецепта.</param>
         /// <param name="subcategoriesId">Индекс подкатегории рецепта.</param>
         /// <param name="description">Описание.</param>
-        /// <param name="ingredientsId">Индекс ингредиентов.</param>
-        /// <param name="countIngred">Количество ингредиентов.</param>
-        /// <param name="stepsHowCooking">Пошаговая инструкция.</param>
-        public void AddRecipe(string nameRecipe, int subcategoriesId, string description, List<int> ingredientsId, List<string> countIngred, List<string> stepsHowCooking)
+        public async Task AddRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
-            var getRecipes = GetRecipesAsync().GetAwaiter().GetResult();
+            var getRecipes = await GetRecipesAsync();
             foreach (var recipe in getRecipes)
             {
                 if (recipe.Name == nameRecipe)
@@ -53,20 +51,30 @@ namespace HomeTask4.Core.Controllers
             }
 
             Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
-            _unitOfWork.Repository.AddAsync(r).GetAwaiter().GetResult();
-            SaveAsync().GetAwaiter().GetResult();
-            var currentRecipe = GetRecipesAsync().GetAwaiter().GetResult().FirstOrDefault(p => p.Name == r.Name);
-            for (int steps=0; steps<ingredientsId.Count;steps++)
+            await _unitOfWork.Repository.AddAsync(r);
+            await SaveAsync();
+            CurrentRecipe = GetRecipesAsync().GetAwaiter().GetResult().FirstOrDefault(p => p.Name == r.Name);
+        }
+        ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
+        /// <param name="ingredientsId">Индекс ингредиентов.</param>
+        /// <param name="countIngred">Количество ингредиентов.</param>
+        public async Task AddedIngredientsInRecipeAsync(List<int> ingredientsId, List<string> countIngred)
+        {
+            for (int steps = 0; steps < ingredientsId.Count; steps++)
             {
-                _unitOfWork.Repository.AddAsync(new IngredientsInRecipe(currentRecipe.Id, ingredientsId[steps], countIngred[steps])).GetAwaiter().GetResult();
-                SaveAsync().GetAwaiter().GetResult();
+                await _unitOfWork.Repository.AddAsync(new IngredientsInRecipe(CurrentRecipe.Id, ingredientsId[steps], countIngred[steps]));
+                await SaveAsync();
             }
+        }
+        ///<summary>Добавляет инструкцию приготовления в рецепт.</summary>
+        /// <param name="stepsHowCooking">Пошаговая инструкция.</param>
+        public async Task AddedStepsInRecipeAsync(List<string> stepsHowCooking)
+        {
             foreach (var steps in stepsHowCooking)
             {
-                _unitOfWork.Repository.AddAsync(new StepsInRecipe(currentRecipe.Id, steps)).GetAwaiter().GetResult();
-                SaveAsync().GetAwaiter().GetResult();
+                await _unitOfWork.Repository.AddAsync(new StepsInRecipe(CurrentRecipe.Id, steps));
+                await SaveAsync();
             }
-            CurrentRecipe = currentRecipe;
         }
         /// <summary>
         /// Поиск рецепта.

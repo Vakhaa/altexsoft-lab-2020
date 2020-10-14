@@ -11,9 +11,9 @@ namespace HomeTask4.Core.Controllers
         IUnitOfWork _unityOfWork;
         public Category CurrentSubcategory { get; set; }
         private List<int> CurrentSubcategoriesInCategory { get; set; }
-        public async Task<List<Category>> GetSubcategoriesAsync()
+        public List<Category> GetSubcategories()
         {
-            return await Task.Run(()=> _unityOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId != null).ToList());
+            return _unityOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId != null).ToList();
         }
         public SubcategoryController(IUnitOfWork unityOfWork)
         {
@@ -24,17 +24,17 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="categoryId">Идентификатор категории.</param>
         /// <param name="nameSubcategory">Название новой подкатегории.</param>
-        public Category AddSubcategory(int categoryId, string nameSubcategory)
+        public async Task<Category> AddSubcategoryAsync(int categoryId, string nameSubcategory)
         {
-            var subcategories = GetSubcategoriesAsync().GetAwaiter().GetResult();
+            var subcategories = GetSubcategories();
 
             if (!int.TryParse(nameSubcategory, out int result))
             {
                 if (!subcategories.Any(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId))
                 {
                     CurrentSubcategory = new Category(nameSubcategory, categoryId);
-                    _unityOfWork.Repository.AddAsync(CurrentSubcategory).GetAwaiter().GetResult();
-                    SaveAsync().GetAwaiter().GetResult();
+                    await _unityOfWork.Repository.AddAsync(CurrentSubcategory);
+                    await SaveAsync();
                     return CurrentSubcategory;
                 }
                 else
@@ -55,7 +55,7 @@ namespace HomeTask4.Core.Controllers
         {
             if (int.TryParse(str, out int result))
             {
-                CurrentSubcategory = GetSubcategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(s => s.Id == CurrentSubcategoriesInCategory[result - 1]);
+                CurrentSubcategory = GetSubcategories().FirstOrDefault(s => s.Id == CurrentSubcategoriesInCategory[result - 1]);
                 return true;
             }
             else

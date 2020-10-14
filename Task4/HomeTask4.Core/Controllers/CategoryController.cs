@@ -22,9 +22,9 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка категорий в приложение.
         /// </summary>
         /// <returns>Список категорий.</returns>
-        public async Task<List<Category>> GetCategoriesAsync()
+        public List<Category> GetCategories()
         {
-            return await Task.Run(()=>_unitOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId == null).ToList());
+            return _unitOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId == null).ToList();
         }
         /// <summary>
         /// Сохранение категорий.
@@ -36,8 +36,6 @@ namespace HomeTask4.Core.Controllers
         public async Task<Category> AddCategoryAsync(string nameCategory)
         {
            return  await _unitOfWork.Repository.AddAsync(new Category(nameCategory));
-            await _unitOfWork.SaveChangesAsync();
-            return GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(i => i.Name == nameCategory);
         }
         /// <summary>
         /// Поиск категории.
@@ -45,7 +43,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="idCategory">Id категории.</param>
         public void FindCategory(int idCategory)
         {
-             CurrentCategory = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(c => c.Id == idCategory);
+             CurrentCategory = GetCategories().FirstOrDefault(c => c.Id == idCategory);
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
@@ -73,7 +71,7 @@ namespace HomeTask4.Core.Controllers
         {
             if (int.TryParse(str, out int categoryId))
             {
-                var category = GetCategoriesAsync().GetAwaiter().GetResult().FirstOrDefault(category => category.Id == categoryId);
+                var category = GetCategories().FirstOrDefault(category => category.Id == categoryId);
                 if (category != null)
                 {
                     CurrentCategory = category;

@@ -30,12 +30,6 @@ namespace HomeTask4.Core.Entities
         public List<StepsInRecipe> StepsHowCooking { get;}
         #endregion
         public Recipe() { }
-        /// <summary>
-        /// Конструктор.
-        /// </summary>
-        /// <param name="name">Название рецепта.</param>
-        /// <param name="categoryId"> Id категории.</param>
-        /// <param name="description">Описание.</param>
         public Recipe(string name, int categoryId, string description)
         {
             #region  Проверка условий

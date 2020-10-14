@@ -6,16 +6,9 @@ namespace HomeTask4.Core.Entities
 {
     public class Ingredient : BaseEntity
     {
-        /// <summary>
-        /// Название ингредиента.
-        /// </summary>
         public string Name { get; set; }
         public List<IngredientsInRecipe> IngredientsInRecipe { get;}
         public Ingredient() { }
-        /// <summary>
-        /// Конструктор.
-        /// </summary>
-        /// <param name="name">Название ингредиента.</param>
         public Ingredient(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
