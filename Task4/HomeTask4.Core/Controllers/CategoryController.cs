@@ -66,7 +66,6 @@ namespace HomeTask4.Core.Controllers
         /// Установка конкретной категории.
         /// </summary>
         /// <param name="str">Переменная, для ответа пользователя.</param>
-        /// <param name="isExist">Аргумент для выхода с цыкла.</param>
         public void SetCurrentCategory(string str)
         {
             if (int.TryParse(str, out int categoryId))

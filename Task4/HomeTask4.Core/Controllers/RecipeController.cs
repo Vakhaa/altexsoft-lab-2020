@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -53,7 +52,8 @@ namespace HomeTask4.Core.Controllers
             Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
             await _unitOfWork.Repository.AddAsync(r);
             await SaveAsync();
-            CurrentRecipe = GetRecipesAsync().GetAwaiter().GetResult().FirstOrDefault(p => p.Name == r.Name);
+            getRecipes = await GetRecipesAsync();
+            CurrentRecipe = getRecipes.FirstOrDefault(p => p.Name == r.Name);
         }
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
         /// <param name="ingredientsId">Индекс ингредиентов.</param>

@@ -34,12 +34,14 @@ namespace HomeTask4.Core.Controllers
         /// <param name="str">Переменная для обработки ответа пользователя.</param>
         public async Task<int> AddedIfNewAsync(string str)
         {
-            if (!GetIngredientsAsync().GetAwaiter().GetResult().Any(i => i.Name.ToLower() == str.ToLower()))
+            var getIngredients = await GetIngredientsAsync();
+            if (!getIngredients.Any(i => i.Name.ToLower() == str.ToLower()))
             {
                var t = await _unitOfWork.Repository.AddAsync(new Ingredient(str));
                 await SaveAsync();
             }
-            return GetIngredientsAsync().GetAwaiter().GetResult().FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;
+            getIngredients = await GetIngredientsAsync();
+            return getIngredients.FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;
         }
         /// <summary>
         /// Поиск ингредиента.
