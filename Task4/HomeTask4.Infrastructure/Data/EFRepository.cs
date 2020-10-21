@@ -52,10 +52,5 @@ namespace HomeTask4.Infrastructure.Data
         {
             await Task.Run(()=> _context.Set<T>().Update(entity));
         }
-
-        public async Task SaveAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
     }
 }
