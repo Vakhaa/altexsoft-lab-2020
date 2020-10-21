@@ -12,7 +12,7 @@ namespace HomeTask4.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<AppDbContext>(opts => opts.UseSqlServer(connectionString));
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IRepository, EFRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<CategoryController>();
             services.AddScoped<SubcategoryController>();

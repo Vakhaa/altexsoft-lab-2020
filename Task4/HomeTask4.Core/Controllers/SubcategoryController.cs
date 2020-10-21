@@ -11,9 +11,10 @@ namespace HomeTask4.Core.Controllers
         IUnitOfWork _unityOfWork;
         public Category CurrentSubcategory { get; set; }
         private List<int> CurrentSubcategoriesInCategory { get; set; }
-        public List<Category> GetSubcategories()
+        public async Task<List<Category>> GetSubcategoriesAsync()
         {
-            return _unityOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId != null).ToList();
+            var subcategories = await _unityOfWork.Repository.ListAsync<Category>();
+            return subcategories.Where(c => c.ParentId != null).ToList();
         }
         public SubcategoryController(IUnitOfWork unityOfWork)
         {
@@ -26,7 +27,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="nameSubcategory">Название новой подкатегории.</param>
         public async Task<Category> AddSubcategoryAsync(int categoryId, string nameSubcategory)
         {
-            var subcategories = GetSubcategories();
+            var subcategories = await GetSubcategoriesAsync();
 
             if (!int.TryParse(nameSubcategory, out int result))
             {
@@ -50,12 +51,13 @@ namespace HomeTask4.Core.Controllers
         /// <summary>
         /// Метод для выбора пользователем конкретной подкатегории из списка.
         /// </summary>
-        /// <param name="str">Параметр, для обработки ответа пользователя.</param>
-        public bool WalkSubcategories(string str)
+        /// <param name="answer">Параметр, для обработки ответа пользователя.</param>
+        public async Task<bool> WalkSubcategoriesAsync(string answer)
         {
-            if (int.TryParse(str, out int result))
+            if (int.TryParse(answer, out int result))
             {
-                CurrentSubcategory = GetSubcategories().FirstOrDefault(s => s.Id == CurrentSubcategoriesInCategory[result - 1]);
+                var subcategories = await GetSubcategoriesAsync();
+                CurrentSubcategory = subcategories.FirstOrDefault(s => s.Id == CurrentSubcategoriesInCategory[result - 1]);
                 return true;
             }
             else

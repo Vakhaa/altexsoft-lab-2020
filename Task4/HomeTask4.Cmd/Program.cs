@@ -42,7 +42,7 @@ namespace HomeTask4.Cmd
                         switch (result)
                         {
                             case 1:
-                                await BookRecipes(categoryController, subcategoryController, ingredientController, recipeController);
+                                await BookRecipes(categoryController, subcategoryController, recipeController);
                                 break;
                             case 2:
                                 await ProgramSettings(categoryController,subcategoryController,ingredientController,recipeController);
@@ -72,7 +72,7 @@ namespace HomeTask4.Cmd
             }
         }
 
-        public static async Task BookRecipes(CategoryController categoryController, SubcategoryController subcategoryController, IngredientController ingredientController, RecipeController recipeController, string str = "", int count = 0, int iterator = 0,bool back = false)
+        public static async Task BookRecipes(CategoryController categoryController, SubcategoryController subcategoryController, RecipeController recipeController, string answer = "", int count = 0, int iterator = 0,bool back = false)
         {
             while (true)
             {
@@ -83,19 +83,19 @@ namespace HomeTask4.Cmd
                 {
                     case 0:
                         #region Walk into categories
-                        foreach (var category in categoryController.GetCategories())
+                        foreach (var category in await categoryController.GetCategoriesAsync())
                         {
                             Console.WriteLine(++count + ". " + category.Name);
                         }
                         count = 0;
                         Console.WriteLine("Категория (id):");
-                        str = Console.ReadLine();
-                        if (IsExit(str))
+                        answer = Console.ReadLine();
+                        if (IsExit(answer))
                         {
-                            str = "";
+                            answer = "";
                             back = true;
                         }
-                        if (categoryController.WalkCategories(str))
+                        if (await categoryController.WalkCategoriesAsync(answer))
                         {
                             iterator++;
                         }
@@ -104,18 +104,19 @@ namespace HomeTask4.Cmd
                         break;
                     case 1:
                         #region Walk into subcategory
-                        var Subcategories = subcategoryController.GetSubcategories()
-                        .Where(c => c.ParentId == categoryController.CurrentCategory.Id).ToList();
-                        foreach (var subcategory in Subcategories)
+
+                        var subcategories = await subcategoryController.GetSubcategoriesAsync();
+                        foreach (var subcategory in subcategories
+                            .Where(c => c.ParentId == categoryController.CurrentCategory.Id).ToList())
                         {
                             Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             subcategoryController.AddCurrentSubcategoriesInCategory(subcategory.Id);
                         }
                         count = 0;
                         Console.WriteLine("Подкатегория (id):");
-                        str = Console.ReadLine();
-                        IsExit(str);
-                        if (subcategoryController.WalkSubcategories(str))
+                        answer = Console.ReadLine();
+                        IsExit(answer);
+                        if (await subcategoryController.WalkSubcategoriesAsync(answer))
                         {
                             subcategoryController.ClearCurrentSubcategoriesInCategory();
                             iterator++;
@@ -142,9 +143,9 @@ namespace HomeTask4.Cmd
                         }
                         count = 0;
                         Console.WriteLine("Рецепт (id):");
-                        str = Console.ReadLine();
-                        IsExit(str);
-                        if (recipeController.WalkRecipes(listRecipes, str))
+                        answer = Console.ReadLine();
+                        IsExit(answer);
+                        if (recipeController.WalkRecipes(listRecipes, answer))
                         {
                             iterator++;
                         }
@@ -189,7 +190,7 @@ namespace HomeTask4.Cmd
         /// <summary>
         /// Метод для отбражения настроек книги рецептов и поиска элементов книги.
         /// </summary>
-        public static async Task ProgramSettings(CategoryController categoryController,SubcategoryController subcategoryController,IngredientController ingredientController ,RecipeController recipeController ,string str = "", int count = 0)
+        public static async Task ProgramSettings(CategoryController categoryController,SubcategoryController subcategoryController,IngredientController ingredientController ,RecipeController recipeController ,string answer = "", int count = 0)
         {
             while (true)
             {
@@ -219,28 +220,28 @@ namespace HomeTask4.Cmd
                             #region Add subcategory
                             Console.Clear();
 
-                            foreach (var category in categoryController.GetCategories())
+                            foreach (var category in await categoryController.GetCategoriesAsync())
                             {
                                 Console.WriteLine(++count + ". " + category.Name);
                             }
                             count = 0;
 
                             Console.Write("Ввидите категорию блюда (id) : ");
-                            categoryController.SetCurrentCategory(Console.ReadLine()); //Выбираем категорию, в которую хотим добавить подкатегорию     
+                            await categoryController.SetCurrentCategoryAsync(Console.ReadLine()); //Выбираем категорию, в которую хотим добавить подкатегорию     
 
                             Console.Clear();
 
-                            var Subcategories = subcategoryController.GetSubcategories()
-                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id);
-                            foreach (var subcategory in Subcategories)
+                            var subcategories = await subcategoryController.GetSubcategoriesAsync();
+                            foreach (var subcategory in subcategories
+                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id))
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             }
                             count = 0;
 
                             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-                            var temp = await subcategoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
-                            if (temp == null) Console.WriteLine("Такая подкатегория уже есть.");
+                            var newSubcategory = await subcategoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
+                            if (newSubcategory == null) Console.WriteLine("Такая подкатегория уже есть.");
                             #endregion
                             break;
                         case 3: //Добавления рецепта
@@ -250,19 +251,19 @@ namespace HomeTask4.Cmd
                             Console.WriteLine("Введите название рецепта: ");
                             var name = Console.ReadLine();
 
-                            foreach (var category in categoryController.GetCategories())
+                            foreach (var category in await categoryController.GetCategoriesAsync())
                             {
                                 Console.WriteLine(++count + ". " + category.Name);
                             }
                             count = 0;
                             Console.Write("Ввидите категорию блюда (id) : ");
-                            categoryController.SetCurrentCategory(Console.ReadLine());
+                            await categoryController.SetCurrentCategoryAsync(Console.ReadLine());
 
                             Console.Clear();
 
-                            var tempSubcategories = subcategoryController.GetSubcategories()
-                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id);
-                            foreach (var subcategory in tempSubcategories)
+                            var tempSubcategories = await subcategoryController.GetSubcategoriesAsync();
+                            foreach (var subcategory in tempSubcategories
+                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id))
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             }
@@ -274,7 +275,7 @@ namespace HomeTask4.Cmd
                                 throw new ArgumentException(nameof(subcategoryNew), "Null subcategoryNew in new Recipe");
                             }
 
-                            var subcategories = subcategoryController.CurrentSubcategory;
+                            var currentSubcategory = subcategoryController.CurrentSubcategory;
                             Console.Clear();
 
                             Console.WriteLine("Введите описание блюда: ");
@@ -328,10 +329,10 @@ namespace HomeTask4.Cmd
                             for (int i = 1; i <= countSteps; i++)
                             {
                                 Console.WriteLine($"Введите описания шага {i} : ");
-                                str = Console.ReadLine();
-                                stepsHowCooking.Add(str);
+                                answer = Console.ReadLine();
+                                stepsHowCooking.Add(answer);
                             }
-                            await recipeController.AddRecipeAsync(name, subcategories.Id, description);
+                            await recipeController.CreateRecipeAsync(name, currentSubcategory.Id, description);
                             await recipeController.AddedIngredientsInRecipeAsync(ingredientsId, countIngred);
                             await recipeController.AddedStepsInRecipeAsync(stepsHowCooking);
                             await recipeController.SaveAsync();
@@ -380,11 +381,11 @@ namespace HomeTask4.Cmd
                                         }
 
                                         Console.Write("Введите id рецeпта : ");
-                                        str = Console.ReadLine();
-                                        if (str.ToLower() == "bye" || str.ToLower() == "back") return;
-                                        if (!int.TryParse(str, out int recipeId)) return;
+                                        answer = Console.ReadLine();
+                                        if (answer.ToLower() == "bye" || answer.ToLower() == "back") return;
+                                        if (!int.TryParse(answer, out int recipeId)) return;
 
-                                        recipeController.CurrentRecipe = recipeController.FindRecipe(recipeId);
+                                        recipeController.CurrentRecipe = await recipeController.FindRecipeAsync(recipeId);
 
                                         if (!string.IsNullOrWhiteSpace(recipeController.CurrentRecipe.Name))
                                         {
@@ -502,11 +503,11 @@ namespace HomeTask4.Cmd
         /// <summary>
         /// Метод для обработки выхода с текущей позиций или с программы.
         /// </summary>
-        /// <param name="str">Строка для обработки ответа пользователя.</param>
+        /// <param name="answer">Строка для обработки ответа пользователя.</param>
         /// <returns>Истина, хочет ли выйти пользователь.</returns>
-        public static bool IsExit(string str)
+        public static bool IsExit(string answer)
         {
-            switch (str.ToLower())
+            switch (answer.ToLower())
             {
                 case "bye":
                     Environment.Exit(0);

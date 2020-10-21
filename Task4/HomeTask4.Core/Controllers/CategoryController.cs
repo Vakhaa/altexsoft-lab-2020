@@ -22,9 +22,10 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка категорий в приложение.
         /// </summary>
         /// <returns>Список категорий.</returns>
-        public List<Category> GetCategories()
+        public async Task<List<Category>> GetCategoriesAsync()
         {
-            return _unitOfWork.Repository.ListAsync<Category>().GetAwaiter().GetResult().Where(c => c.ParentId == null).ToList();
+            var categories = await _unitOfWork.Repository.ListAsync<Category>();
+            return categories.Where(c => c.ParentId == null).ToList();
         }
         /// <summary>
         /// Сохранение категорий.
@@ -41,20 +42,21 @@ namespace HomeTask4.Core.Controllers
         /// Поиск категории.
         /// </summary>
         /// <param name="idCategory">Id категории.</param>
-        public void FindCategory(int idCategory)
+        public async Task FindCategoryAsync(int idCategory)
         {
-             CurrentCategory = GetCategories().FirstOrDefault(c => c.Id == idCategory);
+            var getCategory = await GetCategoriesAsync();
+            CurrentCategory = getCategory.FirstOrDefault(c => c.Id == idCategory);
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
         /// </summary>
-        /// <param name="str">Переменная, для ответа пользователя.</param>
+        /// <param name="answer">Переменная, для ответа пользователя.</param>
         /// <returns>Истина, если пользователь выходит, то он выходит в главное меню.</returns>
-        public bool WalkCategories(string str)
+        public async Task<bool> WalkCategoriesAsync(string answer)
         {
-            if (int.TryParse(str, out int result))
+            if (int.TryParse(answer, out int result))
             {
-                FindCategory(result);
+                await FindCategoryAsync(result);
                 return true;
             }
             else
@@ -65,12 +67,13 @@ namespace HomeTask4.Core.Controllers
         /// <summary>
         /// Установка конкретной категории.
         /// </summary>
-        /// <param name="str">Переменная, для ответа пользователя.</param>
-        public void SetCurrentCategory(string str)
+        /// <param name="answer">Переменная, для ответа пользователя.</param>
+        public async Task SetCurrentCategoryAsync(string answer)
         {
-            if (int.TryParse(str, out int categoryId))
+            if (int.TryParse(answer, out int categoryId))
             {
-                var category = GetCategories().FirstOrDefault(category => category.Id == categoryId);
+                var getCategories = await GetCategoriesAsync();
+                var category = getCategories.FirstOrDefault(category => category.Id == categoryId);
                 if (category != null)
                 {
                     CurrentCategory = category;

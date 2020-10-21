@@ -37,7 +37,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="nameRecipe">Название рецепта.</param>
         /// <param name="subcategoriesId">Индекс подкатегории рецепта.</param>
         /// <param name="description">Описание.</param>
-        public async Task AddRecipeAsync(string nameRecipe, int subcategoriesId, string description)
+        public async Task CreateRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
             var getRecipes = await GetRecipesAsync();
             foreach (var recipe in getRecipes)
@@ -81,19 +81,20 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="recipesId">Индекс рецепта.</param>
         /// <return>Рецепт.</return>
-        public Recipe FindRecipe(int recipesId)
+        public async Task<Recipe> FindRecipeAsync(int recipesId)
         {
-            return GetRecipesAsync().GetAwaiter().GetResult().FirstOrDefault(r => r.Id == recipesId);
+            var recipes = await  GetRecipesAsync();
+            return recipes.FirstOrDefault(r => r.Id == recipesId);
         }
         
         /// <summary>
         /// Метод для выбора пользователем конкретного рецепта из списка.
         /// </summary>
         /// <param name="listRecipes">Список рецептов активной подкатегории.</param>
-        /// <param name="str">Переменная для обработки ответа пользователя.</param>
-        public bool WalkRecipes(List<Recipe> listRecipes, string str)
+        /// <param name="answer">Переменная для обработки ответа пользователя.</param>
+        public bool WalkRecipes(List<Recipe> listRecipes, string answer)
         {
-            if (int.TryParse(str, out int result))
+            if (int.TryParse(answer, out int result))
             {
                 CurrentRecipe = listRecipes[result - 1];
                 return true;

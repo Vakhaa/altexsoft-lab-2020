@@ -4,20 +4,20 @@ using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel;
 using HomeTask4.SharedKernel.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeTask4.Infrastructure.Data
 {
-    public class Repository : IRepository
+    public class EFRepository : IRepository
     {
         private AppDbContext _context;
-        public Repository(AppDbContext context)
+        public EFRepository(AppDbContext context)
         {
             _context = context;
         }
         public  async Task<T> AddAsync<T>(T entity) where T : BaseEntity
         {
-            await Task.Run(() => _context.Set<T>().Add(entity));
-            return await Task.Run(()=> entity);
+            return await Task.FromResult( _context.Set<T>().Add(entity).Entity);
         }
 
         public async Task DeleteAsync<T>(T entity) where T : BaseEntity
@@ -27,20 +27,24 @@ namespace HomeTask4.Infrastructure.Data
 
         public async Task<T> GetByIdAsync<T>(int id) where T : BaseEntity
         {
-            
-            return await Task.Run(() => _context.Set<T>().FirstOrDefault( item => item.Id == id));
+            return await _context.Set<T>().FirstOrDefaultAsync(item => item.Id == id);
         }
 
         public async Task<List<T>> ListAsync<T>() where T : BaseEntity
         {
             if(typeof(T) == typeof(IngredientsInRecipe))
-                return await Task.Run(() => _context.Set<T>().ToList());
-            return await Task.Run(()=> _context.Set<T>().OrderBy(i => i.Id).ToList());
+                return await _context.Set<T>().ToListAsync();
+            return await _context.Set<T>().OrderBy(i => i.Id).ToListAsync();
         }
 
         public async Task UpdateAsync<T>(T entity) where T : BaseEntity
         {
             await Task.Run(()=> _context.Set<T>().Update(entity));
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

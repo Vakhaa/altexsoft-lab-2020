@@ -12,9 +12,7 @@ namespace HomeTask4.Infrastructure.Data.Config
 
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             builder.ToTable("Recipes");
-
             builder.HasKey(x => x.Id);
-
             builder.HasMany(x=>x.Ingredients).WithOne(x=>x.Recipe).HasForeignKey(x => x.RecipeId);
             builder.HasMany(x => x.StepsHowCooking).WithOne(x => x.Recipe).HasForeignKey(x => x.RecipeId);
         }

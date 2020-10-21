@@ -31,17 +31,17 @@ namespace HomeTask4.Core.Controllers
         /// <summary>
         /// Добавляет ингредиенты и возвращает его.
         /// </summary
-        /// <param name="str">Переменная для обработки ответа пользователя.</param>
-        public async Task<int> AddedIfNewAsync(string str)
+        /// <param name="answer">Переменная для обработки ответа пользователя.</param>
+        public async Task<int> AddedIfNewAsync(string answer)
         {
             var getIngredients = await GetIngredientsAsync();
-            if (!getIngredients.Any(i => i.Name.ToLower() == str.ToLower()))
+            if (!getIngredients.Any(i => i.Name.ToLower() == answer.ToLower()))
             {
-               var t = await _unitOfWork.Repository.AddAsync(new Ingredient(str));
+               var t = await _unitOfWork.Repository.AddAsync(new Ingredient(answer));
                 await SaveAsync();
             }
             getIngredients = await GetIngredientsAsync();
-            return getIngredients.FirstOrDefault(i => i.Name.ToLower() == str.ToLower()).Id;
+            return getIngredients.FirstOrDefault(i => i.Name.ToLower() == answer.ToLower()).Id;
         }
         /// <summary>
         /// Поиск ингредиента.
