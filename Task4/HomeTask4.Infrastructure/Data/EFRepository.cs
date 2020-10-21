@@ -15,16 +15,16 @@ namespace HomeTask4.Infrastructure.Data
         {
             _context = context;
         }
-        public  async Task<T> AddAsync<T>(T entity) where T : BaseEntity
+        public async Task<T> AddAsync<T>(T entity) where T : BaseEntity
         {
-            var result = await Task.FromResult(_context.Set<T>().Add(entity).Entity);
+            var result = _context.Set<T>().Add(entity);
             await _context.SaveChangesAsync();
-            return result;
+            return result.Entity;
         }
 
-        public async Task DeleteAsync<T>(T entity) where T : BaseEntity
+        public void Delete<T>(T entity) where T : BaseEntity
         {
-            await Task.Run(()=> _context.Set<T>().Remove(entity));
+            _context.Set<T>().Remove(entity);
         }
 
         public async Task<T> GetByIdAsync<T>(int id) where T : BaseEntity
@@ -34,23 +34,16 @@ namespace HomeTask4.Infrastructure.Data
 
         public async Task<List<T>> ListAsync<T>() where T : BaseEntity
         {
-            if(typeof(T) == typeof(Recipe))
-            {
-                await _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients).ToListAsync();
-                await _context.Set<IngredientsInRecipe>().Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe).ToListAsync();
-                await _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking).ToListAsync();
-            }
-            if (typeof(T) == typeof(Category))
-            {
-                await _context.Set<Category>().Include(i => i.Parent).Where(i=>i.ParentId==null).ToListAsync();
-                await _context.Set<Category>().Include(i => i.Children).Where(i => i.ParentId != null).ToListAsync();
-            }
+            await _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients)
+                .Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe).ToListAsync();
+            await _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking).ToListAsync();
+
             return await _context.Set<T>().OrderBy(i => i.Id).ToListAsync();
         }
 
-        public async Task UpdateAsync<T>(T entity) where T : BaseEntity
+        public void Update<T>(T entity) where T : BaseEntity
         {
-            await Task.Run(()=> _context.Set<T>().Update(entity));
+            _context.Set<T>().Update(entity);
         }
     }
 }

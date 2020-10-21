@@ -43,10 +43,7 @@ namespace HomeTask4.Core.Controllers
         public async Task<Ingredient> FindAndGetIngredientAsync(string nameIngredient)
         {
             var ingredients = await GetIngredientsAsync();
-
-            if (ingredients.Any(ingr => ingr.Name.ToLower() == nameIngredient.ToLower()))
-                return ingredients.FirstOrDefault(ingr => ingr.Name.ToLower() == nameIngredient.ToLower());
-            return null;
+            return ingredients.FirstOrDefault(ingr => ingr.Name.ToLower() == nameIngredient.ToLower());
         }
     }
 }

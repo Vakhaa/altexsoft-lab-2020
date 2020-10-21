@@ -4,6 +4,7 @@ namespace HomeTask4.SharedKernel.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRepository Repository{ get; } 
+        IRepository Repository{ get; }
+        Task SaveAsync();
     }
 }
