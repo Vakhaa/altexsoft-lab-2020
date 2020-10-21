@@ -27,7 +27,6 @@ namespace HomeTask4.Cmd
             var ingredientController = host.Services.GetRequiredService<IngredientController>();
             var recipeController = host.Services.GetRequiredService<RecipeController>();
 
-            await ingredientController.GetIngredientsAsync();
             while (true) //главное меню программы
             {
                 try

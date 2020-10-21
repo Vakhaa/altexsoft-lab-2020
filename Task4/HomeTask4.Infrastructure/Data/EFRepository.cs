@@ -5,6 +5,7 @@ using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel;
 using HomeTask4.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace HomeTask4.Infrastructure.Data
 {
@@ -32,8 +33,12 @@ namespace HomeTask4.Infrastructure.Data
 
         public async Task<List<T>> ListAsync<T>() where T : BaseEntity
         {
-            if(typeof(T) == typeof(IngredientsInRecipe))
-                return await _context.Set<T>().ToListAsync();
+            if(typeof(T) == typeof(Recipe))
+            {
+                await _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients).ToListAsync();
+                await _context.Set<IngredientsInRecipe>().Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe).ToListAsync();
+                await _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking).ToListAsync();
+            }
             return await _context.Set<T>().OrderBy(i => i.Id).ToListAsync();
         }
 

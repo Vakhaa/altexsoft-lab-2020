@@ -20,8 +20,6 @@ namespace HomeTask4.Core.Controllers
         /// <returns>Список рецептов.</returns>
         public async Task<List<Recipe>> GetRecipesAsync()
         {
-            await _unitOfWork.Repository.ListAsync<IngredientsInRecipe>();
-            await _unitOfWork.Repository.ListAsync<StepsInRecipe>();
             return await _unitOfWork.Repository.ListAsync<Recipe>();
         }
         /// <summary>
