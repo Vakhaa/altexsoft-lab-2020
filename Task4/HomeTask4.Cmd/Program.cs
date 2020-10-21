@@ -23,7 +23,6 @@ namespace HomeTask4.Cmd
             var logger = host.Services.GetRequiredService<ILogger<Program>>();
             var unitOfWork = host.Services.GetRequiredService<IUnitOfWork>();
             var categoryController = host.Services.GetRequiredService<CategoryController>();
-            var subcategoryController = host.Services.GetRequiredService<SubcategoryController>();
             var ingredientController = host.Services.GetRequiredService<IngredientController>();
             var recipeController = host.Services.GetRequiredService<RecipeController>();
 
@@ -41,10 +40,10 @@ namespace HomeTask4.Cmd
                         switch (result)
                         {
                             case 1:
-                                await BookRecipes(categoryController, subcategoryController, recipeController);
+                                await BookRecipes(categoryController, recipeController);
                                 break;
                             case 2:
-                                await ProgramSettings(categoryController,subcategoryController,ingredientController,recipeController);
+                                await ProgramSettings(categoryController,ingredientController,recipeController);
                                 break;
                             case 3:
                                 logger.LogInformation("Have a nice day! =)");
@@ -70,7 +69,7 @@ namespace HomeTask4.Cmd
             }
         }
 
-        public static async Task BookRecipes(CategoryController categoryController, SubcategoryController subcategoryController, RecipeController recipeController, string answer = "", int count = 0, int iterator = 0,bool back = false)
+        public static async Task BookRecipes(CategoryController categoryController, RecipeController recipeController, string answer = "", int count = 0, int iterator = 0,bool back = false)
         {
             while (true)
             {
@@ -103,20 +102,17 @@ namespace HomeTask4.Cmd
                     case 1:
                         #region Walk into subcategory
 
-                        var subcategories = await subcategoryController.GetSubcategoriesAsync();
-                        foreach (var subcategory in subcategories
-                            .Where(c => c.ParentId == categoryController.CurrentCategory.Id).ToList())
+                        var subcategories = categoryController.CurrentCategory.Children;
+                        foreach (var subcategory in subcategories)
                         {
                             Console.WriteLine($"{++count}." + $" {subcategory.Name}");
-                            subcategoryController.AddCurrentSubcategoriesInCategory(subcategory.Id);
                         }
                         count = 0;
                         Console.WriteLine("Подкатегория (id):");
                         answer = Console.ReadLine();
                         IsExit(answer);
-                        if (await subcategoryController.WalkSubcategoriesAsync(answer))
+                        if (await categoryController.WalkSubcategoriesAsync(answer))
                         {
-                            subcategoryController.ClearCurrentSubcategoriesInCategory();
                             iterator++;
                         }
                         else
@@ -128,15 +124,15 @@ namespace HomeTask4.Cmd
                     #endregion
                     case 2:
                         #region Walk into Recipes
-                        var getRecipes = await recipeController.GetRecipesAsync();
+                        var recipes = await recipeController.GetRecipesAsync();
                         var listRecipes = new List<Recipe>(); // Список рецептов активной подкатегории
 
-                        for (int recipe = 0; recipe < getRecipes.Count; recipe++)
+                        for (int recipe = 0; recipe < recipes.Count; recipe++)
                         {
-                            if (getRecipes[recipe].Category.Id == subcategoryController.CurrentSubcategory.Id)
+                            if (recipes[recipe].Category.Id == categoryController.CurrentSubcategory.Id)
                             {
-                                Console.WriteLine($"{++count}. {getRecipes[recipe].Name}");
-                                listRecipes.Add(getRecipes[recipe]);
+                                Console.WriteLine($"{++count}. {recipes[recipe].Name}");
+                                listRecipes.Add(recipes[recipe]);
                             }
                         }
                         count = 0;
@@ -188,7 +184,7 @@ namespace HomeTask4.Cmd
         /// <summary>
         /// Метод для отбражения настроек книги рецептов и поиска элементов книги.
         /// </summary>
-        public static async Task ProgramSettings(CategoryController categoryController,SubcategoryController subcategoryController,IngredientController ingredientController ,RecipeController recipeController ,string answer = "", int count = 0)
+        public static async Task ProgramSettings(CategoryController categoryController,IngredientController ingredientController ,RecipeController recipeController ,string answer = "", int count = 0)
         {
             while (true)
             {
@@ -229,16 +225,15 @@ namespace HomeTask4.Cmd
 
                             Console.Clear();
 
-                            var subcategories = await subcategoryController.GetSubcategoriesAsync();
-                            foreach (var subcategory in subcategories
-                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id))
+                            var subcategories = categoryController.CurrentCategory.Children;
+                            foreach (var subcategory in subcategories)
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             }
                             count = 0;
 
                             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-                            var newSubcategory = await subcategoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
+                            var newSubcategory = await categoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
                             if (newSubcategory == null) Console.WriteLine("Такая подкатегория уже есть.");
                             #endregion
                             break;
@@ -259,21 +254,20 @@ namespace HomeTask4.Cmd
 
                             Console.Clear();
 
-                            var tempSubcategories = await subcategoryController.GetSubcategoriesAsync();
-                            foreach (var subcategory in tempSubcategories
-                                .Where(c => c.ParentId == categoryController.CurrentCategory.Id))
+                            var tempSubcategories = categoryController.CurrentCategory.Children;
+                            foreach (var subcategory in tempSubcategories)
                             {
                                 Console.WriteLine($"{++count}." + $" {subcategory.Name}");
                             }
                             count = 0;
                             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-                            var subcategoryNew = await subcategoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());
+                            var subcategoryNew = await categoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());
                             if (subcategoryNew == null)
                             {
                                 throw new ArgumentException(nameof(subcategoryNew), "Null subcategoryNew in new Recipe");
                             }
 
-                            var currentSubcategory = subcategoryController.CurrentSubcategory;
+                            var currentSubcategory = categoryController.CurrentSubcategory;
                             Console.Clear();
 
                             Console.WriteLine("Введите описание блюда: ");
@@ -302,10 +296,12 @@ namespace HomeTask4.Cmd
                             Console.Clear();
 
                             List<string> countIngred = new List<string>();
+                            var tempIngredients = new List<Ingredient>();
                             for (int id = 0; id < ingredientsId.Count; id++)
                             {
+                                tempIngredients = await ingredientController.GetIngredientsAsync();
                                 Console.WriteLine($"Введите колличество для " +
-                                    $"\"{ingredientController.GetIngredientsAsync().GetAwaiter().GetResult().First(i => i.Id == ingredientsId[id]).Name}\": ");
+                                    $"\"{tempIngredients.First(i => i.Id == ingredientsId[id]).Name}\": ");
                                 countIngred.Add(Console.ReadLine());
                             }
 

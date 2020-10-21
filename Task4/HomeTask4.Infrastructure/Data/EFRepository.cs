@@ -40,6 +40,11 @@ namespace HomeTask4.Infrastructure.Data
                 await _context.Set<IngredientsInRecipe>().Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe).ToListAsync();
                 await _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking).ToListAsync();
             }
+            if (typeof(T) == typeof(Category))
+            {
+                await _context.Set<Category>().Include(i => i.Parent).Where(i=>i.ParentId==null).ToListAsync();
+                await _context.Set<Category>().Include(i => i.Children).Where(i => i.ParentId != null).ToListAsync();
+            }
             return await _context.Set<T>().OrderBy(i => i.Id).ToListAsync();
         }
 

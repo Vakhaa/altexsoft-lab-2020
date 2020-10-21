@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HomeTask4.SharedKernel;
 
 namespace HomeTask4.Core.Entities
@@ -7,6 +8,8 @@ namespace HomeTask4.Core.Entities
     {
         public string Name { get; set; }
         public int? ParentId { get; set; }
+        public Category Parent { get; set; }
+        public List<Category> Children { get; set; }
         public Category() { }
         public Category( string name, int parentId=0)
         {

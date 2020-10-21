@@ -15,7 +15,6 @@ namespace HomeTask4.Infrastructure.Extensions
             services.AddScoped<IRepository, EFRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<CategoryController>();
-            services.AddScoped<SubcategoryController>();
             services.AddScoped<IngredientController>();
             services.AddScoped<RecipeController>();
             return services;

@@ -13,7 +13,8 @@ namespace HomeTask4.Core.Controllers
         /// Активная категория.
         /// </summary>
         public Category CurrentCategory { get; set; }
-        
+        public Category CurrentSubcategory { get; set; }
+
         public CategoryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -26,6 +27,38 @@ namespace HomeTask4.Core.Controllers
         {
             var categories = await _unitOfWork.Repository.ListAsync<Category>();
             return categories.Where(c => c.ParentId == null).ToList();
+        }
+        public async Task<List<Category>> GetSubcategoriesAsync()
+        {
+            var subcategories = await _unitOfWork.Repository.ListAsync<Category>();
+            return subcategories.Where(c => c.ParentId != null).ToList();
+        }
+        /// <summary>
+        /// Добавления новой подкатегории.
+        /// </summary>
+        /// <param name="categoryId">Идентификатор категории.</param>
+        /// <param name="nameSubcategory">Название новой подкатегории.</param>
+        public async Task<Category> AddSubcategoryAsync(int categoryId, string nameSubcategory)
+        {
+            var subcategories = await GetSubcategoriesAsync();
+
+            if (!int.TryParse(nameSubcategory, out int result))
+            {
+                if (!subcategories.Any(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId))
+                {
+                    CurrentSubcategory = new Category(nameSubcategory, categoryId);
+                    await _unitOfWork.Repository.AddAsync(CurrentSubcategory);
+                    return CurrentSubcategory;
+                }
+                else
+                {
+                    return CurrentSubcategory = subcategories.FirstOrDefault(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId);
+                }
+            }
+            else
+            {
+                return null;
+            }
         }
         public async Task<Category> AddCategoryAsync(string nameCategory)
         {
@@ -50,6 +83,22 @@ namespace HomeTask4.Core.Controllers
             if (int.TryParse(answer, out int result))
             {
                 await FindCategoryAsync(result);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Метод для выбора пользователем конкретной подкатегории из списка.
+        /// </summary>
+        /// <param name="answer">Параметр, для обработки ответа пользователя.</param>
+        public async Task<bool> WalkSubcategoriesAsync(string answer)
+        {
+            if (int.TryParse(answer, out int result))
+            {
+                CurrentSubcategory = CurrentCategory.Children[result-1];
                 return true;
             }
             else
