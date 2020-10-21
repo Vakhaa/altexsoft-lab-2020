@@ -4,7 +4,6 @@ namespace HomeTask4.Core.Entities
 {
     public class IngredientsInRecipe : BaseEntity
     {
-        private int  Id {get;}
         public int RecipeId { get; set; }
         public int IngredientId { get; set; }
         public string CountIngredient { get; set; }

@@ -11,6 +11,7 @@ namespace HomeTask4.Infrastructure.Data.Config
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             builder.ToTable("IngredientsInRecipe");
+            builder.Ignore("Id");
             builder.HasKey(x => new { x.RecipeId,x.IngredientId });
             builder.HasOne(x => x.Recipe).WithMany(x => x.Ingredients).HasForeignKey(x => x.RecipeId);
             builder.HasOne(x => x.Ingredient).WithMany(x => x.IngredientsInRecipe).HasForeignKey(x => x.IngredientId);
