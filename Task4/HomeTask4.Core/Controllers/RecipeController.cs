@@ -23,22 +23,15 @@ namespace HomeTask4.Core.Controllers
             return await _unitOfWork.Repository.ListAsync<Recipe>();
         }
         /// <summary>
-        /// Сохранение рецепта.
-        /// </summary>
-        public async Task SaveAsync()
-        {
-            await _unitOfWork.SaveChangesAsync();
-        }
-        /// <summary>
-        /// Добавить рецепт.
+        /// Добавить новый рецепт.
         /// </summary>
         /// <param name="nameRecipe">Название рецепта.</param>
         /// <param name="subcategoriesId">Индекс подкатегории рецепта.</param>
         /// <param name="description">Описание.</param>
         public async Task CreateRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
-            var getRecipes = await GetRecipesAsync();
-            foreach (var recipe in getRecipes)
+            var recipes = await GetRecipesAsync();
+            foreach (var recipe in recipes)
             {
                 if (recipe.Name == nameRecipe)
                 {
@@ -49,9 +42,8 @@ namespace HomeTask4.Core.Controllers
 
             Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
             await _unitOfWork.Repository.AddAsync(r);
-            await SaveAsync();
-            getRecipes = await GetRecipesAsync();
-            CurrentRecipe = getRecipes.FirstOrDefault(p => p.Name == r.Name);
+            recipes = await GetRecipesAsync();
+            CurrentRecipe = recipes.FirstOrDefault(p => p.Name == r.Name);
         }
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
         /// <param name="ingredientsId">Индекс ингредиентов.</param>
@@ -61,7 +53,6 @@ namespace HomeTask4.Core.Controllers
             for (int steps = 0; steps < ingredientsId.Count; steps++)
             {
                 await _unitOfWork.Repository.AddAsync(new IngredientsInRecipe(CurrentRecipe.Id, ingredientsId[steps], countIngred[steps]));
-                await SaveAsync();
             }
         }
         ///<summary>Добавляет инструкцию приготовления в рецепт.</summary>
@@ -71,7 +62,6 @@ namespace HomeTask4.Core.Controllers
             foreach (var steps in stepsHowCooking)
             {
                 await _unitOfWork.Repository.AddAsync(new StepsInRecipe(CurrentRecipe.Id, steps));
-                await SaveAsync();
             }
         }
         /// <summary>

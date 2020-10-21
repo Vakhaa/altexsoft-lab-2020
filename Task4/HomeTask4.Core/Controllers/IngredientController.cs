@@ -22,26 +22,18 @@ namespace HomeTask4.Core.Controllers
             return _unitOfWork.Repository.ListAsync<Ingredient>();
         }
         /// <summary>
-        /// Сохранение ингредиента.
-        /// </summary>
-        public async Task SaveAsync()
-        {
-            await _unitOfWork.SaveChangesAsync();
-        }
-        /// <summary>
         /// Добавляет ингредиенты и возвращает его.
         /// </summary
         /// <param name="answer">Переменная для обработки ответа пользователя.</param>
         public async Task<int> AddedIfNewAsync(string answer)
         {
-            var getIngredients = await GetIngredientsAsync();
-            if (!getIngredients.Any(i => i.Name.ToLower() == answer.ToLower()))
+            var ingredients = await GetIngredientsAsync();
+            if (!ingredients.Any(i => i.Name.ToLower() == answer.ToLower()))
             {
                var t = await _unitOfWork.Repository.AddAsync(new Ingredient(answer));
-                await SaveAsync();
             }
-            getIngredients = await GetIngredientsAsync();
-            return getIngredients.FirstOrDefault(i => i.Name.ToLower() == answer.ToLower()).Id;
+            ingredients = await GetIngredientsAsync();
+            return ingredients.FirstOrDefault(i => i.Name.ToLower() == answer.ToLower()).Id;
         }
         /// <summary>
         /// Поиск ингредиента.

@@ -35,7 +35,6 @@ namespace HomeTask4.Core.Controllers
                 {
                     CurrentSubcategory = new Category(nameSubcategory, categoryId);
                     await _unityOfWork.Repository.AddAsync(CurrentSubcategory);
-                    await SaveAsync();
                     return CurrentSubcategory;
                 }
                 else
@@ -84,10 +83,6 @@ namespace HomeTask4.Core.Controllers
         public List<int> GetCurrentSubcategoriesInCategory()
         {
             return CurrentSubcategoriesInCategory;
-        }
-        public async Task SaveAsync()
-        {
-           await _unityOfWork.SaveChangesAsync();
         }
     }
 }

@@ -9,7 +9,6 @@ namespace HomeTask4.Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Recipe> builder)
         {
-
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             builder.ToTable("Recipes");
             builder.HasKey(x => x.Id);

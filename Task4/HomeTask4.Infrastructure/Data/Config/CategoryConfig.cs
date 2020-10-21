@@ -9,7 +9,6 @@ namespace HomeTask4.Infrastructure.Data.Config
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-
             if (builder == null) throw new ArgumentNullException(nameof(builder));
             builder.ToTable("Categories");
             builder.HasKey(x => x.Id);

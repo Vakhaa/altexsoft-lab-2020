@@ -27,13 +27,6 @@ namespace HomeTask4.Core.Controllers
             var categories = await _unitOfWork.Repository.ListAsync<Category>();
             return categories.Where(c => c.ParentId == null).ToList();
         }
-        /// <summary>
-        /// Сохранение категорий.
-        /// </summary>
-        public async Task SaveAsync()
-        {
-            await _unitOfWork.SaveChangesAsync();
-        }
         public async Task<Category> AddCategoryAsync(string nameCategory)
         {
            return  await _unitOfWork.Repository.AddAsync(new Category(nameCategory));
@@ -44,8 +37,8 @@ namespace HomeTask4.Core.Controllers
         /// <param name="idCategory">Id категории.</param>
         public async Task FindCategoryAsync(int idCategory)
         {
-            var getCategory = await GetCategoriesAsync();
-            CurrentCategory = getCategory.FirstOrDefault(c => c.Id == idCategory);
+            var categories = await GetCategoriesAsync();
+            CurrentCategory = categories.FirstOrDefault(c => c.Id == idCategory);
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
@@ -72,8 +65,8 @@ namespace HomeTask4.Core.Controllers
         {
             if (int.TryParse(answer, out int categoryId))
             {
-                var getCategories = await GetCategoriesAsync();
-                var category = getCategories.FirstOrDefault(category => category.Id == categoryId);
+                var categories = await GetCategoriesAsync();
+                var category = categories.FirstOrDefault(category => category.Id == categoryId);
                 if (category != null)
                 {
                     CurrentCategory = category;

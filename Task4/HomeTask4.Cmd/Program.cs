@@ -48,7 +48,6 @@ namespace HomeTask4.Cmd
                                 break;
                             case 3:
                                 logger.LogInformation("Have a nice day! =)");
-                                await unitOfWork.SaveChangesAsync();
                                 Environment.Exit(0);
                                 break;
                             default:
@@ -334,7 +333,6 @@ namespace HomeTask4.Cmd
                             await recipeController.CreateRecipeAsync(name, currentSubcategory.Id, description);
                             await recipeController.AddedIngredientsInRecipeAsync(ingredientsId, countIngred);
                             await recipeController.AddedStepsInRecipeAsync(stepsHowCooking);
-                            await recipeController.SaveAsync();
                             #endregion
                             break;
                         case 4:

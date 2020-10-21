@@ -5,7 +5,6 @@ using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel;
 using HomeTask4.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace HomeTask4.Infrastructure.Data
 {
@@ -18,7 +17,9 @@ namespace HomeTask4.Infrastructure.Data
         }
         public  async Task<T> AddAsync<T>(T entity) where T : BaseEntity
         {
-            return await Task.FromResult( _context.Set<T>().Add(entity).Entity);
+            var result = await Task.FromResult(_context.Set<T>().Add(entity).Entity);
+            await _context.SaveChangesAsync();
+            return result;
         }
 
         public async Task DeleteAsync<T>(T entity) where T : BaseEntity
