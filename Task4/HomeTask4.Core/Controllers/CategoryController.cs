@@ -13,11 +13,13 @@ namespace HomeTask4.Core.Controllers
         /// Активная категория.
         /// </summary>
         public Category CurrentCategory { get; set; }
-        public Category CurrentSubcategory { get; set; }
 
-        public CategoryController(IUnitOfWork unitOfWork)
+        public int LevelImmersion;
+
+        public  CategoryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            LevelImmersion = 0;
         }
         /// <summary>
         /// Загрузка списка категорий в приложение.
@@ -28,31 +30,35 @@ namespace HomeTask4.Core.Controllers
             var categories = await _unitOfWork.Repository.ListAsync<Category>();
             return categories.Where(c => c.ParentId == null).ToList();
         }
-        public async Task<List<Category>> GetSubcategoriesAsync()
+        public async Task<List<Category>> GetAllChildAsync()
         {
             var subcategories = await _unitOfWork.Repository.ListAsync<Category>();
             return subcategories.Where(c => c.ParentId != null).ToList();
         }
+        public async Task<List<Category>> GetCurrentChildAsync()
+        {
+            var subcategories = await _unitOfWork.Repository.ListAsync<Category>();
+            return subcategories.Where(c => c.ParentId == CurrentCategory.Id).ToList();
+        }
+
         /// <summary>
         /// Добавления новой подкатегории.
         /// </summary>
         /// <param name="categoryId">Идентификатор категории.</param>
         /// <param name="nameSubcategory">Название новой подкатегории.</param>
-        public async Task<Category> AddSubcategoryAsync(int categoryId, string nameSubcategory)
+        public async Task<Category> AddChildAsync(int categoryId, string nameSubcategory)
         {
-            var subcategories = await GetSubcategoriesAsync();
+            var child = await GetAllChildAsync();
 
             if (!int.TryParse(nameSubcategory, out int result))
             {
-                if (!subcategories.Any(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId))
+                if (!child.Any(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId))
                 {
-                    CurrentSubcategory = new Category(nameSubcategory, categoryId);
-                    await _unitOfWork.Repository.AddAsync(CurrentSubcategory);
-                    return CurrentSubcategory;
+                    return CurrentCategory = await _unitOfWork.Repository.AddAsync(new Category(nameSubcategory, categoryId));
                 }
                 else
                 {
-                    return CurrentSubcategory = subcategories.FirstOrDefault(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId);
+                    return CurrentCategory = child.FirstOrDefault(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId);
                 }
             }
             else
@@ -65,62 +71,29 @@ namespace HomeTask4.Core.Controllers
            return  await _unitOfWork.Repository.AddAsync(new Category(nameCategory));
         }
         /// <summary>
-        /// Поиск категории.
-        /// </summary>
-        /// <param name="idCategory">Id категории.</param>
-        public async Task FindCategoryAsync(int idCategory)
-        {
-            var categories = await GetCategoriesAsync();
-            CurrentCategory = categories.FirstOrDefault(c => c.Id == idCategory);
-        }
-        /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.
         /// </summary>
         /// <param name="answer">Переменная, для ответа пользователя.</param>
         /// <returns>Истина, если пользователь выходит, то он выходит в главное меню.</returns>
         public async Task<bool> WalkCategoriesAsync(string answer)
         {
-            if (int.TryParse(answer, out int result))
-            {
-                await FindCategoryAsync(result);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        /// <summary>
-        /// Метод для выбора пользователем конкретной подкатегории из списка.
-        /// </summary>
-        /// <param name="answer">Параметр, для обработки ответа пользователя.</param>
-        public async Task<bool> WalkSubcategoriesAsync(string answer)
-        {
-            if (int.TryParse(answer, out int result))
-            {
-                CurrentSubcategory = CurrentCategory.Children[result-1];
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        /// <summary>
-        /// Установка конкретной категории.
-        /// </summary>
-        /// <param name="answer">Переменная, для ответа пользователя.</param>
-        public async Task SetCurrentCategoryAsync(string answer)
-        {
             if (int.TryParse(answer, out int categoryId))
             {
-                var categories = await GetCategoriesAsync();
-                var category = categories.FirstOrDefault(category => category.Id == categoryId);
-                if (category != null)
-                {
-                    CurrentCategory = category;
-                }
+                await SetCurrentCategoryAsync(categoryId);
+                    if (CurrentCategory == null) //Если пользователь дал неверный id дочерней категории
+                        return false;
+                return true;
             }
-        } 
+            else
+            {
+                return false;
+            }
+        }
+        public async Task SetCurrentCategoryAsync(int categoryId, List<Category> categories = null)
+        {
+            categories = await GetCategoriesAsync();
+            categories.AddRange(await GetAllChildAsync());
+            CurrentCategory = categories.FirstOrDefault(c => c.Id == categoryId);
+        }
     }
 }

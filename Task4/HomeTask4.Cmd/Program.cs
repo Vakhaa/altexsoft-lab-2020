@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HomeTask4.Core.Controllers;
 using HomeTask4.Core.Entities;
@@ -68,103 +68,88 @@ namespace HomeTask4.Cmd
             }
         }
 
-        public static async Task BookRecipes(CategoryController categoryController, RecipeController recipeController, string answer = "", int count = 0, int iterator = 0,bool back = false)
+        public static async Task BookRecipes(CategoryController categoryController, RecipeController recipeController)
         {
-            while (true)
+            while(true)
             {
-                if (back) break;
-                Console.Clear();
-                Console.WriteLine("\t\t*exit: bye, back: back*");
-                switch (iterator)
+                await WalkIntoBookRecipesAsync(categoryController, recipeController);
+                if (categoryController.LevelImmersion == -1)
                 {
-                    case 0:
-                        iterator += await WalkIntoCategoryAsync(categoryController);
-                        if (iterator < 0) return;
-                        break;
-                    case 1:
-                        iterator += await WalkIntoSubcategoryAsync(categoryController);
-                        break;
-                    case 2:
-                        iterator += await WalkIntoRecipeAsync(recipeController,categoryController);
-                        break;
-                    case 3:
-                        iterator += await OpenCurrentRecipeAsync(recipeController);
-                        break;
+                   categoryController.LevelImmersion = 0;
+                   break;
                 }
             }
         }
-        
-        public static async Task<int> WalkIntoCategoryAsync(CategoryController categoryController, string answer="")
+        public static async Task WalkIntoBookRecipesAsync(CategoryController categoryController, RecipeController recipeController, string answer="")
         {
-            foreach (var category in await categoryController.GetCategoriesAsync())
-            {
-                Console.WriteLine($"{category.Id}. {category.Name}");
-            }
-            Console.WriteLine("Категория (id):");
-            answer = Console.ReadLine();
+            await DisplayComponents(categoryController,recipeController);
+            answer = Console.ReadLine().ToLower();
             if (IsExit(answer))
             {
-                answer = "";
-                return -1;
+                categoryController.LevelImmersion--;
+                if(categoryController.CurrentCategory!=null)
+                categoryController.CurrentCategory = categoryController.CurrentCategory.Parent;
+                return;
             }
-            if (await categoryController.WalkCategoriesAsync(answer))
+            if(!answer.Contains("open"))
             {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        public static async Task<int> WalkIntoSubcategoryAsync(CategoryController categoryController, string answer="",int count=0)
-        {
-            var subcategories = categoryController.CurrentCategory.Children;
-            foreach (var subcategory in subcategories)
-            {
-                Console.WriteLine($"{++count}. {subcategory.Name}");
-            }
-            count = 0;
-            Console.WriteLine("Подкатегория (id):");
-            answer = Console.ReadLine();
-            IsExit(answer);
-            if (await categoryController.WalkSubcategoriesAsync(answer))
-            {
-                return 1;
-            }
-            else
-            {
-
-                return -1;
-            }
-        }
-        public static async Task<int> WalkIntoRecipeAsync(RecipeController recipeController, CategoryController categoryController, string answer="",int count=0)
-        {
-            var recipes = await recipeController.GetRecipesAsync();
-            var listRecipes = new List<Recipe>(); // Список рецептов активной подкатегории
-
-            for (int recipe = 0; recipe < recipes.Count; recipe++)
-            {
-                if (recipes[recipe].Category.Id == categoryController.CurrentSubcategory.Id)
+                if (await categoryController.WalkCategoriesAsync(answer))
                 {
-                    Console.WriteLine($"{++count}. {recipes[recipe].Name}");
-                    listRecipes.Add(recipes[recipe]);
+                    if (categoryController.CurrentCategory.Children != null)
+                    {
+                        categoryController.LevelImmersion++;
+                        await WalkIntoBookRecipesAsync(categoryController, recipeController);
+                    }
                 }
             }
-            count = 0;
-            Console.WriteLine("Рецепт (id):");
-            answer = Console.ReadLine();
-            IsExit(answer);
-            if (recipeController.WalkRecipes(listRecipes, answer))
-            {
-                return 1;
-            }
             else
             {
-                return -1;
+                if (int.TryParse(Regex.Match(answer, ".[1-9].*").ToString(), out int recipeId))
+                {
+                    recipeController.CurrentRecipe = await recipeController.FindRecipeAsync(recipeId);
+                    if(recipeController.CurrentRecipe.Category.Id == categoryController.CurrentCategory.Id)
+                    await OpenCurrentRecipeAsync(recipeController);
+                }
+                else
+                {
+                    Console.WriteLine("Некорректно веден формат: \"open x (где x - целое число).\"");
+                    Console.WriteLine("\t\t**enter**");
+                    Console.ReadLine();
+                }
             }
+            
+        }
+        public static async Task DisplayComponents(CategoryController categoryController, RecipeController recipeController, bool checkRecipe = false)
+        {
+            Console.Clear();
+            Console.WriteLine("\t\t*exit: bye, back: back, open recipe: open id*");
+            if (categoryController.LevelImmersion == 0)
+                foreach (var category in await categoryController.GetCategoriesAsync())
+                {
+                    Console.WriteLine($"{category.Id}. {category.Name}");
+                }
+            else
+                foreach (var child in await categoryController.GetCurrentChildAsync())
+                {
+                    Console.WriteLine($"{child.Id}. {child.Name}");
+                }
+
+            Console.WriteLine("Категория (id):");
+
+            if (categoryController.LevelImmersion != 0)
+                foreach (var recipe in await recipeController.GetRecipesAsync())
+                {
+                    if (recipe.Category.Id == categoryController.CurrentCategory.Id)
+                    {
+                        checkRecipe = true;
+                        Console.WriteLine($"{recipe.Id}. {recipe.Name}");
+                    }
+                }
+            if (checkRecipe)
+                Console.WriteLine("Рецепт (open id):");
 
         }
-        public static async Task<int> OpenCurrentRecipeAsync(RecipeController recipeController,int count=0)
+        public static async Task OpenCurrentRecipeAsync(RecipeController recipeController, int count = 0)
         {
             Console.Clear();
 
@@ -189,7 +174,6 @@ namespace HomeTask4.Cmd
             }
             Console.WriteLine("\n\t\t*enter*");
             Console.ReadLine();
-            return -1;
         }
         /// <summary>
         /// Метод для отбражения настроек книги рецептов и поиска элементов книги.
@@ -201,7 +185,7 @@ namespace HomeTask4.Cmd
                 Console.Clear();
                 Console.WriteLine(
                     "1. Список ингредиентов.\n" +
-                    "2. Добавить подкатегорию.\n" +
+                    "2. Добавить категорию.\n" +
                     "3. Добавить рецепт.\n" +
                     "4. Добавить ингредиент.\n" +
                     "5. Поиск\n" +
@@ -216,7 +200,7 @@ namespace HomeTask4.Cmd
                             await ListIngredientsAsync(ingredientController);
                             break;
                         case 2:
-                            await AddSubcategoryAsync(categoryController);
+                            await AddChildAsync(categoryController);
                             break;
                         case 3:
                             await AddRecipeAsync(categoryController,recipeController,ingredientController);
@@ -225,7 +209,7 @@ namespace HomeTask4.Cmd
                             await AddIngredientsAsync(ingredientController);
                             break;
                         case 5:
-                            await FindAsync(categoryController,recipeController,ingredientController);
+                            await FindAsync(recipeController,ingredientController);
                             break;
                         case 6:
                             return;
@@ -252,7 +236,7 @@ namespace HomeTask4.Cmd
             Console.WriteLine("\t\t*enter*");
             Console.ReadLine();
         }
-        public static async Task AddSubcategoryAsync(CategoryController categoryController, int count=0)
+        public static async Task AddChildAsync(CategoryController categoryController, int count=0)
         {
             foreach (var category in await categoryController.GetCategoriesAsync())
             {
@@ -261,7 +245,7 @@ namespace HomeTask4.Cmd
             count = 0;
 
             Console.Write("Ввидите категорию блюда (id) : ");
-            await categoryController.SetCurrentCategoryAsync(Console.ReadLine()); //Выбираем категорию, в которую хотим добавить подкатегорию     
+            await categoryController.WalkCategoriesAsync(Console.ReadLine()); //Выбираем категорию, в которую хотим добавить подкатегорию     
 
             Console.Clear();
 
@@ -273,7 +257,7 @@ namespace HomeTask4.Cmd
             count = 0;
 
             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-            var newSubcategory = await categoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
+            var newSubcategory = await categoryController.AddChildAsync(categoryController.CurrentCategory.Id, Console.ReadLine());//Создаем или добавляем подкатегорию
             if (newSubcategory == null) Console.WriteLine("Такая подкатегория уже есть.");
         }
         public static async Task AddRecipeAsync(CategoryController categoryController, RecipeController recipeController, IngredientController ingredientController,string answer="", int count=0)
@@ -281,30 +265,25 @@ namespace HomeTask4.Cmd
             Console.WriteLine("Введите название рецепта: ");
             var name = Console.ReadLine();
 
-            foreach (var category in await categoryController.GetCategoriesAsync())
-            {
-                Console.WriteLine($"{++count}. {category.Name}");
-            }
-            count = 0;
+            DisplayCategoryTree(await categoryController.GetCategoriesAsync());
             Console.Write("Ввидите категорию блюда (id) : ");
-            await categoryController.SetCurrentCategoryAsync(Console.ReadLine());
+            await categoryController.WalkCategoriesAsync(Console.ReadLine());
 
             Console.Clear();
 
-            var tempSubcategories = categoryController.CurrentCategory.Children;
-            foreach (var subcategory in tempSubcategories)
+            var tempChild = categoryController.CurrentCategory.Children;
+            foreach (var child in tempChild)
             {
-                Console.WriteLine($"{++count}. {subcategory.Name}");
+                Console.WriteLine($"{++count}. {child.Name}");
             }
             count = 0;
             Console.WriteLine("Ввидите название подкатегории блюда (Украинская кухня): ");
-            var subcategoryNew = await categoryController.AddSubcategoryAsync(categoryController.CurrentCategory.Id, Console.ReadLine());
-            if (subcategoryNew == null)
+            var categoryNew = await categoryController.AddChildAsync(categoryController.CurrentCategory.Id, Console.ReadLine());
+            if (categoryNew == null)
             {
-                throw new ArgumentException(nameof(subcategoryNew), "Null subcategoryNew in new Recipe");
+                throw new ArgumentException(nameof(categoryNew), "Null subcategoryNew in new Recipe");
             }
 
-            var currentSubcategory = categoryController.CurrentSubcategory;
             Console.Clear();
 
             Console.WriteLine("Введите описание блюда: ");
@@ -357,7 +336,7 @@ namespace HomeTask4.Cmd
                 answer = Console.ReadLine();
                 stepsHowCooking.Add(answer);
             }
-            await recipeController.CreateRecipeAsync(name, currentSubcategory.Id, description);
+            await recipeController.CreateRecipeAsync(name, categoryNew.Id, description);
             await recipeController.AddedIngredientsInRecipeAsync(ingredientsId, countIngred);
             await recipeController.AddedStepsInRecipeAsync(stepsHowCooking);
         }
@@ -377,7 +356,7 @@ namespace HomeTask4.Cmd
                 ingredientsId.Add(await ingredientController.AddedIfNewAsync(Console.ReadLine()));
             }
         }
-        public static async Task FindAsync(CategoryController categoryController, RecipeController recipeController, IngredientController ingredientController, string answer="", int count=0)
+        public static async Task FindAsync(RecipeController recipeController, IngredientController ingredientController, string answer="", int count=0)
         {
             Console.Write("1. Поиск рецепта.\n" +
                                 "2. Поиск ингредиента.\n" +
@@ -499,6 +478,19 @@ namespace HomeTask4.Cmd
                         }
                     }
                 }
+            }
+        }
+        public static void DisplayCategoryTree(List<Category> categories, int LevelLayer=0)
+        {
+            foreach (var category in categories)
+            {
+                for(int i=0;i<LevelLayer;i++)
+                {
+                    Console.Write("\t");
+                }
+                Console.WriteLine($"{category.Id}. {category.Name}");
+                if (category.Children != null)
+                    DisplayCategoryTree(category.Children, LevelLayer+1);
             }
         }
         /// <summary>
