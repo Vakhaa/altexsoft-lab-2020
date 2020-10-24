@@ -66,9 +66,9 @@ namespace HomeTask4.Core.Controllers
                 return null;
             }
         }
-        public async Task<Category> AddCategoryAsync(string nameCategory)
+        public Task<Category> AddCategoryAsync(string nameCategory)
         {
-           return  await _unitOfWork.Repository.AddAsync(new Category(nameCategory));
+           return _unitOfWork.Repository.AddAsync(new Category(nameCategory));
         }
         /// <summary>
         /// Метод для выбора пользователем конкретной категории из списка.

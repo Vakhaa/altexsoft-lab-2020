@@ -2,7 +2,6 @@
 using HomeTask4.Core.Entities;
 using HomeTask4.Infrastructure.Data.Config;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HomeTask4.Infrastructure.Data
 {

@@ -27,16 +27,16 @@ namespace HomeTask4.Infrastructure.Data
             _context.Set<T>().Remove(entity);
         }
 
-        public async Task<T> GetByIdAsync<T>(int id) where T : BaseEntity
+        public Task<T> GetByIdAsync<T>(int id) where T : BaseEntity
         {
-            return await _context.Set<T>().FirstOrDefaultAsync(item => item.Id == id);
+            return _context.Set<T>().FirstOrDefaultAsync(item => item.Id == id);
         }
 
         public async Task<List<T>> ListAsync<T>() where T : BaseEntity
         {
-            await _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients)
-                .Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe).ToListAsync();
-            await _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking).ToListAsync();
+            _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients)
+                .Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe);
+            _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking);
 
             return await _context.Set<T>().OrderBy(i => i.Id).ToListAsync();
         }

@@ -30,7 +30,7 @@ namespace HomeTask4.Core.Controllers
             var ingredients = await GetIngredientsAsync();
             if (!ingredients.Any(i => i.Name.ToLower() == answer.ToLower()))
             {
-               var t = await _unitOfWork.Repository.AddAsync(new Ingredient(answer));
+               await _unitOfWork.Repository.AddAsync(new Ingredient(answer));
             }
             ingredients = await GetIngredientsAsync();
             return ingredients.FirstOrDefault(i => i.Name.ToLower() == answer.ToLower()).Id;
