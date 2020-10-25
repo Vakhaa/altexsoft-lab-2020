@@ -35,12 +35,6 @@ namespace HomeTask4.Core.Controllers
             var subcategories = await _unitOfWork.Repository.ListAsync<Category>();
             return subcategories.Where(c => c.ParentId != null).ToList();
         }
-        public async Task<List<Category>> GetCurrentChildAsync()
-        {
-            var subcategories = await _unitOfWork.Repository.ListAsync<Category>();
-            return subcategories.Where(c => c.ParentId == CurrentCategory.Id).ToList();
-        }
-
         /// <summary>
         /// Добавления новой подкатегории.
         /// </summary>

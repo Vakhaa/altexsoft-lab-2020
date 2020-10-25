@@ -74,23 +74,5 @@ namespace HomeTask4.Core.Controllers
             var recipes = await  GetRecipesAsync();
             return recipes.FirstOrDefault(r => r.Id == recipesId);
         }
-        
-        /// <summary>
-        /// Метод для выбора пользователем конкретного рецепта из списка.
-        /// </summary>
-        /// <param name="listRecipes">Список рецептов активной подкатегории.</param>
-        /// <param name="answer">Переменная для обработки ответа пользователя.</param>
-        public bool WalkRecipes(List<Recipe> listRecipes, string answer)
-        {
-            if (int.TryParse(answer, out int result))
-            {
-                CurrentRecipe = listRecipes[result - 1];
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
     }
 }
