@@ -81,7 +81,7 @@ namespace HomeTask4.Cmd
                 if (int.TryParse(answer, out int recipeId))
                 {
                     recipeController.CurrentRecipe = await recipeController.FindRecipeAsync(recipeId);
-                    await OpenCurrentRecipeAsync(recipeController);
+                    OpenCurrentRecipe(recipeController);
                 }
                 else
                 {
@@ -91,7 +91,7 @@ namespace HomeTask4.Cmd
                 }
             }
         }
-        public static async Task OpenCurrentRecipeAsync(RecipeController recipeController, int count = 0)
+        public static void OpenCurrentRecipe(RecipeController recipeController, int count = 0)
         {
             Console.Clear();
 
@@ -328,7 +328,7 @@ namespace HomeTask4.Cmd
 
             if (!string.IsNullOrWhiteSpace(recipeController.CurrentRecipe.Name))
             {
-                await OpenCurrentRecipeAsync(recipeController);
+                OpenCurrentRecipe(recipeController);
             }
         }
         public static async Task FindIngredientAsync(IngredientController ingredientController, string answer="")
