@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HomeTask4.Core.Controllers;
 using HomeTask4.Core.Entities;
@@ -68,86 +67,29 @@ namespace HomeTask4.Cmd
             }
         }
 
-        public static async Task BookRecipes(CategoryController categoryController, RecipeController recipeController)
+        public static async Task BookRecipes(CategoryController categoryController, RecipeController recipeController, string answer = "")
         {
             while(true)
             {
-                await WalkIntoBookRecipesAsync(categoryController, recipeController);
-                if (categoryController.LevelImmersion == -1)
-                {
-                   categoryController.LevelImmersion = 0;
-                   break;
-                }
-            }
-        }
-        public static async Task WalkIntoBookRecipesAsync(CategoryController categoryController, RecipeController recipeController, string answer="")
-        {
-            await DisplayComponents(categoryController,recipeController);
-            answer = Console.ReadLine().ToLower();
-            if (IsExit(answer))
-            {
-                categoryController.LevelImmersion--;
-                if(categoryController.CurrentCategory!=null)
-                categoryController.CurrentCategory = categoryController.CurrentCategory.Parent;
-                return;
-            }
-            if(!answer.Contains("open"))
-            {                                                               //Categories
-                if (await categoryController.WalkCategoriesAsync(answer))
-                {
-                    if (categoryController.CurrentCategory.Children != null)
-                    {
-                        categoryController.LevelImmersion++;
-                        await WalkIntoBookRecipesAsync(categoryController, recipeController);
-                    }
-                }
-            }
-            else
-            {                                                                 //Recipes
-                if (int.TryParse(Regex.Match(answer, ".[1-9].*").ToString(), out int recipeId))
+                Console.Clear();
+                Console.WriteLine("\t\t*exit: bye, back: back, open recipe: open id*");
+                DisplayCategoryTree(await categoryController.GetCategoriesAsync(), await recipeController.GetRecipesAsync(), true);
+                Console.WriteLine("Что бы открыть рецепи введите {id}:");
+                answer = Console.ReadLine().ToLower();
+                if (IsExit(answer)) break;
+                
+                if (int.TryParse(answer, out int recipeId))
                 {
                     recipeController.CurrentRecipe = await recipeController.FindRecipeAsync(recipeId);
-                    if(recipeController.CurrentRecipe.Category.Id == categoryController.CurrentCategory.Id)
                     await OpenCurrentRecipeAsync(recipeController);
                 }
                 else
                 {
-                    Console.WriteLine("Некорректно веден формат: \"open x (где x - целое число).\"");
+                    Console.WriteLine("Некорректно веден формат: \"x (где x - целое число).\"");
                     Console.WriteLine("\t\t**enter**");
                     Console.ReadLine();
                 }
             }
-            
-        }
-        public static async Task DisplayComponents(CategoryController categoryController, RecipeController recipeController, bool checkRecipe = false)
-        {
-            Console.Clear();
-            Console.WriteLine("\t\t*exit: bye, back: back, open recipe: open id*");
-            if (categoryController.LevelImmersion == 0)
-                foreach (var category in await categoryController.GetCategoriesAsync())
-                {
-                    Console.WriteLine($"{category.Id}. {category.Name}");
-                }
-            else
-                foreach (var child in await categoryController.GetCurrentChildAsync())
-                {
-                    Console.WriteLine($"{child.Id}. {child.Name}");
-                }
-
-            Console.WriteLine("Категория (id):");
-
-            if (categoryController.LevelImmersion != 0)
-                foreach (var recipe in await recipeController.GetRecipesAsync())
-                {
-                    if (recipe.Category.Id == categoryController.CurrentCategory.Id)
-                    {
-                        checkRecipe = true;
-                        Console.WriteLine($"{recipe.Id}. {recipe.Name}");
-                    }
-                }
-            if (checkRecipe)
-                Console.WriteLine("Рецепт (open id):");
-
         }
         public static async Task OpenCurrentRecipeAsync(RecipeController recipeController, int count = 0)
         {
@@ -238,7 +180,7 @@ namespace HomeTask4.Cmd
         }
         public static async Task AddChildCategoryAsync(CategoryController categoryController)
         {
-            DisplayCategoryTree(await categoryController.GetCategoriesAsync());
+            DisplayCategoryTree(await categoryController.GetCategoriesAsync(),null, false);
 
             Console.Write("Ввидите (id) : ");
             await categoryController.WalkCategoriesAsync(Console.ReadLine()); //Выбираем категорию, в которую хотим добавить подкатегорию     
@@ -252,7 +194,7 @@ namespace HomeTask4.Cmd
             Console.WriteLine("Введите название рецепта: ");
             var name = Console.ReadLine();
 
-            DisplayCategoryTree(await categoryController.GetCategoriesAsync());
+            DisplayCategoryTree(await categoryController.GetCategoriesAsync(), null,false);
             Console.Write("Ввидите категорию блюда (id) : ");
             await categoryController.WalkCategoriesAsync(Console.ReadLine());
 
@@ -435,17 +377,34 @@ namespace HomeTask4.Cmd
                 }
             }
         }
-        public static void DisplayCategoryTree(List<Category> categories, int LevelLayer=0)
+        public static void DisplayCategoryTree(List<Category> categories , List<Recipe> recipes, bool isDisplayRecipe = false, int LevelLayer=0)
         {
             foreach (var category in categories)
             {
-                for(int i=0;i<LevelLayer;i++)
+                for (int i=0;i<LevelLayer;i++)
                 {
                     Console.Write("\t");
                 }
-                Console.WriteLine($"{category.Id}. {category.Name}");
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine($"{category.Id}. {category.Name} (категория)");
+                if(isDisplayRecipe)
+                {
+                    foreach (var recipe in recipes)
+                    {
+                        if (recipe.Category.Id == category.Id)
+                        {
+                            for (int i = 0; i <= LevelLayer; i++)
+                            {
+                                Console.Write("\t");
+                            }
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"{recipe.Id}. {recipe.Name}");
+                        }
+                    }
+                }
+                Console.ResetColor();
                 if (category.Children != null)
-                    DisplayCategoryTree(category.Children, LevelLayer+1);
+                    DisplayCategoryTree(category.Children, recipes, isDisplayRecipe, LevelLayer+1);
             }
         }
         /// <summary>

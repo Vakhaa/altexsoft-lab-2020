@@ -34,9 +34,10 @@ namespace HomeTask4.Infrastructure.Data
 
         public async Task<List<T>> ListAsync<T>() where T : BaseEntity
         {
-            _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients)
-                .Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe);
-            _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking);
+            await _context.Set<IngredientsInRecipe>().Include(i => i.Recipe).ThenInclude(r => r.Ingredients)
+                .Include(i => i.Ingredient).ThenInclude(r => r.IngredientsInRecipe).LoadAsync();
+
+            await _context.Set<StepsInRecipe>().Include(s => s.Recipe).ThenInclude(r => r.StepsHowCooking).LoadAsync();
 
             return await _context.Set<T>().OrderBy(i => i.Id).ToListAsync();
         }
