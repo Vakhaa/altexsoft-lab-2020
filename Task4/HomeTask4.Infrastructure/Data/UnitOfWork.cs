@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using HomeTask4.SharedKernel.Interfaces;
 
 namespace HomeTask4.Infrastructure.Data

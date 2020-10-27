@@ -6,7 +6,7 @@ namespace HomeTask4.Core.Entities
     {
         public int RecipeId { get; set; }
         public string Description { get; set; }
-        public Recipe Recipe { get; set; }
+        public virtual Recipe Recipe { get; set; }
         public StepsInRecipe() { }
         public StepsInRecipe(int recipeId, string description)
         {

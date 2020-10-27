@@ -18,9 +18,9 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка рецепта.
         /// </summary>
         /// <returns>Список рецептов.</returns>
-        public Task<List<Recipe>> GetRecipesAsync()
+        public  Task<List<Recipe>> GetRecipesAsync()
         {
-            return _unitOfWork.Repository.ListAsync<Recipe>();
+            return  _unitOfWork.Repository.ListAsync<Recipe>();
         }
         /// <summary>
         /// Добавить новый рецепт.

@@ -2,6 +2,8 @@
 using HomeTask4.Core.Entities;
 using HomeTask4.Infrastructure.Data.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Proxies;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace HomeTask4.Infrastructure.Data
 {
@@ -14,6 +16,11 @@ namespace HomeTask4.Infrastructure.Data
         public DbSet<StepsInRecipe> StepsInRecipes { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder
+                .UseLazyLoadingProxies();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

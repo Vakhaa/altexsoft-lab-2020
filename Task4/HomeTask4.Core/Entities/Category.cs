@@ -8,8 +8,8 @@ namespace HomeTask4.Core.Entities
     {
         public string Name { get; set; }
         public int? ParentId { get; set; }
-        public Category Parent { get; set; }
-        public List<Category> Children { get; set; }
+        public virtual Category Parent { get; set; }
+        public virtual List<Category> Children { get; set; }
         public Category() { }
         public Category( string name, int parentId=0)
         {

@@ -7,7 +7,7 @@ namespace HomeTask4.Core.Entities
     public class Ingredient : BaseEntity
     {
         public string Name { get; set; }
-        public List<IngredientsInRecipe> IngredientsInRecipe { get;}
+        public virtual List<IngredientsInRecipe> IngredientsInRecipe { get; set; }
         public Ingredient() { }
         public Ingredient(string name)
         {

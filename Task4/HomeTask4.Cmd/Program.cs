@@ -99,7 +99,6 @@ namespace HomeTask4.Cmd
             Console.WriteLine($"Описание : {recipeController.CurrentRecipe.Description}");
 
             Console.WriteLine("Ингридиенты : ");
-
             var ingredients = recipeController.CurrentRecipe.Ingredients;
             foreach (var ingredient in ingredients)
             {
