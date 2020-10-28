@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -18,9 +19,9 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка рецепта.
         /// </summary>
         /// <returns>Список рецептов.</returns>
-        public  Task<List<Recipe>> GetRecipesAsync()
+        public IEnumerable<Recipe> GetRecipes()
         {
-            return  _unitOfWork.Repository.ListAsync<Recipe>();
+            return _unitOfWork.Repository.GetWithInclude<Recipe>(x=>x.Category,x=>x.StepsHowCooking,x=>x.IngredientsInRecipe);
         }
         /// <summary>
         /// Добавить новый рецепт.
@@ -30,7 +31,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="description">Описание.</param>
         public async Task CreateRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
-            var recipes = await GetRecipesAsync();
+            var recipes = GetRecipes();
             foreach (var recipe in recipes)
             {
                 if (recipe.Name == nameRecipe)
@@ -42,7 +43,7 @@ namespace HomeTask4.Core.Controllers
 
             Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
             await _unitOfWork.Repository.AddAsync(r);
-            recipes = await GetRecipesAsync();
+            recipes = GetRecipes();
             CurrentRecipe = recipes.FirstOrDefault(p => p.Name == r.Name);
         }
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
@@ -69,10 +70,9 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="recipesId">Индекс рецепта.</param>
         /// <return>Рецепт.</return>
-        public async Task<Recipe> FindRecipeAsync(int recipesId)
+        public Recipe FindRecipe(int recipesId)
         {
-            var recipes = await  GetRecipesAsync();
-            return recipes.FirstOrDefault(r => r.Id == recipesId);
+            return GetRecipes().FirstOrDefault(r => r.Id == recipesId);
         }
     }
 }

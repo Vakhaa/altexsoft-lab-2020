@@ -19,15 +19,15 @@ namespace HomeTask4.Core.Entities
         /// Подкатегория.
         /// </summary>
         public int CategoryId { get; set; }
-        public virtual Category Category { get; set; }
+        public Category Category { get; set; }
         /// <summary>
         /// Ссылка на таблицу, что содержит в себе список ингредиентов для рецпта и их колличество 
         /// </summary>
-        public virtual List<IngredientsInRecipe> Ingredients { get; } 
+        public IEnumerable<IngredientsInRecipe> IngredientsInRecipe { get; set; } 
         /// <summary>
         /// Ссылка на таблицу где описаны шаги приготовления.
         /// </summary>
-        public virtual List<StepsInRecipe> StepsHowCooking { get;}
+        public IEnumerable<StepsInRecipe> StepsHowCooking { get; set; }
         #endregion
         public Recipe() { }
         public Recipe(string name, int categoryId, string description)

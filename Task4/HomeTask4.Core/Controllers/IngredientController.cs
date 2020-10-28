@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -17,9 +19,9 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка ингредиентов.
         /// </summary>
         /// <returns>Список ингредиентов.</returns>
-        public Task<List<Ingredient>> GetIngredientsAsync()
+        public IEnumerable<Ingredient> GetIngredients()
         {
-            return _unitOfWork.Repository.ListAsync<Ingredient>();
+            return _unitOfWork.Repository.GetWithInclude<Ingredient>(i=>i.IngredientsInRecipe);
         }
         /// <summary>
         /// Добавляет ингредиенты и возвращает его.
@@ -27,12 +29,12 @@ namespace HomeTask4.Core.Controllers
         /// <param name="answer">Переменная для обработки ответа пользователя.</param>
         public async Task<int> AddedIfNewAsync(string answer)
         {
-            var ingredients = await GetIngredientsAsync();
+            var ingredients = GetIngredients();
             if (!ingredients.Any(i => i.Name.ToLower() == answer.ToLower()))
             {
                await _unitOfWork.Repository.AddAsync(new Ingredient(answer));
             }
-            ingredients = await GetIngredientsAsync();
+            ingredients = GetIngredients();
             return ingredients.FirstOrDefault(i => i.Name.ToLower() == answer.ToLower()).Id;
         }
         /// <summary>
@@ -40,10 +42,14 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="nameIngredient">Название ингредиента.</param>
         /// <returns>Ингредиент.</returns>
-        public async Task<Ingredient> FindAndGetIngredientAsync(string nameIngredient)
+        public Ingredient FindAndGetIngredient(string nameIngredient)
         {
-            var ingredients = await GetIngredientsAsync();
+            var ingredients = GetIngredients();
             return ingredients.FirstOrDefault(ingr => ingr.Name.ToLower() == nameIngredient.ToLower());
+        }
+        public Task<Ingredient> GetIngredientByIdAsync(int ingredientId)
+        {
+            return _unitOfWork.Repository.GetByIdAsync<Ingredient>(ingredientId);
         }
     }
 }

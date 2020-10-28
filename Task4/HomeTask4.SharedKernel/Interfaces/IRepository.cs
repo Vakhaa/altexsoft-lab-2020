@@ -8,9 +8,12 @@ namespace HomeTask4.SharedKernel.Interfaces
     public interface IRepository
     {
         Task<T> GetByIdAsync<T>(int id) where T : BaseEntity;
-        Task<List<T>> ListAsync<T>() where T : BaseEntity;
+        Task<IEnumerable<T>> ListAsync<T>() where T : BaseEntity;
         Task<T> AddAsync<T>(T entity) where T : BaseEntity;
         void Update<T>(T entity) where T : BaseEntity;
         void Delete<T>(T entity) where T : BaseEntity;
+        IEnumerable<T> GetWithInclude<T>(Func<T, bool> predicate,
+            params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity;
+        IEnumerable<T> GetWithInclude<T>(params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity;
     }
 }

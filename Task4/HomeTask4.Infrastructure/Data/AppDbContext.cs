@@ -2,8 +2,6 @@
 using HomeTask4.Core.Entities;
 using HomeTask4.Infrastructure.Data.Config;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Proxies;
-using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 
 namespace HomeTask4.Infrastructure.Data
 {
@@ -17,11 +15,6 @@ namespace HomeTask4.Infrastructure.Data
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder
-                .UseLazyLoadingProxies();
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
@@ -30,6 +23,7 @@ namespace HomeTask4.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new RecipeConfig());
             modelBuilder.ApplyConfiguration(new StepsInRecipeConfig());
             modelBuilder.ApplyConfiguration(new IngredientsInRecipeConfig());
+            modelBuilder.ApplyConfiguration(new IngredientConfig());
         }
 
     }
