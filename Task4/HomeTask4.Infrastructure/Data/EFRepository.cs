@@ -33,11 +33,6 @@ namespace HomeTask4.Infrastructure.Data
             return _context.Set<T>().FirstOrDefaultAsync(item => item.Id == id);
         }
 
-        public async Task<IEnumerable<T>> ListAsync<T>() where T : BaseEntity
-        {
-            return await _context.Set<T>().OrderBy(i => i.Id).AsQueryable().ToListAsync();
-        }
-
         public void Update<T>(T entity) where T : BaseEntity
         {
             _context.Set<T>().Update(entity);
