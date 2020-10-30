@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -27,11 +28,11 @@ namespace HomeTask4.Core.Controllers
         /// <param name="answer">Переменная для обработки ответа пользователя.</param>
         public async Task<int> AddedIfNewAsync(string answer)
         {
-            var ingredients = await GetIngredientsAsync();
-            var ingredient = ingredients.SingleOrDefault(i => i.Name.ToLower() == answer.ToLower());
-            if (ingredient!=null)
+            if (await _unitOfWork.Repository
+                .IsExistsAsync<Ingredient>(i => i.Name.ToLower() == answer.ToLower(), i => i.IngredientsInRecipe))
             {
-                return ingredient.Id;
+                var result = await _unitOfWork.Repository.GetByNameAsync<Ingredient>(i => i.Name.ToLower() == answer.ToLower(), i => i.IngredientsInRecipe);
+                return result.Id;
             }
             else
             {
@@ -46,13 +47,21 @@ namespace HomeTask4.Core.Controllers
         /// <returns>Ингредиент.</returns>
         public async Task<Ingredient> FindAndGetIngredientAsync(string nameIngredient)
         {
-            var ingredients = await _unitOfWork.Repository
+            if(!await _unitOfWork.Repository
+                .IsExistsAsync<Ingredient>(i => i.Name.ToLower() == nameIngredient.ToLower(), i => i.IngredientsInRecipe))
+            {
+                return null;
+            }
+            else
+            {
+                var result = await _unitOfWork.Repository
                 .GetWithIncludeAsync<Ingredient>(i => i.Name.ToLower() == nameIngredient.ToLower(), i => i.IngredientsInRecipe);
-            return ingredients.FirstOrDefault();
+                return result.FirstOrDefault();
+            }
         }
         public Task<Ingredient> GetIngredientByIdAsync(int ingredientId)
         {
-            return _unitOfWork.Repository.GetByIdAsync<Ingredient>(ingredientId);
+            return _unitOfWork.Repository.GetByIdAsync<Ingredient>(i => i.Id == ingredientId, i=>i.IngredientsInRecipe);
         }
     }
 }

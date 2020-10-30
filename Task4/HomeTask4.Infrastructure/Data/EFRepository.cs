@@ -28,9 +28,16 @@ namespace HomeTask4.Infrastructure.Data
             _context.Set<T>().Remove(entity);
         }
 
-        public Task<T> GetByIdAsync<T>(int id) where T : BaseEntity
+        public async Task<T> GetByIdAsync<T>(Func<T, bool> predicate,
+            params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity
         {
-            return _context.Set<T>().FirstOrDefaultAsync(item => item.Id == id);
+            return Include(predicate, includeProperties).FirstOrDefault();
+        }
+
+        public async Task<T> GetByNameAsync<T>(Func<T, bool> predicate,
+            params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity
+        {
+            return Include(predicate, includeProperties).FirstOrDefault();
         }
 
         public void Update<T>(T entity) where T : BaseEntity
@@ -39,21 +46,36 @@ namespace HomeTask4.Infrastructure.Data
         }
         public async Task<IEnumerable<T>> GetWithIncludeAsync<T>(params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity
         {
-          return Include(includeProperties).AsEnumerable();
+          return Include(null, includeProperties).AsEnumerable();
         }
 
         public async Task<IEnumerable<T>> GetWithIncludeAsync<T>(Func<T, bool> predicate,
             params Expression<Func<T, object>>[] includeProperties) where T:BaseEntity
         {
-            var query = Include(includeProperties);
-            return query.Where(predicate).AsEnumerable();
+            return Include(predicate,includeProperties);
         }
 
-        private IQueryable<T> Include<T>(params Expression<Func<T, object>>[] includeProperties) where T: BaseEntity
+        public async Task<bool> IsExistsAsync<T>(Func<T, bool> predicate,
+            params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity
         {
-            IQueryable<T> query = _context.Set<T>().AsNoTracking();
-            return includeProperties
-                .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+            var query = Include(null,includeProperties);
+            return query.Any(predicate);
+        }
+        private IQueryable<T> Include<T>(Func<T, bool> predicate, params Expression<Func<T, object>>[] includeProperties) where T: BaseEntity
+        {
+            if(predicate==null)
+            {
+                IQueryable<T> query = _context.Set<T>().AsNoTracking();
+                return includeProperties
+                    .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+            }
+            else
+            {
+                IQueryable<T> query = _context.Set<T>().AsNoTracking();
+                return includeProperties
+                    .Aggregate(query, (current, includeProperty) => current.Include(includeProperty))
+                    .Where(predicate).AsQueryable();
+            }
         }
     }
 }

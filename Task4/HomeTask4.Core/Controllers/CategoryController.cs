@@ -31,7 +31,7 @@ namespace HomeTask4.Core.Controllers
         }
         public Task<IEnumerable<Category>> GetAllChildAsync()
         {
-            return _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.ParentId != null, c=>c.ParentId);
+            return _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.ParentId != null, c=>c.Parent);
         }
         /// <summary>
         /// Добавления новой подкатегории.
@@ -40,17 +40,16 @@ namespace HomeTask4.Core.Controllers
         /// <param name="nameSubcategory">Название новой подкатегории.</param>
         public async Task<Category> AddChildAsync(int categoryId, string nameSubcategory)
         {
-            var childs = await GetAllChildAsync();
-            var child = childs.SingleOrDefault(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId);
             if (!int.TryParse(nameSubcategory, out int result))
             {
-                if (child==null)
+                if (!await _unitOfWork.Repository.IsExistsAsync<Category>(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId && c.ParentId!=null, c=>c.Parent))
                 {
                     return CurrentCategory = await _unitOfWork.Repository.AddAsync(new Category(nameSubcategory, categoryId));
                 }
                 else
                 {
-                    return CurrentCategory = child;
+                    var childs = await _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId && c.ParentId != null, c => c.Parent);
+                    return CurrentCategory = childs.FirstOrDefault();
                 }
             }
             else

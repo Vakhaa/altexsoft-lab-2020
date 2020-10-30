@@ -30,18 +30,19 @@ namespace HomeTask4.Core.Controllers
         /// <param name="description">Описание.</param>
         public async Task CreateRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
-            var recipes = await GetRecipesAsync();
-            foreach (var recipe in recipes)
+            if(!await _unitOfWork.Repository
+                .IsExistsAsync<Recipe>(x=>x.Name == nameRecipe, x => x.Category, x => x.StepsHowCooking, x => x.IngredientsInRecipe))
             {
-                if (recipe.Name == nameRecipe)
-                {
-                    CurrentRecipe = recipe;
-                    return;
-                }
+                Recipe r = new Recipe(nameRecipe, subcategoriesId, description);
+                CurrentRecipe = await _unitOfWork.Repository.AddAsync(r);
             }
-
-            Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
-            CurrentRecipe = await _unitOfWork.Repository.AddAsync(r);
+            else
+            {
+                var newRcipe = await _unitOfWork.Repository
+                    .GetWithIncludeAsync<Recipe>(x => x.Name == nameRecipe, x => x.Category, x => x.StepsHowCooking, x => x.IngredientsInRecipe);
+                CurrentRecipe = newRcipe.FirstOrDefault();
+            }
+            
         }
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
         /// <param name="ingredientsId">Индекс ингредиентов.</param>
@@ -67,10 +68,9 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="recipesId">Индекс рецепта.</param>
         /// <return>Рецепт.</return>
-        public async Task<Recipe> FindRecipeAsync(int recipesId)
+        public Task<Recipe> FindRecipeAsync(int recipesId)
         {
-            var result = await GetRecipesAsync();
-            return result.FirstOrDefault(r=>r.Id == recipesId);
+            return _unitOfWork.Repository.GetByIdAsync<Recipe>(r => r.Id == recipesId,r=>r.Category,r=>r.StepsHowCooking,r=>r.IngredientsInRecipe);
         }
     }
 }
