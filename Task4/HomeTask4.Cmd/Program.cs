@@ -73,14 +73,14 @@ namespace HomeTask4.Cmd
             {
                 Console.Clear();
                 Console.WriteLine("\t\t*exit: bye, back: back, open recipe: {id}*");
-                DisplayCategoryTree(await categoryController.GetCategoriesAsync(), recipeController.GetRecipes(), true);
+                DisplayCategoryTree(await categoryController.GetCategoriesAsync(), await recipeController.GetRecipesAsync(), true);
                 Console.WriteLine("Что бы открыть рецепи введите {id}:");
                 answer = Console.ReadLine().ToLower();
                 if (IsExit(answer)) break;
                 
                 if (int.TryParse(answer, out int recipeId))
                 {
-                    recipeController.CurrentRecipe = recipeController.FindRecipe(recipeId);
+                    recipeController.CurrentRecipe = await recipeController.FindRecipeAsync(recipeId);
                     await OpenCurrentRecipeAsync(recipeController, ingredientController);
                 }
                 else
@@ -139,7 +139,7 @@ namespace HomeTask4.Cmd
                     switch (result)
                     {
                         case 1:
-                            ListIngredients(ingredientController);
+                            await ListIngredientsAsync(ingredientController);
                             break;
                         case 2:
                             await AddChildCategoryAsync(categoryController);
@@ -169,9 +169,9 @@ namespace HomeTask4.Cmd
                 }
             }
         }
-        public static void ListIngredients(IngredientController ingredientController, int count=0)
+        public static async Task ListIngredientsAsync(IngredientController ingredientController, int count=0)
         {
-            foreach (var ingredient in ingredientController.GetIngredients())
+            foreach (var ingredient in await ingredientController.GetIngredientsAsync())
             {
                 Console.WriteLine($"{++count}. {ingredient.Name}.");
             }
@@ -229,7 +229,7 @@ namespace HomeTask4.Cmd
             Console.Clear();
 
             List<string> countIngred = new List<string>();
-            var tempIngredients = ingredientController.GetIngredients();
+            var tempIngredients = await ingredientController.GetIngredientsAsync();
             for (int id = 0; id < ingredientsId.Count; id++)
             {
                 Console.WriteLine("Введите колличество для " +
@@ -314,7 +314,7 @@ namespace HomeTask4.Cmd
         }
         public static async Task FindRecipeAsync(RecipeController recipeController, IngredientController ingredientController,string answer="")
         {
-            foreach (var recipes in recipeController.GetRecipes())
+            foreach (var recipes in await recipeController.GetRecipesAsync())
             {
                 Console.WriteLine($"{recipes.Id}. {recipes.Name}.");
             }
@@ -323,7 +323,7 @@ namespace HomeTask4.Cmd
             if (answer.ToLower() == "bye" || answer.ToLower() == "back") return;
             if (!int.TryParse(answer, out int recipeId)) return;
 
-            recipeController.CurrentRecipe = recipeController.FindRecipe(recipeId);
+            recipeController.CurrentRecipe = await recipeController.FindRecipeAsync(recipeId);
 
             if (!string.IsNullOrWhiteSpace(recipeController.CurrentRecipe.Name))
             {
@@ -333,7 +333,7 @@ namespace HomeTask4.Cmd
         public static async Task FindIngredientAsync(IngredientController ingredientController, string answer="")
         {
             Console.Write("Введите название ингредиента : ");
-            var ingr = ingredientController.FindAndGetIngredient(Console.ReadLine().ToLower());
+            var ingr = await ingredientController.FindAndGetIngredientAsync(Console.ReadLine().ToLower());
             if (ingr != null)
             {
                 Console.WriteLine($"{ingr.Name} есть в списке.");

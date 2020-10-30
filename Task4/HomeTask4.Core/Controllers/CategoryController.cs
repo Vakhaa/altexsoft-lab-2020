@@ -25,15 +25,13 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка категорий в приложение.
         /// </summary>
         /// <returns>Список категорий.</returns>
-        public async Task<List<Category>> GetCategoriesAsync()
+        public Task<IEnumerable<Category>> GetCategoriesAsync()
         {
-            var categories = await _unitOfWork.Repository.ListAsync<Category>();
-            return categories.Where(c => c.ParentId == null).ToList();
+            return _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.ParentId == null,c=>c.Children);
         }
-        public async Task<List<Category>> GetAllChildAsync()
+        public Task<IEnumerable<Category>> GetAllChildAsync()
         {
-            var subcategories = await _unitOfWork.Repository.ListAsync<Category>();
-            return subcategories.Where(c => c.ParentId != null).ToList();
+            return _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.ParentId != null, c=>c.ParentId);
         }
         /// <summary>
         /// Добавления новой подкатегории.
@@ -42,17 +40,17 @@ namespace HomeTask4.Core.Controllers
         /// <param name="nameSubcategory">Название новой подкатегории.</param>
         public async Task<Category> AddChildAsync(int categoryId, string nameSubcategory)
         {
-            var child = await GetAllChildAsync();
-
+            var childs = await GetAllChildAsync();
+            var child = childs.SingleOrDefault(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId);
             if (!int.TryParse(nameSubcategory, out int result))
             {
-                if (!child.Any(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId))
+                if (child==null)
                 {
                     return CurrentCategory = await _unitOfWork.Repository.AddAsync(new Category(nameSubcategory, categoryId));
                 }
                 else
                 {
-                    return CurrentCategory = child.FirstOrDefault(s => s.Name.ToLower() == nameSubcategory.ToLower() && s.ParentId == categoryId);
+                    return CurrentCategory = child;
                 }
             }
             else
@@ -83,11 +81,10 @@ namespace HomeTask4.Core.Controllers
                 return false;
             }
         }
-        public async Task SetCurrentCategoryAsync(int categoryId, List<Category> categories = null)
+        public async Task SetCurrentCategoryAsync(int categoryId, IEnumerable<Category> categories = null)
         {
-            categories = await GetCategoriesAsync();
-            categories.AddRange(await GetAllChildAsync());
-            CurrentCategory = categories.FirstOrDefault(c => c.Id == categoryId);
+            categories = await _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.Id == categoryId);
+            CurrentCategory = categories.FirstOrDefault();
         }
     }
 }

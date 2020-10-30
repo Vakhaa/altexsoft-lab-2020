@@ -42,16 +42,16 @@ namespace HomeTask4.Infrastructure.Data
         {
             _context.Set<T>().Update(entity);
         }
-        public IEnumerable<T> GetWithInclude<T>(params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity
+        public async Task<IEnumerable<T>> GetWithIncludeAsync<T>(params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity
         {
-            return Include(includeProperties).ToList();
+          return Include(includeProperties).AsEnumerable();
         }
 
-        public IEnumerable<T> GetWithInclude<T>(Func<T, bool> predicate,
+        public async Task<IEnumerable<T>> GetWithIncludeAsync<T>(Func<T, bool> predicate,
             params Expression<Func<T, object>>[] includeProperties) where T:BaseEntity
         {
             var query = Include(includeProperties);
-            return query.Where(predicate).ToList();
+            return query.Where(predicate).AsEnumerable();
         }
 
         private IQueryable<T> Include<T>(params Expression<Func<T, object>>[] includeProperties) where T: BaseEntity

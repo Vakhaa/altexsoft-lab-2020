@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -19,9 +18,9 @@ namespace HomeTask4.Core.Controllers
         /// Загрузка списка рецепта.
         /// </summary>
         /// <returns>Список рецептов.</returns>
-        public IEnumerable<Recipe> GetRecipes()
+        public Task<IEnumerable<Recipe>> GetRecipesAsync()
         {
-            return _unitOfWork.Repository.GetWithInclude<Recipe>(x=>x.Category,x=>x.StepsHowCooking,x=>x.IngredientsInRecipe);
+            return _unitOfWork.Repository.GetWithIncludeAsync<Recipe>(x=>x.Category,x=>x.StepsHowCooking,x=>x.IngredientsInRecipe);
         }
         /// <summary>
         /// Добавить новый рецепт.
@@ -31,7 +30,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="description">Описание.</param>
         public async Task CreateRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
-            var recipes = GetRecipes();
+            var recipes = await GetRecipesAsync();
             foreach (var recipe in recipes)
             {
                 if (recipe.Name == nameRecipe)
@@ -42,9 +41,7 @@ namespace HomeTask4.Core.Controllers
             }
 
             Recipe r = new Recipe( nameRecipe, subcategoriesId, description);
-            await _unitOfWork.Repository.AddAsync(r);
-            recipes = GetRecipes();
-            CurrentRecipe = recipes.FirstOrDefault(p => p.Name == r.Name);
+            CurrentRecipe = await _unitOfWork.Repository.AddAsync(r);
         }
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
         /// <param name="ingredientsId">Индекс ингредиентов.</param>
@@ -70,9 +67,10 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="recipesId">Индекс рецепта.</param>
         /// <return>Рецепт.</return>
-        public Recipe FindRecipe(int recipesId)
+        public async Task<Recipe> FindRecipeAsync(int recipesId)
         {
-            return GetRecipes().FirstOrDefault(r => r.Id == recipesId);
+            var result = await GetRecipesAsync();
+            return result.FirstOrDefault(r=>r.Id == recipesId);
         }
     }
 }

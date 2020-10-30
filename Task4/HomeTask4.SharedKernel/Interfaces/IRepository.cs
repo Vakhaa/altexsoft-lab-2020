@@ -12,8 +12,8 @@ namespace HomeTask4.SharedKernel.Interfaces
         Task<T> AddAsync<T>(T entity) where T : BaseEntity;
         void Update<T>(T entity) where T : BaseEntity;
         void Delete<T>(T entity) where T : BaseEntity;
-        IEnumerable<T> GetWithInclude<T>(Func<T, bool> predicate,
+        Task<IEnumerable<T>> GetWithIncludeAsync<T>(Func<T, bool> predicate,
             params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity;
-        IEnumerable<T> GetWithInclude<T>(params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity;
+        Task<IEnumerable<T>> GetWithIncludeAsync<T>(params Expression<Func<T, object>>[] includeProperties) where T : BaseEntity;
     }
 }
