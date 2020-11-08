@@ -20,7 +20,7 @@ namespace HomeTask4.Core.Controllers
         /// <returns>Список ингредиентов.</returns>
         public Task<IEnumerable<Ingredient>> GetIngredientsAsync()
         {
-            return _unitOfWork.Repository.GetWithIncludeAsync<Ingredient>(i=>i.IngredientsInRecipe);
+            return _unitOfWork.Repository.GetWithIncludeListAsync<Ingredient>(i=>i.IngredientsInRecipe);
         }
         /// <summary>
         /// Добавляет ингредиенты и возвращает его.
@@ -28,10 +28,9 @@ namespace HomeTask4.Core.Controllers
         /// <param name="answer">Переменная для обработки ответа пользователя.</param>
         public async Task<int> AddedIfNewAsync(string answer)
         {
-            if (await _unitOfWork.Repository
-                .IsExistsAsync<Ingredient>(i => i.Name.ToLower() == answer.ToLower(), i => i.IngredientsInRecipe))
+            var result = await _unitOfWork.Repository.GetWithIncludeEntityAsync<Ingredient>(i => i.Name.ToLower() == answer.ToLower(), i => i.IngredientsInRecipe);
+            if (result != null)
             {
-                var result = await _unitOfWork.Repository.GetByNameAsync<Ingredient>(i => i.Name.ToLower() == answer.ToLower(), i => i.IngredientsInRecipe);
                 return result.Id;
             }
             else
@@ -45,23 +44,14 @@ namespace HomeTask4.Core.Controllers
         /// </summary>
         /// <param name="nameIngredient">Название ингредиента.</param>
         /// <returns>Ингредиент.</returns>
-        public async Task<Ingredient> FindAndGetIngredientAsync(string nameIngredient)
+        public Task<Ingredient> FindAndGetIngredientAsync(string nameIngredient)
         {
-            if(!await _unitOfWork.Repository
-                .IsExistsAsync<Ingredient>(i => i.Name.ToLower() == nameIngredient.ToLower(), i => i.IngredientsInRecipe))
-            {
-                return null;
-            }
-            else
-            {
-                var result = await _unitOfWork.Repository
-                .GetWithIncludeAsync<Ingredient>(i => i.Name.ToLower() == nameIngredient.ToLower(), i => i.IngredientsInRecipe);
-                return result.FirstOrDefault();
-            }
+            return _unitOfWork.Repository
+                .GetWithIncludeEntityAsync<Ingredient>(i => i.Name.ToLower() == nameIngredient.ToLower(), i => i.IngredientsInRecipe);
         }
         public Task<Ingredient> GetIngredientByIdAsync(int ingredientId)
         {
-            return _unitOfWork.Repository.GetByIdAsync<Ingredient>(i => i.Id == ingredientId, i=>i.IngredientsInRecipe);
+            return _unitOfWork.Repository.GetWithIncludeEntityAsync<Ingredient>(i => i.Id == ingredientId, i=>i.IngredientsInRecipe);
         }
     }
 }

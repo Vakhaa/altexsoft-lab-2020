@@ -20,7 +20,7 @@ namespace HomeTask4.Core.Controllers
         /// <returns>Список рецептов.</returns>
         public Task<IEnumerable<Recipe>> GetRecipesAsync()
         {
-            return _unitOfWork.Repository.GetWithIncludeAsync<Recipe>(x=>x.Category,x=>x.StepsHowCooking,x=>x.IngredientsInRecipe);
+            return _unitOfWork.Repository.GetWithIncludeListAsync<Recipe>(x=>x.Category,x=>x.StepsHowCooking,x=>x.IngredientsInRecipe);
         }
         /// <summary>
         /// Добавить новый рецепт.
@@ -30,38 +30,41 @@ namespace HomeTask4.Core.Controllers
         /// <param name="description">Описание.</param>
         public async Task CreateRecipeAsync(string nameRecipe, int subcategoriesId, string description)
         {
-            if(!await _unitOfWork.Repository
-                .IsExistsAsync<Recipe>(x=>x.Name == nameRecipe, x => x.Category, x => x.StepsHowCooking, x => x.IngredientsInRecipe))
+            var newRcipe = await _unitOfWork.Repository
+                    .GetWithIncludeEntityAsync<Recipe>(x => x.Name == nameRecipe, x => x.Category, x => x.StepsHowCooking, x => x.IngredientsInRecipe);
+            if (newRcipe==null)
             {
                 Recipe r = new Recipe(nameRecipe, subcategoriesId, description);
                 CurrentRecipe = await _unitOfWork.Repository.AddAsync(r);
             }
             else
             {
-                var newRcipe = await _unitOfWork.Repository
-                    .GetWithIncludeAsync<Recipe>(x => x.Name == nameRecipe, x => x.Category, x => x.StepsHowCooking, x => x.IngredientsInRecipe);
-                CurrentRecipe = newRcipe.FirstOrDefault();
+                CurrentRecipe = newRcipe;
             }
             
         }
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
         /// <param name="ingredientsId">Индекс ингредиентов.</param>
         /// <param name="countIngred">Количество ингредиентов.</param>
-        public async Task AddedIngredientsInRecipeAsync(List<int> ingredientsId, List<string> countIngred)
+        public async Task AddedIngredientsInRecipeAsync(List<int> ingredientsId, List<string> countIngred, List<IngredientsInRecipe> ingredientsInRecips = null)
         {
+            ingredientsInRecips = new List<IngredientsInRecipe>();
             for (int steps = 0; steps < ingredientsId.Count; steps++)
             {
-                await _unitOfWork.Repository.AddAsync(new IngredientsInRecipe(CurrentRecipe.Id, ingredientsId[steps], countIngred[steps]));
+                ingredientsInRecips.Add(new IngredientsInRecipe(CurrentRecipe.Id, ingredientsId[steps], countIngred[steps]));
             }
+            await _unitOfWork.Repository.AddRangeAsync(ingredientsInRecips);
         }
         ///<summary>Добавляет инструкцию приготовления в рецепт.</summary>
         /// <param name="stepsHowCooking">Пошаговая инструкция.</param>
-        public async Task AddedStepsInRecipeAsync(List<string> stepsHowCooking)
+        public async Task AddedStepsInRecipeAsync(List<string> stepsHowCooking, List<StepsInRecipe> stepsInRecipe =null)
         {
+            stepsInRecipe = new List<StepsInRecipe>();
             foreach (var steps in stepsHowCooking)
             {
-                await _unitOfWork.Repository.AddAsync(new StepsInRecipe(CurrentRecipe.Id, steps));
+                stepsInRecipe.Add(new StepsInRecipe(CurrentRecipe.Id, steps));
             }
+            await _unitOfWork.Repository.AddRangeAsync(stepsInRecipe);
         }
         /// <summary>
         /// Поиск рецепта.
@@ -70,7 +73,7 @@ namespace HomeTask4.Core.Controllers
         /// <return>Рецепт.</return>
         public Task<Recipe> FindRecipeAsync(int recipesId)
         {
-            return _unitOfWork.Repository.GetByIdAsync<Recipe>(r => r.Id == recipesId,r=>r.Category,r=>r.StepsHowCooking,r=>r.IngredientsInRecipe);
+            return _unitOfWork.Repository.GetWithIncludeEntityAsync<Recipe>(r => r.Id == recipesId,r=>r.Category,r=>r.StepsHowCooking,r=>r.IngredientsInRecipe);
         }
     }
 }

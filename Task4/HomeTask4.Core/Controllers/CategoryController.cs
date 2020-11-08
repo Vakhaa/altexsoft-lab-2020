@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -27,11 +26,11 @@ namespace HomeTask4.Core.Controllers
         /// <returns>Список категорий.</returns>
         public Task<IEnumerable<Category>> GetCategoriesAsync()
         {
-            return _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.ParentId == null,c=>c.Children);
+            return _unitOfWork.Repository.GetWithIncludeListAsync<Category>(c => c.ParentId == null,c=>c.Children);
         }
         public Task<IEnumerable<Category>> GetAllChildAsync()
         {
-            return _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.ParentId != null, c=>c.Parent);
+            return _unitOfWork.Repository.GetWithIncludeListAsync<Category>(c => c.ParentId != null, c=>c.Parent);
         }
         /// <summary>
         /// Добавления новой подкатегории.
@@ -42,14 +41,14 @@ namespace HomeTask4.Core.Controllers
         {
             if (!int.TryParse(nameSubcategory, out int result))
             {
-                if (!await _unitOfWork.Repository.IsExistsAsync<Category>(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId && c.ParentId!=null, c=>c.Parent))
+                var child = await _unitOfWork.Repository.GetWithIncludeEntityAsync<Category>(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId && c.ParentId != null, c => c.Parent);
+                if (child == null)
                 {
                     return CurrentCategory = await _unitOfWork.Repository.AddAsync(new Category(nameSubcategory, categoryId));
                 }
                 else
-                {
-                    var childs = await _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.Name.ToLower() == nameSubcategory.ToLower() && c.ParentId == categoryId && c.ParentId != null, c => c.Parent);
-                    return CurrentCategory = childs.FirstOrDefault();
+                {                    
+                    return CurrentCategory = child;
                 }
             }
             else
@@ -82,8 +81,7 @@ namespace HomeTask4.Core.Controllers
         }
         public async Task SetCurrentCategoryAsync(int categoryId, IEnumerable<Category> categories = null)
         {
-            categories = await _unitOfWork.Repository.GetWithIncludeAsync<Category>(c => c.Id == categoryId);
-            CurrentCategory = categories.FirstOrDefault();
+            CurrentCategory = await _unitOfWork.Repository.GetWithIncludeEntityAsync<Category>(c => c.Id == categoryId);
         }
     }
 }
