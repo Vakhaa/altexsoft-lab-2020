@@ -12,13 +12,9 @@ namespace HomeTask4.Core.Controllers
         /// Активная категория.
         /// </summary>
         public Category CurrentCategory { get; set; }
-
-        public int LevelImmersion;
-
         public  CategoryController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            LevelImmersion = 0;
         }
         /// <summary>
         /// Загрузка списка категорий в приложение.
@@ -79,7 +75,7 @@ namespace HomeTask4.Core.Controllers
                 return false;
             }
         }
-        public async Task SetCurrentCategoryAsync(int categoryId, IEnumerable<Category> categories = null)
+        public async Task SetCurrentCategoryAsync(int categoryId)
         {
             CurrentCategory = await _unitOfWork.Repository.GetWithIncludeEntityAsync<Category>(c => c.Id == categoryId);
         }

@@ -45,9 +45,9 @@ namespace HomeTask4.Core.Controllers
         ///<summary>Добавляет ингредиенты и количество в рецепт.</summary>
         /// <param name="ingredientsId">Индекс ингредиентов.</param>
         /// <param name="countIngred">Количество ингредиентов.</param>
-        public async Task AddedIngredientsInRecipeAsync(List<int> ingredientsId, List<string> countIngred, List<IngredientsInRecipe> ingredientsInRecips = null)
+        public async Task AddedIngredientsInRecipeAsync(List<int> ingredientsId, List<string> countIngred)
         {
-            ingredientsInRecips = new List<IngredientsInRecipe>();
+            var ingredientsInRecips = new List<IngredientsInRecipe>();
             for (int steps = 0; steps < ingredientsId.Count; steps++)
             {
                 ingredientsInRecips.Add(new IngredientsInRecipe(CurrentRecipe.Id, ingredientsId[steps], countIngred[steps]));
@@ -56,9 +56,9 @@ namespace HomeTask4.Core.Controllers
         }
         ///<summary>Добавляет инструкцию приготовления в рецепт.</summary>
         /// <param name="stepsHowCooking">Пошаговая инструкция.</param>
-        public async Task AddedStepsInRecipeAsync(List<string> stepsHowCooking, List<StepsInRecipe> stepsInRecipe =null)
+        public async Task AddedStepsInRecipeAsync(List<string> stepsHowCooking)
         {
-            stepsInRecipe = new List<StepsInRecipe>();
+            var stepsInRecipe = new List<StepsInRecipe>();
             foreach (var steps in stepsHowCooking)
             {
                 stepsInRecipe.Add(new StepsInRecipe(CurrentRecipe.Id, steps));
