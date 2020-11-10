@@ -1,0 +1,17 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Declare files that will always have CRLF or LF line endings on checkout.
+*.sln text eol=crlf
+*.*proj text eol=crlf
+*.cs text eol=crlf
+*.cshtml text eol=crlf
+*.js text eol=lf
+*.json text eol=crlf
+*.sql text eol=crlf
+*.sh text eol=lf
+*.ps1 text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
