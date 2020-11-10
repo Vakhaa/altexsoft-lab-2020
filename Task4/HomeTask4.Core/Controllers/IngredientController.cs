@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -28,7 +26,7 @@ namespace HomeTask4.Core.Controllers
         /// <param name="answer">Переменная для обработки ответа пользователя.</param>
         public async Task<int> AddedIfNewAsync(string answer)
         {
-            var result = await _unitOfWork.Repository.GetWithIncludeEntityAsync<Ingredient>(i => i.Name.ToLower() == answer.ToLower(), i => i.IngredientsInRecipe);
+            var result = await FindAndGetIngredientAsync(answer);
             if (result != null)
             {
                 return result.Id;
