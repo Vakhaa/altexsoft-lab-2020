@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+using System.Threading.Tasks;
 using HomeTask4.Core.Controllers;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -14,270 +13,163 @@ namespace XUnitTest.Controllers
 {
     public class RecipeControllerTest
     {
-        [Fact]
-        public async void GetRecipe()
+        Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        RecipeController _controller;
+        Recipe _expectedRecipe;
+        List<Recipe> _expectedListRecipe;
+        public RecipeControllerTest()
         {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _repositoryMock = new Mock<IRepository>();
 
-            var name = Guid.NewGuid().ToString();
-            var name2 = Guid.NewGuid().ToString();
-            var description = Guid.NewGuid().ToString();
-            var description2 = Guid.NewGuid().ToString();
-            var categoryId = rnd.Next();
-            var categoryId2 = rnd.Next();
+            _expectedRecipe = new Recipe
+            {
+                Id = 1,
+                Name = "expected",
+                Description = "expected"
+            };
 
-            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
-            repositoryMock.Setup(o => 
-            o.GetWithIncludeListAsync<Recipe>(It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
-                .ReturnsAsync(new List<Recipe>
-                {
-                    new Recipe { Id = 1, Name=name, CategoryId = categoryId, Description = description},
-                    new Recipe { Id = 2, Name=name2, CategoryId = categoryId2, Description = description2}
-                });
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
+            _expectedListRecipe = new List<Recipe>()
+            {
+                _expectedRecipe
+            };
+            // Simulate "AddAsync" method from "IRepository" to return test entity
+            _repositoryMock.Setup(o => o.AddAsync<Recipe>(It.IsAny<Recipe>()))
+                .ReturnsAsync((Recipe x) => x);
 
             // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
+            _unitOfWorkMock.SetupGet(o => o.Repository)
+                .Returns(_repositoryMock.Object);
 
-            unitOfWorkMock.Setup(o => o.SaveAsync());
+            _unitOfWorkMock.Setup(o => o.SaveAsync());
 
             // Create controller which should be tested
-            var controller = new RecipeController(unitOfWorkMock.Object);
-
-            // Act
-            // Run method which should be tested
-
-            var entities = await controller.GetRecipesAsync();
-            var firstEntity = entities.FirstOrDefault();
-            var secondEntity = entities.FirstOrDefault(i=>i.Id == 2);
-
-            // Assert
-            // Check if the entity has been return from method GetRecipesAsync
-            Assert.Equal(name, firstEntity.Name);
-            Assert.Equal(1, firstEntity.Id);
-            Assert.Equal(categoryId, firstEntity.CategoryId);
-            Assert.Equal(description, firstEntity.Description);
-
-            Assert.Equal(name2, secondEntity.Name);
-            Assert.Equal(2, secondEntity.Id);
-            Assert.Equal(categoryId2, secondEntity.CategoryId);
-            Assert.Equal(description2, secondEntity.Description);
-
-            Assert.Equal(2, entities.Count());
+            _controller = new RecipeController(_unitOfWorkMock.Object);
         }
         [Fact]
-        public async void CreateRecipe_If_Exists()
+        public async Task GetRecipe_IfIsItems_ReturnItems()
         {
             // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
+            MakeMockGetWithIncludeListForRepository();
+            // Act
+            // Run method which should be tested
+            var result = await _controller.GetRecipesAsync();
 
-            var name = Guid.NewGuid().ToString();
-            var description = Guid.NewGuid().ToString();
-            var categoryId = rnd.Next();
-
-            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
-            repositoryMock.Setup(o =>
-            o.GetWithIncludeEntityAsync<Recipe>(It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
-                .ReturnsAsync(new Recipe { Id = 1, Name = name, CategoryId = categoryId, Description = description });
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new RecipeController(unitOfWorkMock.Object);
+            // Assert
+            Assert.Same(_expectedListRecipe, result);
+        }
+        [Fact]
+        public async Task CreateRecipe_IfExists_ReturnRecipe()
+        {
+            //Arrange
+            MakeMockGetWithIncludeEntityForRepository();
 
             // Act
             // Run method which should be tested
-
-            await controller.CreateRecipeAsync(name, categoryId ,description);
+            await _controller.CreateRecipeAsync("expected", 1,"expected");
 
             // Assert
             // Check if the entity has been return from method CreateRecipeAsync
-            Assert.NotNull(controller.CurrentRecipe);
-            Assert.Equal(1, controller.CurrentRecipe.Id);
-            Assert.Equal(categoryId, controller.CurrentRecipe.CategoryId);
-            Assert.Equal(description, controller.CurrentRecipe.Description);
+            Assert.NotNull(_controller.CurrentRecipe);
+            Assert.Same(_expectedRecipe, _controller.CurrentRecipe);
         }
         [Fact]
-        public async void CreateRecipe_If_New()
+        public async Task CreateRecipe_IfNew_CreateRecipe()
         {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var name = Guid.NewGuid().ToString();
-            var description = Guid.NewGuid().ToString();
-            var categoryId = rnd.Next();
-            
-            // Simulate "AddAsync" method from "IRepository"
-            repositoryMock.Setup(o =>
-            o.AddAsync<Recipe>(It.IsAny<Recipe>()))
-                .ReturnsAsync((Recipe x)=>x);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new RecipeController(unitOfWorkMock.Object);
-
             // Act
             // Run method which should be tested
-
-            await controller.CreateRecipeAsync(name, categoryId, description);
-
+            await _controller.CreateRecipeAsync("expected", 1, "expected");
 
             // Assert
-            Assert.NotNull(controller.CurrentRecipe);
-            Assert.Equal(0, controller.CurrentRecipe.Id);
-            Assert.Equal(categoryId, controller.CurrentRecipe.CategoryId);
-            Assert.Equal(description, controller.CurrentRecipe.Description);
-            repositoryMock.Verify(o => o.AddAsync(It.IsAny<Recipe>()), Times.Exactly(1));
+            Assert.NotNull(_controller.CurrentRecipe);
+            Assert.Equal(0, _controller.CurrentRecipe.Id);
+            Assert.Equal(1, _controller.CurrentRecipe.CategoryId);
+            Assert.Equal("expected", _controller.CurrentRecipe.Description);
+            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Recipe>()), Times.Exactly(1));
         }
         [Fact]
-        public async void AddIngredientsInRecipe()
+        public async Task AddIngredientsInRecipe_IfNewItem_AddItem()
         {
             // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var count1 = Guid.NewGuid().ToString();
-            var count2 = Guid.NewGuid().ToString();
-            var ingredientId1 = rnd.Next();
-            var ingredientId2 = rnd.Next();
+            var count = "expected";
+            var ingredientId = 1;
 
             var ingredientsId = new List<int>
             {
-                ingredientId1,
-                ingredientId2
+                ingredientId
             };
             var countIngredietns = new List<string>
             {
-                count1,
-                count2
+                count
             };
-
-            // Simulate "AddRangeAsync" method from "IRepository"
-            repositoryMock.Setup(o =>
-            o.AddRangeAsync<IngredientsInRecipe>(It.IsAny<List<IngredientsInRecipe>>()));
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new RecipeController(unitOfWorkMock.Object);
-            controller.CurrentRecipe = new Recipe { Id = rnd.Next() };
+            MakeMockGetWithIncludeListForRepository();
+            
             // Act
             // Run method which should be tested
-
-            await controller.AddedIngredientsInRecipeAsync(ingredientsId,countIngredietns);
-
+            _controller.CurrentRecipe = new Recipe { Id = 1};
+            await _controller.AddedIngredientsInRecipeAsync(ingredientsId,countIngredietns);
 
             // Assert
-            repositoryMock.Verify(o => o.AddRangeAsync(It.IsAny<List<IngredientsInRecipe>>()), Times.Exactly(1));
+            _repositoryMock.Verify(o => o.AddRangeAsync(It.IsAny<List<IngredientsInRecipe>>()), Times.Exactly(1));
         }
         [Fact]
-        public async void AddStepsInRecipe()
+        public async Task AddStepsInRecipe_IfNewItem_AddItem()
         {
             // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
+            var step = "expected";
+            MakeMockGetWithIncludeEntityForRepository();
 
-            var step1 = Guid.NewGuid().ToString();
-            var step2 = Guid.NewGuid().ToString();
-            
             var stepsInRecipe = new List<string>
             {
-                step1,
-                step2
+                step
             };
 
-            // Simulate "AddRangeAsync" method from "IRepository"
-            repositoryMock.Setup(o =>
-            o.AddRangeAsync<StepsInRecipe>(It.IsAny<List<StepsInRecipe>>()));
+            // Act
+            // Run method which should be tested
+            _controller.CurrentRecipe = new Recipe { Id = 1};
+            await _controller.AddedStepsInRecipeAsync(stepsInRecipe);
 
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new RecipeController(unitOfWorkMock.Object);
-            controller.CurrentRecipe = new Recipe { Id = rnd.Next() };
+            // Assert
+            _repositoryMock.Verify(o => o.AddRangeAsync(It.IsAny<List<StepsInRecipe>>()), Times.Exactly(1));
+        }
+        [Fact]
+        public async Task FindRecipe_IfExists_ReturnRecipe()
+        {
+            //Arrange
+            MakeMockGetWithIncludeEntityForRepository();
             
             // Act
             // Run method which should be tested
-            await controller.AddedStepsInRecipeAsync(stepsInRecipe);
+            var result = await _controller.FindRecipeAsync(1);
 
             // Assert
-            repositoryMock.Verify(o => o.AddRangeAsync(It.IsAny<List<StepsInRecipe>>()), Times.Exactly(1));
+            Assert.Equal(_expectedRecipe, result);
         }
         [Fact]
-        public async void FindRecipe()
+        public async Task FindRecipe_IfNotExists_ReturnNull()
         {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var id = rnd.Next();
-            var name = Guid.NewGuid().ToString();
-            var description = Guid.NewGuid().ToString();
-            var categoryId = rnd.Next();
-
-            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test list of entities
-            repositoryMock.Setup(o =>
-            o.GetWithIncludeEntityAsync<Recipe>(It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
-                .ReturnsAsync(new Recipe 
-                { 
-                    Id = id, 
-                    Name = name, 
-                    CategoryId = categoryId, 
-                    Description = description 
-                });
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new RecipeController(unitOfWorkMock.Object);
-
             // Act
             // Run method which should be tested
-
-            var entity = await controller.FindRecipeAsync(id);
+            var result = await _controller.FindRecipeAsync(1);
 
             // Assert
-            Assert.Equal(id, entity.Id);
-            Assert.Equal(name, entity.Name);
-            Assert.Equal(categoryId, entity.CategoryId);
-            Assert.Equal(description, entity.Description);
+            Assert.Null(result);
+        }
+        private void MakeMockGetWithIncludeListForRepository()
+        {
+            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
+            _repositoryMock.Setup(o =>
+            o.GetWithIncludeListAsync<Recipe>(It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
+                .ReturnsAsync(_expectedListRecipe);
+        }
+
+        private void MakeMockGetWithIncludeEntityForRepository()
+        {
+            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test list of entities
+            _repositoryMock.Setup(o =>
+            o.GetWithIncludeEntityAsync<Recipe>(It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
+                .ReturnsAsync(_expectedRecipe);
         }
     }
 }

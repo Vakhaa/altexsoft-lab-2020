@@ -7,23 +7,21 @@ namespace XUnitTest.Entities
     public class RecipeTest
     {
         [Fact]
-        public async void CTOR_Recipe()
+        public async void CTOR_Recipe_IfDataCorrect_CreateEntity()
         {
             // Arrange
-            var rnd = new Random();
-
-            var categoryId = rnd.Next();
-            var name = Guid.NewGuid().ToString();
-            var description = Guid.NewGuid().ToString();
+            var categoryId = 1;
+            var name = "expected";
+            var description = "expected";
 
             // Act
             // Run method which should be tested
 
-            var newEntity = new Recipe(name, categoryId, description);
+            var result = new Recipe(name, categoryId, description);
             // Assert
-            Assert.Equal(name, newEntity.Name);
-            Assert.Equal(categoryId, newEntity.CategoryId);
-            Assert.Equal(description, newEntity.Description);
+            Assert.Equal(name, result.Name);
+            Assert.Equal(categoryId, result.CategoryId);
+            Assert.Equal(description, result.Description);
         }
     }
 }

@@ -7,20 +7,18 @@ namespace XUnitTest.Entities
     public class CategoryTest
     {
         [Fact]
-        public void CTOR_Category()
+        public void CTOR_Category_IfDataCorrect_CreateEntity()
         {
             // Arrange
-            var rnd = new Random();
-            var parentId = rnd.Next(); 
-            var childCategoryName = Guid.NewGuid().ToString();
-
+            var parentId = 1; 
+            var childCategoryName = "expected";
             // Act
             // Run method which should be tested
 
-            var newChildEntity = new Category(childCategoryName, parentId);
+            var result = new Category(childCategoryName, parentId);
             // Assert
-            Assert.Equal(childCategoryName, newChildEntity.Name);
-            Assert.Equal(parentId, newChildEntity.ParentId);
+            Assert.Equal(childCategoryName, result.Name);
+            Assert.Equal(parentId, result.ParentId);
         }
     }
 }

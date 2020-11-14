@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using HomeTask4.Core.Controllers;
 using HomeTask4.Core.Entities;
 using HomeTask4.SharedKernel.Interfaces;
@@ -12,248 +12,138 @@ namespace XUnitTest.Controllers
 {
     public class CategoryControllerTest
     {
-        [Fact]
-        public async void GetCategories()
+        Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        CategoryController _controller; // Create controller which should be tested
+        Category _expectedCategory;
+        List<Category> _expectedListCategory;
+        public CategoryControllerTest()
         {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            
-            var name = Guid.NewGuid().ToString();
-            var name2 = Guid.NewGuid().ToString();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _repositoryMock = new Mock<IRepository>();
 
-            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
-            repositoryMock.Setup(o => o.GetWithIncludeListAsync<Category>(It.IsAny<Func<Category,bool>>(), It.IsAny<Expression<Func<Category, object>>>()))
-                .ReturnsAsync(new List<Category>
+            _expectedCategory = new Category
+            {
+                Id = 1,
+                Name = "expected",
+                Parent = new Category
                 {
-                    new Category { Id = 1, Name=name,Parent=null, ParentId=null, Children = null},
-                    new Category { Id = 2, Name=name2,Parent=null,ParentId=null, Children = null}
-                });
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new CategoryController(unitOfWorkMock.Object);
-
-            // Act
-            // Run method which should be tested
-            var entities = await controller.GetCategoriesAsync();
-            var firstEntity = entities.FirstOrDefault();
-            var secondEntity = entities.FirstOrDefault(i => i.Id == 2);
-
-            // Assert
-            Assert.Equal(name, firstEntity.Name);
-            Assert.Equal(name2, secondEntity.Name);
-            Assert.Equal(2, entities.Count());
-        }
-        [Fact]
-        public async void GetAllChild()
-        {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var name = Guid.NewGuid().ToString();
-            var name2 = Guid.NewGuid().ToString();
-
-            var parent = new Category { 
-                Id = rnd.Next(), 
-                Name = Guid.NewGuid().ToString() 
+                    Id = 2,
+                    Name = "expected"
+                }
             };
-            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
-            repositoryMock.Setup(o => o.GetWithIncludeListAsync<Category>(It.IsAny<Func<Category, bool>>(), It.IsAny<Expression<Func<Category, object>>>()))
-                .ReturnsAsync(new List<Category>
-                {
-                    new Category { Id = 1, Name=name,Parent=parent, ParentId=parent.Id, Children = null},
-                    new Category { Id = 2, Name=name2,Parent=parent,ParentId=parent.Id, Children = null}
-                });
 
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
+            _expectedListCategory = new List<Category>()
+            {
+                _expectedCategory
+            };
+            // Simulate "AddAsync" method from "IRepository" to return new test entity
+            _repositoryMock.Setup(o => o.AddAsync(It.IsAny<Category>()))
+                .ReturnsAsync((Category x) => x);
 
             // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
+            _unitOfWorkMock.SetupGet(o => o.Repository)
+                .Returns(_repositoryMock.Object);
 
-            unitOfWorkMock.Setup(o => o.SaveAsync());
+            _unitOfWorkMock.Setup(o => o.SaveAsync());
 
-            // Create controller which should be tested
-            var controller = new CategoryController(unitOfWorkMock.Object);
+            _controller = new CategoryController(_unitOfWorkMock.Object);
+        }
+        [Fact]
+        public async Task GetCategories_IfIsItems_ReturnItems()
+        {
+            //Arrange
+            MakeMockWithIncludeListForRepository();
 
             // Act
             // Run method which should be tested
-
-            var entities = await controller.GetAllChildAsync();
-            var firstEntity = entities.FirstOrDefault();
-            var secondEntity = entities.FirstOrDefault(i=>i.Id==2);
+            var result = await _controller.GetCategoriesAsync();
 
             // Assert
-            Assert.Equal(name, firstEntity.Name);
-            Assert.Equal(parent.Id, firstEntity.ParentId);
-            Assert.Equal(parent, firstEntity.Parent);
+            Assert.Same(_expectedListCategory, result);
 
-            Assert.Equal(name2, secondEntity.Name);
-            Assert.Equal(parent.Id, secondEntity.ParentId);
-            Assert.Equal(parent, secondEntity.Parent);
-
-            Assert.Equal(2, entities.Count());
         }
         [Fact]
-        public async void AddChild_ShouldWork()
+        public async Task GetAllChild_IfIsItems_ReturnItems()
         {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var name = Guid.NewGuid().ToString();
-            var parentId = rnd.Next();
-            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
-            repositoryMock.Setup(o => o.GetWithIncludeListAsync<Category>(It.IsAny<Func<Category, bool>>(), It.IsAny<Expression<Func<Category, object>>>()))
-                .ReturnsAsync(new List<Category>
-                {
-                    new Category { Id = 1, Name=Guid.NewGuid().ToString()}
-                });
-
-            // Simulate "AddAsync" method from "IRepository" to return new test entity
-            repositoryMock.Setup(o => o.AddAsync(It.IsAny<Category>()))
-                .ReturnsAsync((Category x) => x);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-            // Create controller which should be tested
-            var controller = new CategoryController(unitOfWorkMock.Object);
+            //Arrange
+            MakeMockWithIncludeListForRepository();
 
             // Act
             // Run method which should be tested
-            var newEntity = await controller.AddChildAsync(parentId, name);
+            var result = await _controller.GetAllChildAsync();
+
+            // Assert
+            Assert.Same(_expectedListCategory, result);
+        }
+        [Fact]
+        public async Task AddChild_IfNewItem_AddItem()
+        {
+            // Arrange
+            MakeMockWithIncludeEntityForRepository();
+            var expected = "expected";
+
+            // Act
+            // Run method which should be tested
+            var newEntity = await _controller.AddChildAsync(2, expected);
 
             //Assert
-            repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(1));
-            Assert.Equal(name, newEntity.Name);
-            Assert.Equal(parentId, newEntity.ParentId);
-            Assert.Equal(newEntity, controller.CurrentCategory);
+            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(1));
+            Assert.Same(expected, newEntity.Name);
+            Assert.Equal(_expectedCategory.Parent.Id, _controller.CurrentCategory.ParentId);
         }
         [Fact]
-        public async void AddCategory_ShouldWork()
+        public async Task AddCategory_IfNewItem_AddItem()
         {
-            // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-
-            var name = Guid.NewGuid().ToString();
-            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
-            repositoryMock.Setup(o => o.GetWithIncludeListAsync<Category>(It.IsAny<Func<Category, bool>>(), It.IsAny<Expression<Func<Category, object>>>()))
-                .ReturnsAsync(new List<Category>
-                {
-                    new Category { Id = 1, Name=Guid.NewGuid().ToString()}
-                });
-
-            // Simulate "AddAsync" method from "IRepository" to return new test entity
-            repositoryMock.Setup(o => o.AddAsync(It.IsAny<Category>()))
-                .ReturnsAsync((Category x) => x);
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-            // Create controller which should be tested
-            var controller = new CategoryController(unitOfWorkMock.Object);
-
+            //Arrange
+            var expected = "expected";
+            
             // Act
             // Run method which should be tested
-
-            var newEntity = await controller.AddCategoryAsync(name);
+            var result = await _controller.AddCategoryAsync(expected);
 
             //Assert
-            repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(1));
-            Assert.Equal(name, newEntity.Name);
+            Assert.Equal(expected, result.Name);
+            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(1));
         }
         [Fact]
-        public async void SetCurrentCategory_ShouldWork()
+        public async Task SetCurrentCategory_IfItemExists_SetItem()
         {
             // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var name = Guid.NewGuid().ToString();
-            var id = rnd.Next();
-            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
-            repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()))
-                .ReturnsAsync(
-                    new Category { 
-                        Id = id, 
-                        Name=name
-                    }
-                );
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-            // Create controller which should be tested
-            var controller = new CategoryController(unitOfWorkMock.Object);
+            MakeMockWithIncludeEntityForRepository();
 
             // Act
             // Run method which should be tested
-
-            await controller.SetCurrentCategoryAsync(id);
+            await _controller.SetCurrentCategoryAsync(1);
 
             //Assert
-            Assert.Equal(id, controller.CurrentCategory.Id);
-            Assert.Equal(name, controller.CurrentCategory.Name);
+            Assert.Same(_expectedCategory, _controller.CurrentCategory);
         }
         [Fact]
-        public async void WalkCategories_ShouldWork()
+        public async Task WalkCategories_IfItemExists_ReturnTrue()
         {
             // Arrange
-            var repositoryMock = new Mock<IRepository>(); // Create mock object for IRepository
-            var rnd = new Random();
-
-            var name = Guid.NewGuid().ToString();
-            var id = rnd.Next();
-            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
-            repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()))
-                .ReturnsAsync(
-                    new Category
-                    {
-                        Id = id,
-                        Name = name
-                    }
-                );
-
-            var unitOfWorkMock = new Mock<IUnitOfWork>(); // Create mock object for IUnitOfWork
-
-            // Simulate "Repository" property to return prevously created mock object for IRepository
-            unitOfWorkMock.Setup(o => o.Repository)
-                .Returns(repositoryMock.Object);
-
-            unitOfWorkMock.Setup(o => o.SaveAsync());
-
-            // Create controller which should be tested
-            var controller = new CategoryController(unitOfWorkMock.Object);
+            MakeMockWithIncludeEntityForRepository();
 
             // Act
             // Run method which should be tested
-            var resultBool = await controller.WalkCategoriesAsync(id.ToString());
+            var resultBool = await _controller.WalkCategoriesAsync("1");
 
             //Assert
             Assert.True(resultBool);
-            Assert.Equal(id, controller.CurrentCategory.Id);
-            Assert.Equal(name, controller.CurrentCategory.Name);
+            Assert.Equal(_expectedCategory, _controller.CurrentCategory);
+        }
+        private void MakeMockWithIncludeListForRepository()
+        {
+            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return test list of entities
+            _repositoryMock.Setup(o => o.GetWithIncludeListAsync<Category>(It.IsAny<Func<Category, bool>>(), It.IsAny<Expression<Func<Category, object>>>()))
+                .ReturnsAsync(_expectedListCategory);
+        }
+        private void MakeMockWithIncludeEntityForRepository()
+        {
+            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
+            _repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()))
+                .ReturnsAsync(_expectedCategory);
         }
     }
 }
