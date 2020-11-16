@@ -8,15 +8,15 @@ using HomeTask4.SharedKernel.Interfaces;
 using Moq;
 using Xunit;
 
-namespace XUnitTest.Controllers
+namespace HomeTask4.Test.Controllers
 {
     public class IngredientControllerTest
     {
-        Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
-        Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
-        IngredientController _controller; // Create controller which should be tested
-        Ingredient _expectedIngredient;
-        List<Ingredient> _expectedListIngredient;
+        readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        readonly IngredientController _controller; // Create controller which should be tested
+        readonly Ingredient _expectedIngredient;
+        readonly List<Ingredient> _expectedListIngredient;
         public IngredientControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -95,6 +95,16 @@ namespace XUnitTest.Controllers
             Assert.Same(_expectedIngredient, result);
         }
         [Fact]
+        public async Task FindAndGetIngredient_IfNotExists_ReturnNull()
+        {
+            // Act
+            // Run method which should be tested
+            var result = await _controller.FindAndGetIngredientAsync("expected");
+
+            // Assert
+            Assert.Null(result);
+        }
+        [Fact]
         public async Task GetIngredientById_IfItemExists_ReturnItem()
         {
             //Arrange
@@ -106,6 +116,16 @@ namespace XUnitTest.Controllers
 
             // Assert
             Assert.Same(_expectedIngredient, result);
+        }
+        [Fact]
+        public async Task GetIngredientById_IfItemNotExists_ReturnNull()
+        {
+            // Act
+            // Run method which should be tested
+            var result = await _controller.GetIngredientByIdAsync(1);
+
+            // Assert
+            Assert.Null(result);
         }
         private void MakeMockGetWithIncludeListForRepository()
         {

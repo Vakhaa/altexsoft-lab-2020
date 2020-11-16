@@ -8,15 +8,15 @@ using HomeTask4.SharedKernel.Interfaces;
 using Moq;
 using Xunit;
 
-namespace XUnitTest.Controllers
+namespace HomeTask4.Test.Controllers
 {
     public class CategoryControllerTest
     {
-        Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
-        Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
-        CategoryController _controller; // Create controller which should be tested
-        Category _expectedCategory;
-        List<Category> _expectedListCategory;
+        readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        readonly CategoryController _controller; // Create controller which should be tested
+        readonly Category _expectedCategory;
+        readonly List<Category> _expectedListCategory;
         public CategoryControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -93,6 +93,21 @@ namespace XUnitTest.Controllers
             Assert.Equal(_expectedCategory.Parent.Id, _controller.CurrentCategory.ParentId);
         }
         [Fact]
+        public async Task AddChild_IfTryParseReturnTrue_ReturnNull()
+        {
+            // Arrange
+            MakeMockWithIncludeEntityForRepository();
+
+            // Act
+            // Run method which should be tested
+            var newEntity = await _controller.AddChildAsync(2, "2");
+
+            //Assert
+            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(0));
+            Assert.Null(newEntity);
+            Assert.Null(_controller.CurrentCategory);
+        }
+        [Fact]
         public async Task AddCategory_IfNewItem_AddItem()
         {
             //Arrange
@@ -120,6 +135,16 @@ namespace XUnitTest.Controllers
             Assert.Same(_expectedCategory, _controller.CurrentCategory);
         }
         [Fact]
+        public async Task SetCurrentCategory_IfItemNotExists_SetNull()
+        {
+            // Act
+            // Run method which should be tested
+            await _controller.SetCurrentCategoryAsync(1);
+
+            //Assert
+            Assert.Null(_controller.CurrentCategory);
+        }
+        [Fact]
         public async Task WalkCategories_IfItemExists_ReturnTrue()
         {
             // Arrange
@@ -132,6 +157,20 @@ namespace XUnitTest.Controllers
             //Assert
             Assert.True(resultBool);
             Assert.Equal(_expectedCategory, _controller.CurrentCategory);
+        }
+        [Fact]
+        public async Task WalkCategories_IfTruParseReturnFalse_ReturnFalse()
+        {
+            // Arrange
+            MakeMockWithIncludeEntityForRepository();
+
+            // Act
+            // Run method which should be tested
+            var resultBool = await _controller.WalkCategoriesAsync("expected");
+
+            //Assert
+            Assert.False(resultBool);
+            Assert.Null(_controller.CurrentCategory);
         }
         private void MakeMockWithIncludeListForRepository()
         {

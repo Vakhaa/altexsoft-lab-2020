@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HomeTask4.Core.Controllers;
@@ -9,15 +8,15 @@ using HomeTask4.SharedKernel.Interfaces;
 using Moq;
 using Xunit;
 
-namespace XUnitTest.Controllers
+namespace HomeTask4.Test.Controllers
 {
     public class RecipeControllerTest
     {
-        Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
-        Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
-        RecipeController _controller;
-        Recipe _expectedRecipe;
-        List<Recipe> _expectedListRecipe;
+        readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        readonly RecipeController _controller;
+        readonly Recipe _expectedRecipe;
+        readonly List<Recipe> _expectedListRecipe;
         public RecipeControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();

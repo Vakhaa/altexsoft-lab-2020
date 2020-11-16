@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeTask4.Core", "HomeTask4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeTask4.Infrastructure", "HomeTask4.Infrastructure\HomeTask4.Infrastructure.csproj", "{B21F4807-0469-4E26-BAFD-3566977329AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTest", "XUnitTest\XUnitTest.csproj", "{BEAC6BD6-1CB7-4305-85EA-014D50BEEF77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeTask4.Test", "XUnitTest\HomeTask4.Test.csproj", "{BEAC6BD6-1CB7-4305-85EA-014D50BEEF77}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F5C7E204-BBC3-4FAB-B75D-435B61FE8589}"
 	ProjectSection(SolutionItems) = preProject

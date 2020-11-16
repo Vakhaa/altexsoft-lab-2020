@@ -1,7 +1,7 @@
 ﻿using HomeTask4.Core.Entities;
 using Xunit;
 
-namespace XUnitTest.Entities
+namespace HomeTask4.Test.Entities
 {
     public class IngredientTest
     {
