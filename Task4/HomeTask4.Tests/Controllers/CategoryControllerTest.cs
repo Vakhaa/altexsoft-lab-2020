@@ -159,6 +159,17 @@ namespace HomeTask4.Tests.Controllers
             Assert.Equal(_expectedCategory, _controller.CurrentCategory);
         }
         [Fact]
+        public async Task WalkCategories_IfItemExistsAndCurrentCategoryIsNull_ReturnTrue()
+        {
+            // Act
+            // Run method which should be tested
+            var resultBool = await _controller.WalkCategoriesAsync("1");
+
+            //Assert
+            Assert.Null(_controller.CurrentCategory);
+            Assert.False(resultBool);
+        }
+        [Fact]
         public async Task WalkCategories_IfTryParseReturnFalse_ReturnFalse()
         {
             // Arrange
