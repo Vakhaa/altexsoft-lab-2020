@@ -1,12 +1,12 @@
 ﻿using HomeTask4.Core.Entities;
 using Xunit;
 
-namespace HomeTask4.Test.Entities
+namespace HomeTask4.Tests.Entities
 {
     public class CategoryTest
     {
         [Fact]
-        public void CTOR_Category_IfDataCorrect_CreateEntity()
+        public void Constructor_Category_IfDataCorrect_CreateEntity()
         {
             // Arrange
             var parentId = 1; 

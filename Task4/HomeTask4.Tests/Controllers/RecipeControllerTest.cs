@@ -8,7 +8,7 @@ using HomeTask4.SharedKernel.Interfaces;
 using Moq;
 using Xunit;
 
-namespace HomeTask4.Test.Controllers
+namespace HomeTask4.Tests.Controllers
 {
     public class RecipeControllerTest
     {
