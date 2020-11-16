@@ -159,7 +159,7 @@ namespace HomeTask4.Test.Controllers
             Assert.Equal(_expectedCategory, _controller.CurrentCategory);
         }
         [Fact]
-        public async Task WalkCategories_IfTruParseReturnFalse_ReturnFalse()
+        public async Task WalkCategories_IfTryParseReturnFalse_ReturnFalse()
         {
             // Arrange
             MakeMockWithIncludeEntityForRepository();
