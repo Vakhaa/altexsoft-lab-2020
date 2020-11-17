@@ -12,11 +12,11 @@ namespace HomeTask4.Tests.Controllers
 {
     public class IngredientControllerTest
     {
-        readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
-        readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
-        readonly IngredientController _controller; // Create controller which should be tested
-        readonly Ingredient _expectedIngredient;
-        readonly List<Ingredient> _expectedListIngredient;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        private readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        private readonly IngredientController _controller; // Create controller which should be tested
+        private readonly Ingredient _expectedIngredient;
+        private readonly List<Ingredient> _expectedListIngredient;
         public IngredientControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -32,10 +32,7 @@ namespace HomeTask4.Tests.Controllers
             { 
                 _expectedIngredient
             };
-            // Simulate "AddAsync" method from "IRepository" to return test entity
-            _repositoryMock.Setup(o => o.AddAsync<Ingredient>(It.IsAny<Ingredient>()))
-                .ReturnsAsync((Ingredient x) => x);
-
+            
             // Simulate "Repository" property to return prevously created mock object for IRepository
             _unitOfWorkMock.SetupGet(o => o.Repository)
                 .Returns(_repositoryMock.Object);
@@ -54,6 +51,7 @@ namespace HomeTask4.Tests.Controllers
             var result = await _controller.GetIngredientsAsync();
 
             // Assert
+            _repositoryMock.VerifyAll();
             Assert.Same(_expectedListIngredient, result);
         }
         [Fact]
@@ -66,20 +64,23 @@ namespace HomeTask4.Tests.Controllers
             var entityId = await _controller.AddedIfNewAsync("expected");
 
             // Assert
+            _repositoryMock.VerifyAll();
             Assert.Equal(_expectedIngredient.Id, entityId);
         }
         [Fact]
         public async Task AddedIfNew_IfNew_ReturnNewItem()
         {
             //Arrange
-            MakeMockGetWithIncludeEntityForRepository();
+            //MakeMockGetWithIncludeEntityForRepository();
+            MakeMockAddForRepository();
 
             // Act
             // Run method which should be tested
             var entityId = await _controller.AddedIfNewAsync("expected");
 
             // Assert
-            Assert.Equal(_expectedIngredient.Id, entityId);
+            _repositoryMock.VerifyAll();
+            Assert.Equal(0, entityId);
         }
         [Fact]
         public async Task FindAndGetIngredient_IfExists_ReturnItem()
@@ -92,6 +93,7 @@ namespace HomeTask4.Tests.Controllers
             var result = await _controller.FindAndGetIngredientAsync("expected");
 
             // Assert
+            _repositoryMock.VerifyAll();
             Assert.Same(_expectedIngredient, result);
         }
         [Fact]
@@ -115,6 +117,7 @@ namespace HomeTask4.Tests.Controllers
             var result = await _controller.GetIngredientByIdAsync(1);
 
             // Assert
+            _repositoryMock.VerifyAll();
             Assert.Same(_expectedIngredient, result);
         }
         [Fact]
@@ -126,6 +129,12 @@ namespace HomeTask4.Tests.Controllers
 
             // Assert
             Assert.Null(result);
+        }
+        private void MakeMockAddForRepository()
+        {
+            // Simulate "AddAsync" method from "IRepository" to return test entity
+            _repositoryMock.Setup(o => o.AddAsync<Ingredient>(It.IsAny<Ingredient>()))
+                .ReturnsAsync((Ingredient x) => x);
         }
         private void MakeMockGetWithIncludeListForRepository()
         {

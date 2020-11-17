@@ -12,11 +12,11 @@ namespace HomeTask4.Tests.Controllers
 {
     public class CategoryControllerTest
     {
-        readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
-        readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
-        readonly CategoryController _controller; // Create controller which should be tested
-        readonly Category _expectedCategory;
-        readonly List<Category> _expectedListCategory;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock; // Create mock object for IUnitOfWork
+        private readonly Mock<IRepository> _repositoryMock;  // Create mock object for IRepository
+        private readonly CategoryController _controller; // Create controller which should be tested
+        private readonly Category _expectedCategory;
+        private readonly List<Category> _expectedListCategory;
         public CategoryControllerTest()
         {
             _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -37,10 +37,7 @@ namespace HomeTask4.Tests.Controllers
             {
                 _expectedCategory
             };
-            // Simulate "AddAsync" method from "IRepository" to return new test entity
-            _repositoryMock.Setup(o => o.AddAsync(It.IsAny<Category>()))
-                .ReturnsAsync((Category x) => x);
-
+            
             // Simulate "Repository" property to return prevously created mock object for IRepository
             _unitOfWorkMock.SetupGet(o => o.Repository)
                 .Returns(_repositoryMock.Object);
@@ -61,7 +58,7 @@ namespace HomeTask4.Tests.Controllers
 
             // Assert
             Assert.Same(_expectedListCategory, result);
-
+            _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task GetAllChild_IfIsItems_ReturnItems()
@@ -75,12 +72,13 @@ namespace HomeTask4.Tests.Controllers
 
             // Assert
             Assert.Same(_expectedListCategory, result);
+            _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task AddChild_IfNewItem_AddItem()
         {
             // Arrange
-            MakeMockWithIncludeEntityForRepository();
+            MakeMockAddForRepository();
             var expected = "expected";
 
             // Act
@@ -88,22 +86,19 @@ namespace HomeTask4.Tests.Controllers
             var newEntity = await _controller.AddChildAsync(2, expected);
 
             //Assert
-            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(1));
+            _repositoryMock.VerifyAll();
             Assert.Same(expected, newEntity.Name);
             Assert.Equal(_expectedCategory.Parent.Id, _controller.CurrentCategory.ParentId);
         }
         [Fact]
         public async Task AddChild_IfTryParseReturnTrue_ReturnNull()
         {
-            // Arrange
-            MakeMockWithIncludeEntityForRepository();
-
             // Act
             // Run method which should be tested
             var newEntity = await _controller.AddChildAsync(2, "2");
 
             //Assert
-            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(0));
+            _repositoryMock.VerifyAll();
             Assert.Null(newEntity);
             Assert.Null(_controller.CurrentCategory);
         }
@@ -112,6 +107,7 @@ namespace HomeTask4.Tests.Controllers
         {
             //Arrange
             var expected = "expected";
+            MakeMockAddForRepository();
             
             // Act
             // Run method which should be tested
@@ -119,7 +115,7 @@ namespace HomeTask4.Tests.Controllers
 
             //Assert
             Assert.Equal(expected, result.Name);
-            _repositoryMock.Verify(o => o.AddAsync(It.IsAny<Category>()), Times.Exactly(1));
+            _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task SetCurrentCategory_IfItemExists_SetItem()
@@ -133,6 +129,7 @@ namespace HomeTask4.Tests.Controllers
 
             //Assert
             Assert.Same(_expectedCategory, _controller.CurrentCategory);
+            _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task SetCurrentCategory_IfItemNotExists_SetNull()
@@ -155,6 +152,7 @@ namespace HomeTask4.Tests.Controllers
             var resultBool = await _controller.WalkCategoriesAsync("1");
 
             //Assert
+            _repositoryMock.VerifyAll();
             Assert.True(resultBool);
             Assert.Equal(_expectedCategory, _controller.CurrentCategory);
         }
@@ -173,7 +171,6 @@ namespace HomeTask4.Tests.Controllers
         public async Task WalkCategories_IfTryParseReturnFalse_ReturnFalse()
         {
             // Arrange
-            MakeMockWithIncludeEntityForRepository();
 
             // Act
             // Run method which should be tested
@@ -182,6 +179,12 @@ namespace HomeTask4.Tests.Controllers
             //Assert
             Assert.False(resultBool);
             Assert.Null(_controller.CurrentCategory);
+        }
+        private void MakeMockAddForRepository()
+        {
+            // Simulate "AddAsync" method from "IRepository" to return new test entity
+            _repositoryMock.Setup(o => o.AddAsync(It.IsAny<Category>()))
+                .ReturnsAsync((Category x) => x);
         }
         private void MakeMockWithIncludeListForRepository()
         {
