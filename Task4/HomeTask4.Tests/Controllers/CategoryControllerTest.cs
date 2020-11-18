@@ -170,8 +170,6 @@ namespace HomeTask4.Tests.Controllers
         [Fact]
         public async Task WalkCategories_IfTryParseReturnFalse_ReturnFalse()
         {
-            // Arrange
-
             // Act
             // Run method which should be tested
             var resultBool = await _controller.WalkCategoriesAsync("expected");

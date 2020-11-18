@@ -134,9 +134,6 @@ namespace HomeTask4.Tests.Controllers
             {
                 step
             };
-
-            // Simulate "AddAsync" method from "IRepository" to return test entity
-            //_repositoryMock.Setup(o => o.AddRangeAsync<Recipe>(It.IsAny<List<Recipe>>()));
             
             // Act
             // Run method which should be tested

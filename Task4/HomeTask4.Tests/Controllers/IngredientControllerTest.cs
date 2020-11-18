@@ -71,7 +71,6 @@ namespace HomeTask4.Tests.Controllers
         public async Task AddedIfNew_IfNew_ReturnNewItem()
         {
             //Arrange
-            //MakeMockGetWithIncludeEntityForRepository();
             MakeMockAddForRepository();
 
             // Act
