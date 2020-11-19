@@ -48,11 +48,11 @@ namespace HomeTask4.Tests.Controllers
             MakeMockGetWithIncludeListForRepository();
             // Act
             // Run method which should be tested
-            var result = await _controller.GetIngredientsAsync();
+            var listIngredients = await _controller.GetIngredientsAsync();
 
             // Assert
             _repositoryMock.VerifyAll();
-            Assert.Same(_expectedListIngredient, result);
+            Assert.Same(_expectedListIngredient, listIngredients);
         }
         [Fact]
         public async Task AddedIfNew_IfExist_ReturnItem()
@@ -71,7 +71,9 @@ namespace HomeTask4.Tests.Controllers
         public async Task AddedIfNew_IfNew_ReturnNewItem()
         {
             //Arrange
+            MakeMockGetWithIncludeEntityForRepository_ReturnNull();
             MakeMockAddForRepository();
+            int expectedId = 0;
 
             // Act
             // Run method which should be tested
@@ -79,7 +81,7 @@ namespace HomeTask4.Tests.Controllers
 
             // Assert
             _repositoryMock.VerifyAll();
-            Assert.Equal(0, entityId);
+            Assert.Equal(expectedId, entityId);
         }
         [Fact]
         public async Task FindAndGetIngredient_IfExists_ReturnItem()
@@ -89,21 +91,25 @@ namespace HomeTask4.Tests.Controllers
 
             // Act
             // Run method which should be tested
-            var result = await _controller.FindAndGetIngredientAsync("expected");
+            var ingredient = await _controller.FindAndGetIngredientAsync("expected");
 
             // Assert
             _repositoryMock.VerifyAll();
-            Assert.Same(_expectedIngredient, result);
+            Assert.Same(_expectedIngredient, ingredient);
         }
         [Fact]
         public async Task FindAndGetIngredient_IfNotExists_ReturnNull()
         {
+            //Arrange
+            MakeMockGetWithIncludeEntityForRepository_ReturnNull();
+
             // Act
             // Run method which should be tested
-            var result = await _controller.FindAndGetIngredientAsync("expected");
+            var ingredient = await _controller.FindAndGetIngredientAsync("expected");
 
             // Assert
-            Assert.Null(result);
+            _repositoryMock.VerifyAll();
+            Assert.Null(ingredient);
         }
         [Fact]
         public async Task GetIngredientById_IfItemExists_ReturnItem()
@@ -113,21 +119,24 @@ namespace HomeTask4.Tests.Controllers
 
             // Act
             // Run method which should be tested
-            var result = await _controller.GetIngredientByIdAsync(1);
+            var ingredient = await _controller.GetIngredientByIdAsync(1);
 
             // Assert
             _repositoryMock.VerifyAll();
-            Assert.Same(_expectedIngredient, result);
+            Assert.Same(_expectedIngredient, ingredient);
         }
         [Fact]
         public async Task GetIngredientById_IfItemNotExists_ReturnNull()
         {
+            //Arrange
+            MakeMockGetWithIncludeEntityForRepository_ReturnNull();
             // Act
             // Run method which should be tested
-            var result = await _controller.GetIngredientByIdAsync(1);
+            var ingredient = await _controller.GetIngredientByIdAsync(1);
 
             // Assert
-            Assert.Null(result);
+            Assert.Null(ingredient);
+            _repositoryMock.VerifyAll();
         }
         private void MakeMockAddForRepository()
         {
@@ -141,9 +150,15 @@ namespace HomeTask4.Tests.Controllers
             _repositoryMock.Setup(o => o.GetWithIncludeListAsync<Ingredient>(It.IsAny<Expression<Func<Ingredient, object>>>()))
                 .ReturnsAsync(_expectedListIngredient);
         }
+        private void MakeMockGetWithIncludeEntityForRepository_ReturnNull()
+        {
+            // Simulate "GetWithIncludeListAsync" method from "IRepository" to return null
+            _repositoryMock.Setup(o =>
+            o.GetWithIncludeEntityAsync<Ingredient>(It.IsAny<Func<Ingredient, bool>>(), It.IsAny<Expression<Func<Ingredient, object>>>()));
+        }
         private void MakeMockGetWithIncludeEntityForRepository()
         {
-            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test list of entities
+            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return entity
             _repositoryMock.Setup(o =>
             o.GetWithIncludeEntityAsync<Ingredient>(It.IsAny<Func<Ingredient, bool>>(), It.IsAny<Expression<Func<Ingredient, object>>>()))
                 .ReturnsAsync(_expectedIngredient);

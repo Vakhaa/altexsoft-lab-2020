@@ -54,10 +54,10 @@ namespace HomeTask4.Tests.Controllers
 
             // Act
             // Run method which should be tested
-            var result = await _controller.GetCategoriesAsync();
+            var listCategories = await _controller.GetCategoriesAsync();
 
             // Assert
-            Assert.Same(_expectedListCategory, result);
+            Assert.Same(_expectedListCategory, listCategories);
             _repositoryMock.VerifyAll();
         }
         [Fact]
@@ -68,26 +68,27 @@ namespace HomeTask4.Tests.Controllers
 
             // Act
             // Run method which should be tested
-            var result = await _controller.GetAllChildAsync();
+            var listChildsCategories = await _controller.GetAllChildAsync();
 
             // Assert
-            Assert.Same(_expectedListCategory, result);
+            Assert.Same(_expectedListCategory, listChildsCategories);
             _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task AddChild_IfNewItem_AddItem()
         {
             // Arrange
+            MakeMockWithIncludeChildForRepository_ReturnNull();
             MakeMockAddForRepository();
-            var expected = "expected";
+            var expectedChildName = "expected";
 
             // Act
             // Run method which should be tested
-            var newEntity = await _controller.AddChildAsync(2, expected);
+            var newEntity = await _controller.AddChildAsync(2, expectedChildName);
 
             //Assert
             _repositoryMock.VerifyAll();
-            Assert.Same(expected, newEntity.Name);
+            Assert.Same(expectedChildName, newEntity.Name);
             Assert.Equal(_expectedCategory.Parent.Id, _controller.CurrentCategory.ParentId);
         }
         [Fact]
@@ -98,23 +99,23 @@ namespace HomeTask4.Tests.Controllers
             var newEntity = await _controller.AddChildAsync(2, "2");
 
             //Assert
-            _repositoryMock.VerifyAll();
             Assert.Null(newEntity);
             Assert.Null(_controller.CurrentCategory);
+            _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task AddCategory_IfNewItem_AddItem()
         {
             //Arrange
-            var expected = "expected";
+            var expectedCategoryName = "expected";
             MakeMockAddForRepository();
             
             // Act
             // Run method which should be tested
-            var result = await _controller.AddCategoryAsync(expected);
+            var result = await _controller.AddCategoryAsync(expectedCategoryName);
 
             //Assert
-            Assert.Equal(expected, result.Name);
+            Assert.Equal(expectedCategoryName, result.Name);
             _repositoryMock.VerifyAll();
         }
         [Fact]
@@ -134,12 +135,15 @@ namespace HomeTask4.Tests.Controllers
         [Fact]
         public async Task SetCurrentCategory_IfItemNotExists_SetNull()
         {
+            //Arrange
+            MakeMockWithIncludeCategoryForRepository_ReturnNull();
             // Act
             // Run method which should be tested
             await _controller.SetCurrentCategoryAsync(1);
 
             //Assert
             Assert.Null(_controller.CurrentCategory);
+            _repositoryMock.VerifyAll();
         }
         [Fact]
         public async Task WalkCategories_IfItemExists_ReturnTrue()
@@ -157,8 +161,10 @@ namespace HomeTask4.Tests.Controllers
             Assert.Equal(_expectedCategory, _controller.CurrentCategory);
         }
         [Fact]
-        public async Task WalkCategories_IfItemExistsAndCurrentCategoryIsNull_ReturnTrue()
+        public async Task WalkCategories_IfItemExistsAndCurrentCategoryIsNull_ReturnFalse()
         {
+            //Arrange
+            MakeMockWithIncludeCategoryForRepository_ReturnNull();
             // Act
             // Run method which should be tested
             var resultBool = await _controller.WalkCategoriesAsync("1");
@@ -195,6 +201,16 @@ namespace HomeTask4.Tests.Controllers
             // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
             _repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()))
                 .ReturnsAsync(_expectedCategory);
+        }
+        private void MakeMockWithIncludeChildForRepository_ReturnNull()
+        {
+            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
+            _repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>(), It.IsAny<Expression<Func<Category, object>>>()));
+        }
+        private void MakeMockWithIncludeCategoryForRepository_ReturnNull()
+        {
+            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
+            _repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()));
         }
     }
 }

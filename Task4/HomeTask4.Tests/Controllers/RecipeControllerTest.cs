@@ -48,12 +48,13 @@ namespace HomeTask4.Tests.Controllers
         {
             // Arrange
             MakeMockGetWithIncludeListForRepository();
+
             // Act
             // Run method which should be tested
-            var result = await _controller.GetRecipesAsync();
+            var listRecipes = await _controller.GetRecipesAsync();
 
             // Assert
-            Assert.Same(_expectedListRecipe, result);
+            Assert.Same(_expectedListRecipe, listRecipes);
             _repositoryMock.VerifyAll();
         }
         [Fact]
@@ -76,17 +77,21 @@ namespace HomeTask4.Tests.Controllers
         public async Task CreateRecipe_IfNew_CreateRecipe()
         {
             //Arrange
+            MakeMockGetWithIncludeEntityForRepository_ReturnNull();
             MakeMockAddForRepository();
-
+            int expectedCategoryId = 1;
+            string expectedDescription = "expected";
+            string expectedName = "expected";
+            
             // Act
             // Run method which should be tested
-            await _controller.CreateRecipeAsync("expected", 1, "expected");
+            await _controller.CreateRecipeAsync(expectedName, expectedCategoryId, expectedDescription);
 
             // Assert
             Assert.NotNull(_controller.CurrentRecipe);
-            Assert.Equal(0, _controller.CurrentRecipe.Id);
-            Assert.Equal(1, _controller.CurrentRecipe.CategoryId);
-            Assert.Equal("expected", _controller.CurrentRecipe.Description);
+            Assert.Equal(expectedName, _controller.CurrentRecipe.Name);
+            Assert.Equal(expectedCategoryId, _controller.CurrentRecipe.CategoryId);
+            Assert.Equal(expectedDescription, _controller.CurrentRecipe.Description);
             _repositoryMock.VerifyAll();
         }
         [Fact]
@@ -156,21 +161,24 @@ namespace HomeTask4.Tests.Controllers
             
             // Act
             // Run method which should be tested
-            var result = await _controller.FindRecipeAsync(1);
+            var recipe = await _controller.FindRecipeAsync(1);
 
             // Assert
             _repositoryMock.VerifyAll();
-            Assert.Equal(_expectedRecipe, result);
+            Assert.Equal(_expectedRecipe, recipe);
         }
         [Fact]
         public async Task FindRecipe_IfNotExists_ReturnNull()
         {
+            //Arrange
+            MakeMockGetWithIncludeEntityForRepository_ReturnNull();
             // Act
             // Run method which should be tested
-            var result = await _controller.FindRecipeAsync(1);
+            var recipe = await _controller.FindRecipeAsync(1);
 
             // Assert
-            Assert.Null(result);
+            Assert.Null(recipe);
+            _repositoryMock.VerifyAll();
         }
         private void MakeMockAddForRepository()
         {
@@ -185,13 +193,18 @@ namespace HomeTask4.Tests.Controllers
             o.GetWithIncludeListAsync<Recipe>(It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
                 .ReturnsAsync(_expectedListRecipe);
         }
-
         private void MakeMockGetWithIncludeEntityForRepository()
         {
             // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test list of entities
             _repositoryMock.Setup(o =>
             o.GetWithIncludeEntityAsync<Recipe>(It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
                 .ReturnsAsync(_expectedRecipe);
+        }
+        private void MakeMockGetWithIncludeEntityForRepository_ReturnNull()
+        {
+            // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test list of entities
+            _repositoryMock.Setup(o =>
+            o.GetWithIncludeEntityAsync<Recipe>(It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()));
         }
     }
 }
