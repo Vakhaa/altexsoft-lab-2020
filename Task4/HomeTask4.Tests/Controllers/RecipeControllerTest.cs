@@ -204,7 +204,9 @@ namespace HomeTask4.Tests.Controllers
         {
             // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test list of entities
             _repositoryMock.Setup(o =>
-            o.GetWithIncludeEntityAsync<Recipe>(It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()));
+            o.GetWithIncludeEntityAsync<Recipe>
+            (It.IsAny<Func<Recipe, bool>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>(), It.IsAny<Expression<Func<Recipe, object>>>()))
+                .ReturnsAsync((Recipe)null);
         }
     }
 }

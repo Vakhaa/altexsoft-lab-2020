@@ -100,7 +100,6 @@ namespace HomeTask4.Tests.Controllers
 
             //Assert
             Assert.Null(newEntity);
-            Assert.Null(_controller.CurrentCategory);
             _repositoryMock.VerifyAll();
         }
         [Fact]
@@ -182,7 +181,6 @@ namespace HomeTask4.Tests.Controllers
 
             //Assert
             Assert.False(resultBool);
-            Assert.Null(_controller.CurrentCategory);
         }
         private void MakeMockAddForRepository()
         {
@@ -210,7 +208,8 @@ namespace HomeTask4.Tests.Controllers
         private void MakeMockWithIncludeCategoryForRepository_ReturnNull()
         {
             // Simulate "GetWithIncludeEntityAsync" method from "IRepository" to return test entity
-            _repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()));
+            _repositoryMock.Setup(o => o.GetWithIncludeEntityAsync<Category>(It.IsAny<Func<Category, bool>>()))
+                .ReturnsAsync((Category)null);
         }
     }
 }
