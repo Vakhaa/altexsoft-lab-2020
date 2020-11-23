@@ -74,7 +74,7 @@ namespace HomeTask4.Cmd
                 Console.Clear();
                 Console.WriteLine("\t\t*exit: bye, back: back, open recipe: {id}*");
                 DisplayCategoryTree(await categoryController.GetCategoriesAsync(), await recipeController.GetRecipesAsync(), true);
-                Console.WriteLine("Что бы открыть рецепи введите {id}:");
+                Console.WriteLine("Что бы открыть рецепт введите {id}:");
                 answer = Console.ReadLine().ToLower();
                 if (IsExit(answer)) break;
                 
