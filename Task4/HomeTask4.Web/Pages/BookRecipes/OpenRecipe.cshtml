@@ -1,0 +1,29 @@
+﻿@page "{id}"
+@model HomeTask4.Web.Pages.BookRecipes.OpenRecipeModel
+@{
+}
+
+<div>
+    <h2 class="text-center">@Model.Recipe.Name</h2>
+    <p>Описание: </p>
+    <p>@Model.Recipe.Description</p>
+    <p>Ингредиенты: </p>
+    <ol>
+        @foreach (var item in Model.Recipe.IngredientsInRecipe)
+        {
+            var ingredient = await Model.GetIngredientAsync(item.IngredientId);
+            @:<li>
+                @: @ingredient.Name - @item.CountIngredient
+            @:</li>
+        }
+    </ol>
+    <p>Описание приготовление: </p>
+    <ol>
+        @foreach (var item in Model.Recipe.StepsHowCooking)
+        {
+            @:<li>
+                @:@item.Description
+            @:</li>
+        }
+    </ol>
+</div>

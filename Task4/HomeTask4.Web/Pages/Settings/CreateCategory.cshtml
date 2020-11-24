@@ -1,0 +1,35 @@
+﻿@page
+@model HomeTask4.Web.Pages.Settings.CreateCategoryModel
+@using HomeTask4.Core.Entities
+@{
+    var isDisplayRecipe = false;
+    var CategoriesParent = await Model.CategoryController.GetCategoriesAsync();
+    IEnumerable<Recipe> Recipes = null;
+    ViewData["Title"] = "Create category page";
+    Layout = "_Layout";
+}
+
+<div>
+    @Html.Partial("_DisplayCategoryTree", new { CategoriesParent, Recipes, isDisplayRecipe })
+    <form method="post">
+        <p>Chose id category: </p>
+        <input type="text" name="categoryId" />
+        <p>Enter name child category: </p>
+        <input type="text" name="subcategoryName" />
+        <input type="submit" class="btn btn-primary" value="Send" />
+    </form>
+    @{
+        if (Model.isAdded)
+        {
+            if (Model.CategoryController.CurrentCategory == null)
+            {
+                @:This category is exists.
+            }
+            else
+            {
+                @:New category - @Model.CategoryController.CurrentCategory.Name added.
+            }
+        }
+
+    }
+</div>

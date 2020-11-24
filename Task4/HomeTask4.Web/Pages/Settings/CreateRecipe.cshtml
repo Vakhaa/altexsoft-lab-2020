@@ -1,0 +1,54 @@
+﻿@page
+@model HomeTask4.Web.Pages.Settings.CreateRecipeModel
+@using HomeTask4.Core.Entities
+@{
+    var isDisplayRecipe = false;
+    var CategoriesParent = await Model.CategoryController.GetCategoriesAsync();
+    IEnumerable<Recipe> Recipes = null;
+    ViewData["Title"] = "Create recipe page";
+    Layout = "_Layout";
+}
+<div>
+    <h2 class="text-center">Create recipe.</h2>
+    <div>
+        <form method="post">
+            <div id="dataForCreate" class="col-12">
+                <div id="leftSide" class="col-4" style="float:left">
+                    <div id="recipe">
+                        <label>Enter name recipe: </label>
+                        <input type="text" name="recipeName" />
+                    </div>
+                    <div id="category">
+                        @Html.Partial("_DisplayCategoryTree", new { CategoriesParent, Recipes, isDisplayRecipe })
+                        <label>Enter id category: </label>
+                        <input type="text" name="categoryId" />
+                    </div>
+                    <div id="shortDescriptions">
+                        <p>Enter short description: </p>
+                        <input type="text" name="description" />
+                    </div>
+                </div>
+                <div id="centerSide" class="col-4" style="float:left">
+                    <div id="ingredient"></div>
+                    <div id="ingredientAddButton">
+                        <br />
+                        <input class="btn btn-primary" type="button" value="Add Ingredient." onclick="AddIngredient()" />
+                        <br />
+                    </div>
+                </div>
+                <div id="rightSide" class="col-4" style="float:right">
+                    <div id="step"></div>
+                    <div id="stepsAddButton">
+                        <br />
+                        <input class="btn btn-primary" type="button" value="Add steps cooking in recipe." onclick="AddSteps()" />
+                        <br />
+                    </div>
+                </div>
+            </div>
+            <div id="submit" style="float:right">
+                <br /><br />
+                <input type="submit" class="btn btn-primary" value="Create new recipe!" />
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using HomeTask4.Core.Entities
+@{
+    void DisplayCategoryTree(IEnumerable<Category> categories, IEnumerable<Recipe> recipes, bool isDisplayRecipe = false, int LevelLayer = 0)
+    {
+        @:<ol>
+            foreach (var category in categories)
+        {
+            if (isDisplayRecipe)
+            {
+                    @:<li class="list-unstyled">
+                    @category.Name
+                    }
+                    else
+                    {
+                        @:<li class="list-unstyled">
+                       @: @category.Id. @category.Name
+                    }
+                @:</li>
+                if (isDisplayRecipe)
+                {
+                    @:<ol>
+                        foreach (var recipe in Model.Recipes)
+                        {
+                            if (recipe.Category.Id == category.Id)
+                            {
+                                @:<li>
+                                    @:<a href="/BookRecipes/OpenRecipe/@recipe.Id"> @recipe.Name</a>    
+                                @:</li>
+                            }
+                        }
+                    @:</ol>
+                }
+                if (category.Children != null)
+                    DisplayCategoryTree(category.Children, recipes, isDisplayRecipe, LevelLayer + 1);
+            }
+        @:</ol>
+    }
+    DisplayCategoryTree(Model.CategoriesParent, Model.Recipes, Model.isDisplayRecipe);
+}

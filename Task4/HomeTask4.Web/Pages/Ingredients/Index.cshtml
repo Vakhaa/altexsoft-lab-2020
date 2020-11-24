@@ -1,0 +1,16 @@
+﻿@page
+@model HomeTask4.Web.Pages.Ingredients.IndexModel
+@{
+    Layout = "_Layout";
+}
+<div>
+    <h2>Ingredients</h2>
+    <ol>
+        @foreach(var ingredient in @Model.Ingredients)
+        {
+            <li>
+                <a asp-page="/Edit">@ingredient.Name</a>.
+            </li>
+        }
+    </ol>
+</div>
