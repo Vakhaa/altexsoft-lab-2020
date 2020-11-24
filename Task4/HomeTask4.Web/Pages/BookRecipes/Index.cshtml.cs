@@ -10,15 +10,13 @@ namespace HomeTask4.Web.Pages.BookRecipes
     {
         private CategoryController _categoryController;
         private RecipeController _recipeController;
-        private IngredientController _ingredientController;
         public IEnumerable<Category> CategoriesParent;
         public IEnumerable<Recipe> Recipes;
         public IEnumerable<Category> CategoriesChild;
-        public IndexModel(CategoryController categoryController,RecipeController recipeController, IngredientController ingredientController)
+        public IndexModel(CategoryController categoryController,RecipeController recipeController)
         {
             _categoryController = categoryController;
             _recipeController = recipeController;
-            _ingredientController = ingredientController;
         }
         public async Task OnGetAsync()
         {

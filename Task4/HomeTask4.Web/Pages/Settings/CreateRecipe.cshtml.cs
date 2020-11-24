@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HomeTask4.Core.Controllers;
-using HomeTask4.Core.Entities;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HomeTask4.Web.Pages.Settings

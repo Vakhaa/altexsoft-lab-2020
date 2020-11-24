@@ -21,7 +21,7 @@ namespace HomeTask4.Web.Pages.Settings
             isAdded = true;
             CategoryController.CurrentCategory = await CategoryController.AddChildAsync(categoryId, subcategoryName);//Создаем или добавляем подкатегорию
         }
-        public async Task OnGetAsync()
+        public void OnGet()
         {
         }
     }

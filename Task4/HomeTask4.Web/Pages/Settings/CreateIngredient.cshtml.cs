@@ -6,12 +6,12 @@ namespace HomeTask4.Web.Pages.Settings
 {
     public class CreateIngredientModel : PageModel
     {
-        public IngredientController IngredientController;
+        private IngredientController _ingredientController;
         public bool isAdded;
         public CreateIngredientModel(IngredientController ingredientController)
         {
             isAdded = false;
-            IngredientController = ingredientController;
+            _ingredientController = ingredientController;
         }
         public void OnGet()
         {
@@ -19,7 +19,7 @@ namespace HomeTask4.Web.Pages.Settings
         public async Task OnPostAsync(string name)
         {
             isAdded = true;
-            await IngredientController.AddedIfNewAsync(name);
+            await _ingredientController.AddedIfNewAsync(name);
         }
     }
 }

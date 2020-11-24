@@ -8,8 +8,8 @@ namespace HomeTask4.Web.Pages.BookRecipes
     public class OpenRecipeModel : PageModel
     {
         public Recipe Recipe;
-        RecipeController _recipeController;
-        IngredientController _ingredientController;
+        private RecipeController _recipeController;
+        private IngredientController _ingredientController;
         public OpenRecipeModel(RecipeController recipeController, IngredientController ingredientController)
         {
             _recipeController = recipeController;
