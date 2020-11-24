@@ -1,0 +1,8 @@
+﻿@page
+@model HomeTask4.Web.Pages.BookRecipes.IndexModel
+@{
+    var isDisplayRecipe = true;
+    ViewData["Title"] = "Tree recipe page";
+    Layout = "_Layout";
+    @Html.Partial("_DisplayCategoryTree", new { Model.CategoriesParent, Model.Recipes, isDisplayRecipe})
+}
